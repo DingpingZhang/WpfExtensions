@@ -1,4 +1,4 @@
-# System.Windows.MarkupEx
+# System.Windows.Extensions
 
 ## 1. `ComposeExtension`
 
