@@ -3,6 +3,17 @@
   <PropertyGroup>
     <TargetFramework>net40</TargetFramework>
     <LangVersion>latest</LangVersion>
+    <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
+    <Authors>Dingping Zhang</Authors>
+    <Version>0.0.1</Version>
+    <Description>Some common custom markup extensions for WPF.</Description>
+    <PackageProjectUrl>https://github.com/DingpingZhang/System.Windows.Extensions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/DingpingZhang/System.Windows.Extensions</RepositoryUrl>
+    <PackageTags>wpf;xaml;markup-extension</PackageTags>
+    <Copyright>Copyright (c) 2019 DingpingZhang</Copyright>
+    <PackageLicenseUrl>https://github.com/DingpingZhang/System.Windows.Extensions/blob/master/LICENSE</PackageLicenseUrl>
+    <Product>System.Windows.Extensions</Product>
+    <PackageId>XamlExtensions</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
