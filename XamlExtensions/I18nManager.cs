@@ -1,10 +1,12 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Resources;
 using System.Threading;
+using System.Windows;
 
-namespace System.Windows.Extensions
+namespace XamlExtensions
 {
     public class CurrentUICultureChangedEventArgs : EventArgs
     {

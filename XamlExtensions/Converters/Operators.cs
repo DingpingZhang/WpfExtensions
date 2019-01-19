@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace System.Windows.Extensions.Converters
+namespace XamlExtensions.Converters
 {
     #region Without parameter
 

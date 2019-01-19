@@ -10,7 +10,7 @@
 
 using System.Windows.Data;
 
-namespace System.Windows.Extensions.Markup
+namespace XamlExtensions.Markup
 {
     public partial class ComposeExtension
     {

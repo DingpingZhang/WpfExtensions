@@ -1,7 +1,10 @@
-﻿using System.Windows.Data;
+﻿using System;
+using System.Windows;
+using System.Windows.Data;
 using System.Windows.Markup;
+using XamlExtensions.ExtensionMethods;
 
-namespace System.Windows.Extensions.Markup
+namespace XamlExtensions.Markup
 {
     [MarkupExtensionReturnType(typeof(object))]
     public class I18nExtension : MarkupExtension

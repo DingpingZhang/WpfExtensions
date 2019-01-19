@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
+using System.Windows;
 
-namespace System.Windows.Extensions
+namespace XamlExtensions
 {
     public class I18nSource : INotifyPropertyChanged
     {

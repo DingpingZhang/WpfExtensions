@@ -1,10 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace System.Windows.Extensions.Markup
+namespace XamlExtensions.Markup
 {
     [MarkupExtensionReturnType(typeof(IValueConverter))]
     [Localizability(LocalizationCategory.NeverLocalize)]

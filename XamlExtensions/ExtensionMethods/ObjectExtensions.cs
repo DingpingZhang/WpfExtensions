@@ -1,5 +1,8 @@
 ﻿// ReSharper disable once CheckNamespace
-namespace System.Windows.Extensions.ExtensionMethods
+
+using System;
+
+namespace XamlExtensions.ExtensionMethods
 {
     public static class ObjectExtensions
     {

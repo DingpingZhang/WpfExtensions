@@ -1,9 +1,10 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Windows.Data;
-using System.Windows.Extensions.ExtensionMethods;
 using System.Windows.Markup;
+using XamlExtensions.ExtensionMethods;
 
-namespace System.Windows.Extensions.Markup
+namespace XamlExtensions.Markup
 {
     public class IfExtension : MultiBinding
     {
