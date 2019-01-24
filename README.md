@@ -5,7 +5,7 @@
 Combine multiple Converters into one pipeline.
 
 ```xml
-<Button Visibility="{Binding SampleCollection, Converter={markupEx:Compose
+<Button Visibility="{Binding SampleCollection, Converter={markup:Compose
                     {StaticResource AnyConverter},
                     {StaticResource NotConverter},
                     {StaticResource BooleanToVisibilityConverter}}}" />
@@ -16,10 +16,24 @@ Combine multiple Converters into one pipeline.
 Using the `Conditional expression` in XAML.
 
 ```xml
-<Button Command="{markupEx:If
+<Button Command="{markup:If
                  {Binding BoolProperty},
                  {Binding OkCommand},
                  {Binding CancelCommand}}" />
+```
+
+```xml
+<UserControl>
+    <markup:If Condition="{Binding IsLoading}">
+        <markup:If.True>
+            <LoadingView />
+        </markup:If.True>
+        
+        <markup:If.False>
+        	<LoadedView />
+        </markup:If.False>
+    </markup:If>
+</UserControl>
 ```
 
 ## 3. `I18nExtension`
@@ -27,30 +41,26 @@ Using the `Conditional expression` in XAML.
 Dynamically switch languages without restarting the app.
 
 ```xml
-<TextBlock Text="{markupEx:I18n {x:Static language:UiStrings.MainWindow_Title}}" />
+<TextBlock Text="{markup:I18n {x:Static language:UiStrings.MainWindow_Title}}" />
 ```
 
 ## 4. `StylesExtension` (In Progress)
 
 ```xml
-<Button Style="{Styles {StaticResource FlatButtonStyle},
-                       {StaticResource AnimationStyle}
-                       ...}" />
+<Button Style="{markup:Styles 
+               {StaticResource FlatButtonStyle}, 
+               {StaticResource AnimationStyle},
+               ...}" />
 ```
 
-## 5. `SwitchExtension` (TBD)
+## 5. `SwitchExtension` (In Progress)
 
 ```xml
-<UserControl Width="{Switch {Binding Path=ActualWidth, ElementName=MainWindow},
-                    {Case 400, 0},
-                    {Case 600, 100},
-                    {Case 1000, 150}}" />
-```
-
-```xml
-<Image Source="{Switch {Binding FileType},
+<Image Source="{markup:Switch {Binding FileType},
                {Case {x:Static res:FileType.Music}, {StaticResource MusicIcon}},
                {Case {x:Static res:FileType.Video}, {StaticResource VideoIcon}},
                {Case {x:Static res:FileType.Picture}, {StaticResource PictureIcon}},
-               ...}" />
+               ...
+               {Default {StaticResource UnknownFileIcon}}}" />
 ```
+
