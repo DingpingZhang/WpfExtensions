@@ -9,14 +9,23 @@ namespace XamlExtensions
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public I18nSource(ComponentResourceKey key, FrameworkElement element = null)
+        public I18nSource(ComponentResourceKey key, object owner = null)
         {
             _key = key;
 
-            if (element != null)
+            switch (owner)
             {
-                element.Loaded += OnLoaded;
-                element.Unloaded += OnUnloaded;
+                case FrameworkElement frameworkElement:
+                    frameworkElement.Loaded += OnLoaded;
+                    frameworkElement.Unloaded += OnUnloaded;
+                    break;
+                case FrameworkContentElement frameworkContentElement:
+                    frameworkContentElement.Loaded += OnLoaded;
+                    frameworkContentElement.Unloaded += OnUnloaded;
+                    break;
+                default:
+                    OnLoaded(null, null);
+                    break;
             }
         }
 

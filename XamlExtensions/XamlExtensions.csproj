@@ -17,6 +17,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Markup\I18nExtension.Ctors.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>I18nExtension.Ctors.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
@@ -39,6 +47,14 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ComposeExtension.Ctors.cs</LastGenOutput>
     </None>
+    <None Update="Markup\I18nExtension.Ctors.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>I18nExtension.Ctors.cs</LastGenOutput>
+    </None>
+    <None Update="Markup\SwitchExtension.Ctors.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SwitchExtension.Ctors.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -50,6 +66,16 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ComposeExtension.Ctors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Markup\I18nExtension.Ctors.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>I18nExtension.Ctors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Markup\SwitchExtension.Ctors.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SwitchExtension.Ctors.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 
