@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 using XamlExtensions.ExtensionMethods;
@@ -79,7 +80,11 @@ namespace XamlExtensions.Markup
 
             public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
             {
-                return values[_ifExtension._conditionIndex].CastTo<bool>()
+                var condition = values[_ifExtension._conditionIndex];
+
+                if (condition == DependencyProperty.UnsetValue) return Binding.DoNothing;
+
+                return condition.CastTo<bool>()
                     ? GetValue(_ifExtension._trueIndex, _ifExtension._true)
                     : GetValue(_ifExtension._falseIndex, _ifExtension._false);
 

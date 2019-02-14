@@ -14,6 +14,46 @@
 
     <Window.Resources>
 
+        <DrawingImage x:Key="Icon.Paused">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V200 H200 V0 H0 Z">
+                    <GeometryDrawing Brush="#FF888888"
+                                     Geometry="F1 M200,200z M0,0z M128,180C118.1,180,110,172.3,110,162.9L110,37.1C110,27.6,118.1,20,128,20L142,20C151.9,20,160,27.7,160,37.1L160,162.8C160,172.3,151.9,179.9,142,179.9L128,179.9z M144,30L126,30C122.7,30,120,32.6,120,35.7L120,164.3C120,167.5,122.7,170,126,170L144,170C147.3,170,150,167.4,150,164.3L150,35.7C150,32.6,147.3,30,144,30z M58,180C48.1,180,40,172.3,40,162.9L40,37.1C40,27.7,48.1,20,58,20L72,20C81.9,20,90,27.7,90,37.1L90,162.8C90,172.3,81.9,179.9,72,179.9L58,179.9z M74,30L56,30C52.7,30,50,32.6,50,35.7L50,164.3C50,167.5,52.7,170,56,170L74,170C77.3,170,80,167.4,80,164.3L80,35.7C80,32.6,77.3,30,74,30z" />
+                    <GeometryDrawing>
+                        <GeometryDrawing.Brush>
+                            <SolidColorBrush Color="#FFD8D8D8"
+                                             Opacity="0" />
+                        </GeometryDrawing.Brush>
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry RadiusX="0"
+                                               RadiusY="0"
+                                               Rect="0,0,200,200" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DrawingImage x:Key="Icon.Run">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V200 H200 V0 H0 Z">
+                    <GeometryDrawing Brush="#FF888888"
+                                     Geometry="F1 M200,200z M0,0z M49.3,178.9C44.6,181.8,40.8,179.7,40.8,174.1L40.8,25.9C40.8,20.4,44.6,18.2,49.3,21.1L167.6,94.7C172.3,97.6,172.3,102.3,167.6,105.2L49.3,178.9z M143.1,105.5C147.7,102.5,147.7,97.6,143.1,94.6L61.6,41.4C57,38.4,53.2,40.5,53.2,46L53.2,154.1C53.2,159.7,56.9,161.7,61.6,158.7L143.1,105.5z" />
+                    <GeometryDrawing>
+                        <GeometryDrawing.Brush>
+                            <SolidColorBrush Color="#FFFFFFFF"
+                                             Opacity="0" />
+                        </GeometryDrawing.Brush>
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry RadiusX="0"
+                                               RadiusY="0"
+                                               Rect="0,0,200,200" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
         <Style x:Key="LinkButtonStyle"
@@ -96,11 +136,16 @@
             <markup:If Condition="{Binding IsLoading}">
 
                 <markup:If.True>
-                    <TextBlock Text="Loading Data..."
-                               FontSize="50"
-                               Foreground="BlueViolet"
-                               FontWeight="Bold"
-                               HorizontalAlignment="Center" />
+                    <StackPanel>
+                        <Image Height="20"
+                               Width="20"
+                               Source="{markup:If {Binding IsLoading}, {StaticResource Icon.Paused}, {StaticResource Icon.Run}}" />
+                        <TextBlock Text="Loading Data..."
+                                   FontSize="50"
+                                   Foreground="BlueViolet"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
                 </markup:If.True>
 
                 <markup:If.False>
@@ -108,6 +153,10 @@
                             BorderBrush="BlueViolet"
                             Margin="10">
                         <StackPanel>
+                            <Image Height="20"
+                                   Width="20"
+                                   Source="{markup:If {Binding IsLoading}, {StaticResource Icon.Paused}, {StaticResource Icon.Run}}" />
+
                             <Button Style="{StaticResource LinkButtonStyle}"
                                     Content="{Binding InputText}" />
 
