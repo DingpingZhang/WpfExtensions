@@ -5,7 +5,7 @@
     <LangVersion>latest</LangVersion>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
     <Authors>Dingping Zhang</Authors>
-    <Version>0.0.3</Version>
+    <Version>0.0.4</Version>
     <Description>Some common custom markup extensions for WPF.</Description>
     <PackageProjectUrl>https://github.com/DingpingZhang/System.Windows.Extensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DingpingZhang/System.Windows.Extensions</RepositoryUrl>
