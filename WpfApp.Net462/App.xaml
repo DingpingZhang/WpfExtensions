@@ -1,0 +1,9 @@
+﻿<Application x:Class="WpfApp.Net462.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:WpfApp.Net462"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary Source="pack://application:,,,/XamlExtensions;component/Converters/ImportOperators.xaml" />
+    </Application.Resources>
+</Application>
