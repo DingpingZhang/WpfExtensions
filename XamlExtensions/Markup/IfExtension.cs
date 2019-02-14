@@ -37,6 +37,12 @@ namespace XamlExtensions.Markup
             set => SetProperty(value, ref _falseIndex, out _false);
         }
 
+        public new IMultiValueConverter Converter
+        {
+            get => base.Converter;
+            private set => base.Converter = value;
+        }
+
         public IfExtension() => Converter = new MultiValueConverter(this);
 
         public IfExtension(Binding condition, object trueValue, object falseValue)
