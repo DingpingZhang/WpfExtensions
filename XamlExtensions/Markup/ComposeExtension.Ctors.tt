@@ -16,7 +16,7 @@
 
 <#
     const string ClassName = "ComposeExtension";
-	const string ItemTypeName = "IValueConverter";
+	const string ItemTypeName = "object";
 	const string CollectionName = "Converters";
 	const int Count = 16;
 #>

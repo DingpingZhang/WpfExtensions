@@ -17,25 +17,25 @@ namespace XamlExtensions.Markup
 		/*
 		 * Have to list these constructor overloads here,
 		 * because the stupid xaml does not support the "params" keyword.
-		 * e.g.: ctor(params IValueConverter[] converters) cannot be used.
+		 * e.g.: ctor(params object[] converters) cannot be used.
 		 */
 
 		public ComposeExtension() { }
 
-		public ComposeExtension(IValueConverter item0, IValueConverter item1)
+		public ComposeExtension(object item0, object item1)
 		{
 			Converters.Add(item0);
 			Converters.Add(item1);
 		}
 
-		public ComposeExtension(IValueConverter item0, IValueConverter item1, IValueConverter item2)
+		public ComposeExtension(object item0, object item1, object item2)
 		{
 			Converters.Add(item0);
 			Converters.Add(item1);
 			Converters.Add(item2);
 		}
 
-		public ComposeExtension(IValueConverter item0, IValueConverter item1, IValueConverter item2, IValueConverter item3)
+		public ComposeExtension(object item0, object item1, object item2, object item3)
 		{
 			Converters.Add(item0);
 			Converters.Add(item1);
@@ -43,7 +43,7 @@ namespace XamlExtensions.Markup
 			Converters.Add(item3);
 		}
 
-		public ComposeExtension(IValueConverter item0, IValueConverter item1, IValueConverter item2, IValueConverter item3, IValueConverter item4)
+		public ComposeExtension(object item0, object item1, object item2, object item3, object item4)
 		{
 			Converters.Add(item0);
 			Converters.Add(item1);
@@ -52,7 +52,7 @@ namespace XamlExtensions.Markup
 			Converters.Add(item4);
 		}
 
-		public ComposeExtension(IValueConverter item0, IValueConverter item1, IValueConverter item2, IValueConverter item3, IValueConverter item4, IValueConverter item5)
+		public ComposeExtension(object item0, object item1, object item2, object item3, object item4, object item5)
 		{
 			Converters.Add(item0);
 			Converters.Add(item1);
@@ -62,7 +62,7 @@ namespace XamlExtensions.Markup
 			Converters.Add(item5);
 		}
 
-		public ComposeExtension(IValueConverter item0, IValueConverter item1, IValueConverter item2, IValueConverter item3, IValueConverter item4, IValueConverter item5, IValueConverter item6)
+		public ComposeExtension(object item0, object item1, object item2, object item3, object item4, object item5, object item6)
 		{
 			Converters.Add(item0);
 			Converters.Add(item1);
@@ -73,7 +73,7 @@ namespace XamlExtensions.Markup
 			Converters.Add(item6);
 		}
 
-		public ComposeExtension(IValueConverter item0, IValueConverter item1, IValueConverter item2, IValueConverter item3, IValueConverter item4, IValueConverter item5, IValueConverter item6, IValueConverter item7)
+		public ComposeExtension(object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7)
 		{
 			Converters.Add(item0);
 			Converters.Add(item1);
@@ -85,7 +85,7 @@ namespace XamlExtensions.Markup
 			Converters.Add(item7);
 		}
 
-		public ComposeExtension(IValueConverter item0, IValueConverter item1, IValueConverter item2, IValueConverter item3, IValueConverter item4, IValueConverter item5, IValueConverter item6, IValueConverter item7, IValueConverter item8)
+		public ComposeExtension(object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8)
 		{
 			Converters.Add(item0);
 			Converters.Add(item1);
@@ -98,7 +98,7 @@ namespace XamlExtensions.Markup
 			Converters.Add(item8);
 		}
 
-		public ComposeExtension(IValueConverter item0, IValueConverter item1, IValueConverter item2, IValueConverter item3, IValueConverter item4, IValueConverter item5, IValueConverter item6, IValueConverter item7, IValueConverter item8, IValueConverter item9)
+		public ComposeExtension(object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9)
 		{
 			Converters.Add(item0);
 			Converters.Add(item1);
@@ -112,7 +112,7 @@ namespace XamlExtensions.Markup
 			Converters.Add(item9);
 		}
 
-		public ComposeExtension(IValueConverter item0, IValueConverter item1, IValueConverter item2, IValueConverter item3, IValueConverter item4, IValueConverter item5, IValueConverter item6, IValueConverter item7, IValueConverter item8, IValueConverter item9, IValueConverter item10)
+		public ComposeExtension(object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10)
 		{
 			Converters.Add(item0);
 			Converters.Add(item1);
@@ -127,7 +127,7 @@ namespace XamlExtensions.Markup
 			Converters.Add(item10);
 		}
 
-		public ComposeExtension(IValueConverter item0, IValueConverter item1, IValueConverter item2, IValueConverter item3, IValueConverter item4, IValueConverter item5, IValueConverter item6, IValueConverter item7, IValueConverter item8, IValueConverter item9, IValueConverter item10, IValueConverter item11)
+		public ComposeExtension(object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10, object item11)
 		{
 			Converters.Add(item0);
 			Converters.Add(item1);
@@ -143,7 +143,7 @@ namespace XamlExtensions.Markup
 			Converters.Add(item11);
 		}
 
-		public ComposeExtension(IValueConverter item0, IValueConverter item1, IValueConverter item2, IValueConverter item3, IValueConverter item4, IValueConverter item5, IValueConverter item6, IValueConverter item7, IValueConverter item8, IValueConverter item9, IValueConverter item10, IValueConverter item11, IValueConverter item12)
+		public ComposeExtension(object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10, object item11, object item12)
 		{
 			Converters.Add(item0);
 			Converters.Add(item1);
@@ -160,7 +160,7 @@ namespace XamlExtensions.Markup
 			Converters.Add(item12);
 		}
 
-		public ComposeExtension(IValueConverter item0, IValueConverter item1, IValueConverter item2, IValueConverter item3, IValueConverter item4, IValueConverter item5, IValueConverter item6, IValueConverter item7, IValueConverter item8, IValueConverter item9, IValueConverter item10, IValueConverter item11, IValueConverter item12, IValueConverter item13)
+		public ComposeExtension(object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10, object item11, object item12, object item13)
 		{
 			Converters.Add(item0);
 			Converters.Add(item1);
@@ -178,7 +178,7 @@ namespace XamlExtensions.Markup
 			Converters.Add(item13);
 		}
 
-		public ComposeExtension(IValueConverter item0, IValueConverter item1, IValueConverter item2, IValueConverter item3, IValueConverter item4, IValueConverter item5, IValueConverter item6, IValueConverter item7, IValueConverter item8, IValueConverter item9, IValueConverter item10, IValueConverter item11, IValueConverter item12, IValueConverter item13, IValueConverter item14)
+		public ComposeExtension(object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10, object item11, object item12, object item13, object item14)
 		{
 			Converters.Add(item0);
 			Converters.Add(item1);
@@ -197,7 +197,7 @@ namespace XamlExtensions.Markup
 			Converters.Add(item14);
 		}
 
-		public ComposeExtension(IValueConverter item0, IValueConverter item1, IValueConverter item2, IValueConverter item3, IValueConverter item4, IValueConverter item5, IValueConverter item6, IValueConverter item7, IValueConverter item8, IValueConverter item9, IValueConverter item10, IValueConverter item11, IValueConverter item12, IValueConverter item13, IValueConverter item14, IValueConverter item15)
+		public ComposeExtension(object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10, object item11, object item12, object item13, object item14, object item15)
 		{
 			Converters.Add(item0);
 			Converters.Add(item1);

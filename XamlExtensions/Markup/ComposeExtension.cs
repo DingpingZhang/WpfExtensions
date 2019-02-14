@@ -10,10 +10,11 @@ namespace XamlExtensions.Markup
 {
     [MarkupExtensionReturnType(typeof(IValueConverter))]
     [Localizability(LocalizationCategory.NeverLocalize)]
+    [ContentProperty(nameof(Converters))]
     public partial class ComposeExtension : MarkupExtension, IValueConverter
     {
         [ConstructorArgument(nameof(Converters))]
-        public ConverterCollection Converters { get; set; } = new ConverterCollection();
+        public ConverterCollection Converters { get; } = new ConverterCollection();
 
         public override object ProvideValue(IServiceProvider serviceProvider) => this;
 
@@ -26,5 +27,17 @@ namespace XamlExtensions.Markup
 
     public class ConverterCollection : Collection<IValueConverter>
     {
+        public void Add(object item)
+        {
+            if (item is IValueConverter converter)
+            {
+                base.Add(converter);
+            }
+            else
+            {
+                throw new ArgumentException($"[ComposeExtension] The type of the parameter must be IValueConverter, " +
+                    $"but here is {item?.GetType().FullName ?? "null"}");
+            }
+        }
     }
 }

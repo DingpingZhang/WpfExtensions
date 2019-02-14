@@ -13,4 +13,6 @@
     <converters:GreaterThanOperator x:Key="GreaterThanOperator" />
     <converters:LessThanOperator x:Key="LessThanOperator" />
 
+    <converters:BitmapToBitmapSourceConverter x:Key="BitmapToBitmapSourceConverter" />
+
 </ResourceDictionary>
