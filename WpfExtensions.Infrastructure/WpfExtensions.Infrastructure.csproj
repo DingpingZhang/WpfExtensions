@@ -3,6 +3,13 @@
   <PropertyGroup>
     <TargetFramework>net45</TargetFramework>
     <LangVersion>latest</LangVersion>
+    <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
+    <Authors>Dingping Zhang</Authors>
+    <Version>0.0.1</Version>
+    <PackageTags>wpf;mvvm;command</PackageTags>
+    <Copyright>Copyright (c) 2019 DingpingZhang</Copyright>
+    <Product>WpfExtensions.Infrastructure</Product>
+    <PackageId>WpfExtensions.Infrastructure</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
