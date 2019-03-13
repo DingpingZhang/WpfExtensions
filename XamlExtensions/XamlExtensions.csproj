@@ -5,7 +5,7 @@
     <LangVersion>latest</LangVersion>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
     <Authors>Dingping Zhang</Authors>
-    <Version>0.0.4</Version>
+    <Version>0.0.5</Version>
     <Description>Some common custom markup extensions for WPF.</Description>
     <PackageProjectUrl>https://github.com/DingpingZhang/System.Windows.Extensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DingpingZhang/System.Windows.Extensions</RepositoryUrl>
@@ -15,14 +15,6 @@
     <Product>XamlExtensions</Product>
     <PackageId>XamlExtensions</PackageId>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="Markup\I18nExtension.Ctors.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>I18nExtension.Ctors.tt</DependentUpon>
-    </None>
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
@@ -47,9 +39,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ComposeExtension.Ctors.cs</LastGenOutput>
     </None>
-    <None Update="Markup\I18nExtension.Ctors.tt">
+    <None Update="Markup\I18nStringExtension.Ctors.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>I18nExtension.Ctors.cs</LastGenOutput>
+      <LastGenOutput>I18nStringExtension.Ctors.cs</LastGenOutput>
     </None>
     <None Update="Markup\SwitchExtension.Ctors.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -67,10 +59,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ComposeExtension.Ctors.tt</DependentUpon>
     </Compile>
-    <Compile Update="Markup\I18nExtension.Ctors.cs">
+    <Compile Update="Markup\I18nStringExtension.Ctors.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>I18nExtension.Ctors.tt</DependentUpon>
+      <DependentUpon>I18nStringExtension.Ctors.tt</DependentUpon>
     </Compile>
     <Compile Update="Markup\SwitchExtension.Ctors.cs">
       <DesignTime>True</DesignTime>

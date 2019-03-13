@@ -15,7 +15,7 @@ namespace XamlExtensions.ExtensionMethods
         /// <returns>The first parent item that matches the submitted
         /// type parameter. If not matching item can be found, a null
         /// reference is being returned.</returns>
-        public static T TryFindParent<T>(this DependencyObject child) where T : DependencyObject
+        internal static T TryFindParent<T>(this DependencyObject child) where T : DependencyObject
         {
             while (true)
             {
@@ -40,7 +40,7 @@ namespace XamlExtensions.ExtensionMethods
         /// <param name="child">The item to be processed.</param>
         /// <returns>The submitted item's parent, if available. Otherwise
         /// null.</returns>
-        public static DependencyObject GetParentObject(this DependencyObject child)
+        internal static DependencyObject GetParentObject(this DependencyObject child)
         {
             if (child == null) return null;
 
@@ -68,6 +68,5 @@ namespace XamlExtensions.ExtensionMethods
 
             return null;
         }
-
     }
 }

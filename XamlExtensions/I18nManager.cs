@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Resources;
 using System.Threading;
@@ -21,7 +22,7 @@ namespace XamlExtensions
         }
     }
 
-    public class I18nManager
+    public class I18nManager : INotifyPropertyChanged
     {
         public static I18nManager Instance { get; } = new I18nManager();
 
@@ -29,6 +30,7 @@ namespace XamlExtensions
         private CultureInfo _currentUICulture;
 
         public event EventHandler<CurrentUICultureChangedEventArgs> CurrentUICultureChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private I18nManager() { }
 
@@ -53,8 +55,11 @@ namespace XamlExtensions
             _resourceManagerStorage[resourceManager.BaseName] = resourceManager;
         }
 
-        private void OnCurrentUICultureChanged(CultureInfo oldCulture, CultureInfo newCulture) =>
+        private void OnCurrentUICultureChanged(CultureInfo oldCulture, CultureInfo newCulture)
+        {
             CurrentUICultureChanged?.Invoke(this, new CurrentUICultureChangedEventArgs(oldCulture, newCulture));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentUICulture)));
+        }
 
         public object Get(ComponentResourceKey key) =>
             GetCurrentResourceManager(key.TypeInTargetAssembly.FullName)?

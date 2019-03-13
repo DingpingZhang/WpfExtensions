@@ -15,7 +15,7 @@
 //------------------------------------------------------------------------------
 
 <#
-    const string ClassName = "I18nExtension";
+    const string ClassName = "I18nStringExtension";
 	const string ItemTypeName = "object";
 	const string CollectionName = "Args";
 	const int Count = 16;
@@ -40,7 +40,7 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
 			Args = new ArgCollection(this);
 		}
 
-		public I18nExtension(ComponentResourceKey key)
+		public <#= ClassName #>(ComponentResourceKey key)
 			: this()
 		{
 			Key = key;

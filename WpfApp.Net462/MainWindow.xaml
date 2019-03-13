@@ -157,13 +157,18 @@
                                    Width="20"
                                    Source="{markup:If {Binding IsLoading}, {StaticResource Icon.Paused}, {StaticResource Icon.Run}}" />
 
+                            <Image Source="{markup:I18n {x:Static i18NRes:ResKeys.test}}" Height="50" Width="50"/>
+
                             <Button Style="{StaticResource LinkButtonStyle}"
                                     Content="{Binding InputText}" />
 
+                            <TextBlock Text="{markup:If {Binding InputText, Converter={StaticResource IsNullOrEmptyOperator}}, 
+                                                        {markup:I18n {x:Static i18NRes:ResKeys.TestString_WithoutFormat}}, 
+                                                        {markup:I18n {x:Static i18NRes:ResKeys.TestString_WithFormat1}}}" />
                             <TextBlock Text="{markup:I18n {x:Static i18NRes:ResKeys.TestString_WithoutFormat}}" />
-                            <TextBlock Text="{markup:I18n {x:Static i18NRes:ResKeys.TestString_WithFormat1}, 
+                            <TextBlock Text="{markup:I18nString {x:Static i18NRes:ResKeys.TestString_WithFormat1}, 
                                                           {Binding InputText}}" />
-                            <TextBlock Text="{markup:I18n {x:Static i18NRes:ResKeys.TestString_WithFormat3},
+                            <TextBlock Text="{markup:I18nString {x:Static i18NRes:ResKeys.TestString_WithFormat3},
                                                           {Binding InputText},
                                                           'RANDOM TEXT',
                                                           '2311231'}" />

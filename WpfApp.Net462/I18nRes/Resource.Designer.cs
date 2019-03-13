@@ -61,6 +61,16 @@ namespace WpfApp.Net462.I18nRes {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap test {
+            get {
+                object obj = ResourceManager.GetObject("test", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Prefix-{0}-Suffix.
         /// </summary>
         internal static string TestString_WithFormat1 {

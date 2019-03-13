@@ -13,7 +13,7 @@ using System.Windows;
 
 namespace XamlExtensions.Markup
 {
-    public partial class I18nExtension
+    public partial class I18nStringExtension
     {
 		/*
 		 * Have to list these constructor overloads here,
@@ -21,13 +21,13 @@ namespace XamlExtensions.Markup
 		 * e.g.: ctor(params object[] converters) cannot be used.
 		 */
 
-		public I18nExtension() 
+		public I18nStringExtension() 
 		{
 			Converter = new MultiValueConverter(this);
 			Args = new ArgCollection(this);
 		}
 
-		public I18nExtension(ComponentResourceKey key)
+		public I18nStringExtension(ComponentResourceKey key)
 			: this()
 		{
 			Key = key;
@@ -39,20 +39,20 @@ namespace XamlExtensions.Markup
 			});
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0)
+		public I18nStringExtension(ComponentResourceKey key, object item0)
 			: this(key)
 		{
 			Args.Add(item0);
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0, object item1)
+		public I18nStringExtension(ComponentResourceKey key, object item0, object item1)
 			: this(key)
 		{
 			Args.Add(item0);
 			Args.Add(item1);
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0, object item1, object item2)
+		public I18nStringExtension(ComponentResourceKey key, object item0, object item1, object item2)
 			: this(key)
 		{
 			Args.Add(item0);
@@ -60,7 +60,7 @@ namespace XamlExtensions.Markup
 			Args.Add(item2);
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3)
+		public I18nStringExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3)
 			: this(key)
 		{
 			Args.Add(item0);
@@ -69,7 +69,7 @@ namespace XamlExtensions.Markup
 			Args.Add(item3);
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4)
+		public I18nStringExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4)
 			: this(key)
 		{
 			Args.Add(item0);
@@ -79,7 +79,7 @@ namespace XamlExtensions.Markup
 			Args.Add(item4);
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5)
+		public I18nStringExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5)
 			: this(key)
 		{
 			Args.Add(item0);
@@ -90,7 +90,7 @@ namespace XamlExtensions.Markup
 			Args.Add(item5);
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6)
+		public I18nStringExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6)
 			: this(key)
 		{
 			Args.Add(item0);
@@ -102,7 +102,7 @@ namespace XamlExtensions.Markup
 			Args.Add(item6);
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7)
+		public I18nStringExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7)
 			: this(key)
 		{
 			Args.Add(item0);
@@ -115,7 +115,7 @@ namespace XamlExtensions.Markup
 			Args.Add(item7);
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8)
+		public I18nStringExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8)
 			: this(key)
 		{
 			Args.Add(item0);
@@ -129,7 +129,7 @@ namespace XamlExtensions.Markup
 			Args.Add(item8);
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9)
+		public I18nStringExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9)
 			: this(key)
 		{
 			Args.Add(item0);
@@ -144,7 +144,7 @@ namespace XamlExtensions.Markup
 			Args.Add(item9);
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10)
+		public I18nStringExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10)
 			: this(key)
 		{
 			Args.Add(item0);
@@ -160,7 +160,7 @@ namespace XamlExtensions.Markup
 			Args.Add(item10);
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10, object item11)
+		public I18nStringExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10, object item11)
 			: this(key)
 		{
 			Args.Add(item0);
@@ -177,7 +177,7 @@ namespace XamlExtensions.Markup
 			Args.Add(item11);
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10, object item11, object item12)
+		public I18nStringExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10, object item11, object item12)
 			: this(key)
 		{
 			Args.Add(item0);
@@ -195,7 +195,7 @@ namespace XamlExtensions.Markup
 			Args.Add(item12);
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10, object item11, object item12, object item13)
+		public I18nStringExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10, object item11, object item12, object item13)
 			: this(key)
 		{
 			Args.Add(item0);
@@ -214,7 +214,7 @@ namespace XamlExtensions.Markup
 			Args.Add(item13);
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10, object item11, object item12, object item13, object item14)
+		public I18nStringExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10, object item11, object item12, object item13, object item14)
 			: this(key)
 		{
 			Args.Add(item0);
@@ -234,7 +234,7 @@ namespace XamlExtensions.Markup
 			Args.Add(item14);
 		}
 
-		public I18nExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10, object item11, object item12, object item13, object item14, object item15)
+		public I18nStringExtension(ComponentResourceKey key, object item0, object item1, object item2, object item3, object item4, object item5, object item6, object item7, object item8, object item9, object item10, object item11, object item12, object item13, object item14, object item15)
 			: this(key)
 		{
 			Args.Add(item0);
