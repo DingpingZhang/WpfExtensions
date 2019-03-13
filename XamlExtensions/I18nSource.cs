@@ -47,6 +47,8 @@ namespace XamlExtensions
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
         }
 
+        public override string ToString() => Value?.ToString() ?? string.Empty;
+
         public static implicit operator I18nSource(ComponentResourceKey resourceKey) => new I18nSource(resourceKey);
     }
 }
