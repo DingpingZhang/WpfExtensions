@@ -50,6 +50,11 @@ namespace XamlExtensions.Converters
         }
     }
 
+    public class GetTypeOperator : ValueConverterBase<object, Type>
+    {
+        protected override Type ConvertNonNullValue(object value) => value.GetType();
+    }
+
     #endregion
 
     #region With parameter
@@ -63,7 +68,7 @@ namespace XamlExtensions.Converters
 
     public class EqualsOperator : ValueConverterBase<object, bool, object>
     {
-        protected override bool Convert(object value, object parameter) => Equals(value, parameter);
+        protected override bool Convert(object value, object parameter) => value?.Equals(parameter) ?? parameter == null;
     }
 
     public class GreaterThanOperator : ValueConverterBase<double, bool, double>

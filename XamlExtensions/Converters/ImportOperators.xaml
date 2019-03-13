@@ -7,6 +7,7 @@
     <converters:IsNullOperator x:Key="IsNullOperator" />
     <converters:IsNullOrEmptyOperator x:Key="IsNullOrEmptyOperator" />
     <converters:ReverseOperator x:Key="ReverseOperator" />
+    <converters:GetTypeOperator x:Key="GetTypeOperator" />
 
     <converters:DoubleEqualsOperator x:Key="DoubleEqualsOperator" />
     <converters:EqualsOperator x:Key="EqualsOperator" />

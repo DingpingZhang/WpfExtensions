@@ -33,6 +33,7 @@ namespace XamlExtensions
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            OnCurrentUICultureChanged(sender, null);
             I18nManager.Instance.CurrentUICultureChanged += OnCurrentUICultureChanged;
         }
 
@@ -41,7 +42,7 @@ namespace XamlExtensions
             I18nManager.Instance.CurrentUICultureChanged -= OnCurrentUICultureChanged;
         }
 
-        private void OnCurrentUICultureChanged(object sender, CurrentUICultureChangedEventArgs currentUiCultureChangedEventArgs)
+        private void OnCurrentUICultureChanged(object sender, CurrentUICultureChangedEventArgs e)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
         }

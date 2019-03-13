@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Resources;
-using System.Threading;
 using System.Windows;
 
 namespace XamlExtensions
@@ -39,26 +38,19 @@ namespace XamlExtensions
             get => _currentUICulture;
             set
             {
-                if (EqualityComparer<CultureInfo>.Default.Equals(value, Thread.CurrentThread.CurrentUICulture)) return;
+                if (EqualityComparer<CultureInfo>.Default.Equals(_currentUICulture, value)) return;
 
-                var backup = _currentUICulture;
-                _currentUICulture = value;
-                OnCurrentUICultureChanged(backup, _currentUICulture);
+                OnCurrentUICultureChanged(_currentUICulture, _currentUICulture = value);
+                OnPropertyChanged(nameof(CurrentUICulture));
             }
         }
 
         public void Add(ResourceManager resourceManager)
         {
             if (_resourceManagerStorage.ContainsKey(resourceManager.BaseName))
-                throw new ArgumentException("", nameof(resourceManager));
+                throw new ArgumentException($"The ResourceManager named {resourceManager.BaseName} already exists, cannot be added repeatedly. ", nameof(resourceManager));
 
             _resourceManagerStorage[resourceManager.BaseName] = resourceManager;
-        }
-
-        private void OnCurrentUICultureChanged(CultureInfo oldCulture, CultureInfo newCulture)
-        {
-            CurrentUICultureChanged?.Invoke(this, new CurrentUICultureChangedEventArgs(oldCulture, newCulture));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentUICulture)));
         }
 
         public object Get(ComponentResourceKey key) =>
@@ -67,5 +59,15 @@ namespace XamlExtensions
 
         private ResourceManager GetCurrentResourceManager(string key) =>
             _resourceManagerStorage.TryGetValue(key, out var value) ? value : null;
+
+        protected virtual void OnCurrentUICultureChanged(CultureInfo oldCulture, CultureInfo newCulture)
+        {
+            CurrentUICultureChanged?.Invoke(this, new CurrentUICultureChangedEventArgs(oldCulture, newCulture));
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
