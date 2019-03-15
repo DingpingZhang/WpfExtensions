@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 using Point = System.Drawing.Point;
 
-namespace XamlExtensions.ExtensionMethods
+namespace WpfExtensions.Xaml.ExtensionMethods
 {
     public static class ImageExtensions
     {

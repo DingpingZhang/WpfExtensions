@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using XamlExtensions.ExtensionMethods;
+using WpfExtensions.Xaml.ExtensionMethods;
 
-namespace XamlExtensions.Converters
+namespace WpfExtensions.Xaml.Converters
 {
     public abstract class ValueConverterBase<TSource, TTarget, TParameter> : IValueConverter
     {

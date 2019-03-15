@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using System.Globalization;
-using System.Runtime.InteropServices;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using XamlExtensions.ExtensionMethods;
+using WpfExtensions.Xaml.ExtensionMethods;
 
-namespace XamlExtensions.Converters
+namespace WpfExtensions.Xaml.Converters
 {
     public class BitmapToBitmapSourceConverter : IValueConverter
     {

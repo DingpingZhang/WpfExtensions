@@ -115,12 +115,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\XamlExtensions\XamlExtensions.csproj">
-      <Project>{F03CD638-4395-4D8B-9105-F44844CB70DD}</Project>
-      <Name>XamlExtensions</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="I18nRes\ResKeys.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ResKeys.cs</LastGenOutput>
@@ -131,6 +125,11 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\WpfExtensions.Xaml\WpfExtensions.Xaml.csproj">
+      <Project>{51bfadbd-538e-43f6-95f1-8ff1d61f1c10}</Project>
+      <Name>WpfExtensions.Xaml</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

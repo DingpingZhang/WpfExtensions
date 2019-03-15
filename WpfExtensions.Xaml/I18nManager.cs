@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Resources;
 using System.Windows;
 
-namespace XamlExtensions
+namespace WpfExtensions.Xaml
 {
     public class CurrentUICultureChangedEventArgs : EventArgs
     {

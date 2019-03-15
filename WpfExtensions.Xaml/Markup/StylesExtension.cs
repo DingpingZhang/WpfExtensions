@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Markup;
-using XamlExtensions.ExtensionMethods;
+using WpfExtensions.Xaml.ExtensionMethods;
 
-namespace XamlExtensions.Markup
+namespace WpfExtensions.Xaml.Markup
 {
     [MarkupExtensionReturnType(typeof(Style))]
     public class StylesExtension : MarkupExtension

@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace XamlExtensions.ExtensionMethods
+namespace WpfExtensions.Xaml.ExtensionMethods
 {
     public static class CollectionExtensions
     {

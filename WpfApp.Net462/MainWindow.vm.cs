@@ -1,7 +1,6 @@
-﻿using System.Diagnostics;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows.Input;
-using XamlExtensions;
+using WpfExtensions.Xaml;
 
 namespace WpfApp.Net462
 {

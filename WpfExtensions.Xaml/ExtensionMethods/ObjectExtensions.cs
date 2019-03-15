@@ -2,7 +2,7 @@
 
 using System;
 
-namespace XamlExtensions.ExtensionMethods
+namespace WpfExtensions.Xaml.ExtensionMethods
 {
     public static class ObjectExtensions
     {

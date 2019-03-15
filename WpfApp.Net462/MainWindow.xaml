@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp.Net462"
-        xmlns:markup="clr-namespace:XamlExtensions.Markup;assembly=XamlExtensions"
+        xmlns:markup="clr-namespace:WpfExtensions.Xaml.Markup;assembly=WpfExtensions.Xaml"
         xmlns:i18NRes="clr-namespace:WpfApp.Net462.I18nRes"
         mc:Ignorable="d"
         Title="MainWindow"

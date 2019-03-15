@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace XamlExtensions.Markup
+namespace WpfExtensions.Xaml.Markup
 {
     [MarkupExtensionReturnType(typeof(IValueConverter))]
     [Localizability(LocalizationCategory.NeverLocalize)]

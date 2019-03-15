@@ -11,7 +11,7 @@
 using System.Windows.Data;
 using System.Windows;
 
-namespace XamlExtensions.Markup
+namespace WpfExtensions.Xaml.Markup
 {
     public partial class I18nStringExtension
     {

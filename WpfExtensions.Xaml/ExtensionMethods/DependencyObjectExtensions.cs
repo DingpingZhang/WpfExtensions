@@ -2,7 +2,7 @@
 using System.Windows.Media;
 
 // ReSharper disable once CheckNamespace
-namespace XamlExtensions.ExtensionMethods
+namespace WpfExtensions.Xaml.ExtensionMethods
 {
     public static class DependencyObjectExtensions
     {

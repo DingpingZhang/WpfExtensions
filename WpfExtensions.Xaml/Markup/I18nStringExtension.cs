@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
-using XamlExtensions.ExtensionMethods;
 
-namespace XamlExtensions.Markup
+namespace WpfExtensions.Xaml.Markup
 {
 
     [ContentProperty(nameof(Args))]

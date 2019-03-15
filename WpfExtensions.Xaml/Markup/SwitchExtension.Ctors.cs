@@ -10,7 +10,7 @@
 
 using System.Windows.Data;
 
-namespace XamlExtensions.Markup
+namespace WpfExtensions.Xaml.Markup
 {
     public partial class SwitchExtension
     {

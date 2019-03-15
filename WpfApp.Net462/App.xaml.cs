@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using WpfApp.Net462.I18nRes;
-using XamlExtensions;
+using WpfExtensions.Xaml;
 
 namespace WpfApp.Net462
 {

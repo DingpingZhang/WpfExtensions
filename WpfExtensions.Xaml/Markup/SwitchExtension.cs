@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace XamlExtensions.Markup
+namespace WpfExtensions.Xaml.Markup
 {
     public class CaseCollection : Collection<CaseExtension>
     {

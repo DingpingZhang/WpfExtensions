@@ -3,9 +3,9 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
-using XamlExtensions.ExtensionMethods;
+using WpfExtensions.Xaml.ExtensionMethods;
 
-namespace XamlExtensions.Markup
+namespace WpfExtensions.Xaml.Markup
 {
     public class IfExtension : MultiBinding
     {

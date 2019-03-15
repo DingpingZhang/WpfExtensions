@@ -5,16 +5,20 @@
     <LangVersion>latest</LangVersion>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
     <Authors>Dingping Zhang</Authors>
-    <Version>0.0.6</Version>
+    <Version>0.0.7</Version>
     <Description>Some common custom markup extensions for WPF.</Description>
-    <PackageProjectUrl>https://github.com/DingpingZhang/System.Windows.Extensions</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/DingpingZhang/System.Windows.Extensions</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/DingpingZhang/WpfExtensions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/DingpingZhang/WpfExtensions</RepositoryUrl>
     <PackageTags>wpf;xaml;markup-extension</PackageTags>
     <Copyright>Copyright (c) 2019 DingpingZhang</Copyright>
-    <PackageLicenseUrl>https://github.com/DingpingZhang/System.Windows.Extensions/blob/master/LICENSE</PackageLicenseUrl>
-    <Product>XamlExtensions</Product>
-    <PackageId>XamlExtensions</PackageId>
+    <PackageLicenseUrl>https://github.com/DingpingZhang/WpfExtensions/blob/master/LICENSE</PackageLicenseUrl>
+    <Product>WpfExtensions.Xaml</Product>
+    <PackageId>WpfExtensions.Xaml</PackageId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Converters\ImportOperators.xaml" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
@@ -22,8 +26,8 @@
 
   <ItemGroup>
     <Page Include="Converters\ImportOperators.xaml">
-      <Generator>XamlIntelliSenseFileGenerator</Generator>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
   </ItemGroup>
 
@@ -35,40 +39,40 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Markup\ComposeExtension.Ctors.cs">
+      <DependentUpon>ComposeExtension.Ctors.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Markup\I18nStringExtension.Ctors.cs">
+      <DependentUpon>I18nStringExtension.Ctors.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Markup\SwitchExtension.Ctors.cs">
+      <DependentUpon>SwitchExtension.Ctors.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Markup\ComposeExtension.Ctors.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ComposeExtension.Ctors.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
     </None>
     <None Update="Markup\I18nStringExtension.Ctors.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>I18nStringExtension.Ctors.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
     </None>
     <None Update="Markup\SwitchExtension.Ctors.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>SwitchExtension.Ctors.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
     </None>
   </ItemGroup>
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Markup\ComposeExtension.Ctors.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>ComposeExtension.Ctors.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Markup\I18nStringExtension.Ctors.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>I18nStringExtension.Ctors.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Markup\SwitchExtension.Ctors.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SwitchExtension.Ctors.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
 
 </Project>

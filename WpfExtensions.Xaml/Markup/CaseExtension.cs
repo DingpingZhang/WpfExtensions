@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Markup;
 
-namespace XamlExtensions.Markup
+namespace WpfExtensions.Xaml.Markup
 {
     [MarkupExtensionReturnType(typeof(CaseExtension))]
     public class CaseExtension : MarkupExtension
