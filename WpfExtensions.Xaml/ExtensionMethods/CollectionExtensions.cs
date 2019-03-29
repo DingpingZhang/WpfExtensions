@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace WpfExtensions.Xaml.ExtensionMethods
 {
-    public static class CollectionExtensions
+    internal static class CollectionExtensions
     {
         public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> items)
         {

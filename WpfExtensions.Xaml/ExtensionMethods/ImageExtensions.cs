@@ -11,7 +11,7 @@ using Point = System.Drawing.Point;
 
 namespace WpfExtensions.Xaml.ExtensionMethods
 {
-    public static class ImageExtensions
+    internal static class ImageExtensions
     {
         [DllImport("gdi32")]
         public static extern int DeleteObject(IntPtr o);

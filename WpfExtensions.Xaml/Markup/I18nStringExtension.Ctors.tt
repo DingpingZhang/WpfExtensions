@@ -40,7 +40,7 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
 			Args = new ArgCollection(this);
 		}
 
-		public <#= ClassName #>(ComponentResourceKey key)
+		private <#= ClassName #>(ComponentResourceKey key)
 			: this()
 		{
 			Key = key;

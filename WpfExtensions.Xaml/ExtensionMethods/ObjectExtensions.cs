@@ -4,7 +4,7 @@ using System;
 
 namespace WpfExtensions.Xaml.ExtensionMethods
 {
-    public static class ObjectExtensions
+    internal static class ObjectExtensions
     {
         private const double Tolerance = 1e-6;
 

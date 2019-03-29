@@ -27,7 +27,7 @@ namespace WpfExtensions.Xaml.Markup
 			Args = new ArgCollection(this);
 		}
 
-		public I18nStringExtension(ComponentResourceKey key)
+		private I18nStringExtension(ComponentResourceKey key)
 			: this()
 		{
 			Key = key;

@@ -4,7 +4,7 @@ using System.Windows.Media;
 // ReSharper disable once CheckNamespace
 namespace WpfExtensions.Xaml.ExtensionMethods
 {
-    public static class DependencyObjectExtensions
+    internal static class DependencyObjectExtensions
     {
         /// <summary>
         /// Finds a parent of a given item on the visual tree.
@@ -15,7 +15,7 @@ namespace WpfExtensions.Xaml.ExtensionMethods
         /// <returns>The first parent item that matches the submitted
         /// type parameter. If not matching item can be found, a null
         /// reference is being returned.</returns>
-        internal static T TryFindParent<T>(this DependencyObject child) where T : DependencyObject
+        public static T TryFindParent<T>(this DependencyObject child) where T : DependencyObject
         {
             while (true)
             {
@@ -40,7 +40,7 @@ namespace WpfExtensions.Xaml.ExtensionMethods
         /// <param name="child">The item to be processed.</param>
         /// <returns>The submitted item's parent, if available. Otherwise
         /// null.</returns>
-        internal static DependencyObject GetParentObject(this DependencyObject child)
+        public static DependencyObject GetParentObject(this DependencyObject child)
         {
             if (child == null) return null;
 
