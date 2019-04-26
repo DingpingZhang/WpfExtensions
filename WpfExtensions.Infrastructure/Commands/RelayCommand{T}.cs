@@ -1,4 +1,5 @@
 ﻿using System;
+using WpfExtensions.Infrastructure.Extensions;
 
 namespace WpfExtensions.Infrastructure.Commands
 {
@@ -13,9 +14,9 @@ namespace WpfExtensions.Infrastructure.Commands
             _canExecute = canExecute;
         }
 
-        protected override bool CanExecute(object parameter) => parameter != null && CanExecute((T)parameter);
+        protected override bool CanExecute(object parameter) => parameter != null && CanExecute(parameter.CastTo<T>());
 
-        protected override void Execute(object parameter) => Execute((T)parameter);
+        protected override void Execute(object parameter) => Execute(parameter.CastTo<T>());
 
         public bool CanExecute(T parameter) => _canExecute?.Invoke(parameter) ?? true;
 

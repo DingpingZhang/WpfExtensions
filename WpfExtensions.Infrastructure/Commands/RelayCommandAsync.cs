@@ -33,11 +33,11 @@ namespace WpfExtensions.Infrastructure.Commands
 
         protected override bool CanExecute(object parameter) => !IsExecuting && CanExecute();
 
-        protected override async void Execute(object parameter) => await Execute();
+        protected override async void Execute(object parameter) => await ExecuteAsync();
 
         public bool CanExecute() => _canExecute?.Invoke() ?? true;
 
-        public async Task Execute()
+        public async Task ExecuteAsync()
         {
             IsExecuting = true;
             var invoke = _execute?.Invoke();

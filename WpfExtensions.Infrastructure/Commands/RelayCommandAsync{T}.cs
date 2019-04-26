@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using WpfExtensions.Infrastructure.Extensions;
 
 namespace WpfExtensions.Infrastructure.Commands
 {
@@ -31,13 +32,13 @@ namespace WpfExtensions.Infrastructure.Commands
         }
 
 
-        protected override bool CanExecute(object parameter) => !IsExecuting && CanExecute((T)parameter);
+        protected override bool CanExecute(object parameter) => !IsExecuting && CanExecute(parameter.CastTo<T>());
 
-        protected override async void Execute(object parameter) => await Execute((T)parameter);
+        protected override async void Execute(object parameter) => await ExecuteAsync(parameter.CastTo<T>());
 
         public bool CanExecute(T parameter) => _canExecute?.Invoke(parameter) ?? true;
 
-        public async Task Execute(T parameter)
+        public async Task ExecuteAsync(T parameter)
         {
             IsExecuting = true;
             var invoke = _execute?.Invoke(parameter);
