@@ -38,7 +38,7 @@ namespace WpfExtensions.Infrastructure
             while (interval < _delaySpan)
             {
                 if (_cancelled) break;
-                await Task.Delay(interval);
+                await Task.Delay(_delaySpan - interval);
                 interval = DateTimeOffset.Now - _invokeTime;
             }
 
