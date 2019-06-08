@@ -1,6 +1,8 @@
 ﻿using System.Globalization;
 using System.Windows.Input;
+using WpfExtensions.Infrastructure.Commands;
 using WpfExtensions.Xaml;
+using WpfExtensions.Xaml.Router;
 
 namespace WpfApp.Net462
 {
@@ -28,6 +30,8 @@ namespace WpfApp.Net462
 
         public ICommand SwitchCultureCommand { get; }
 
+        public ICommand NavigateCommand { get; }
+
         public MainWindowViewModel()
         {
             I18nManager.Instance.CurrentUICulture = ZhCn;
@@ -37,6 +41,9 @@ namespace WpfApp.Net462
             {
                 I18nManager.Instance.CurrentUICulture = I18nManager.Instance.CurrentUICulture.Equals(En) ? ZhCn : En;
             });
+            NavigateCommand = new RelayCommand<string>(
+                path => BrowserRouter.Navigate(path),
+                path => !string.IsNullOrWhiteSpace(path));
         }
     }
 }
