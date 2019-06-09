@@ -4,6 +4,11 @@
              xmlns:local="clr-namespace:WpfApp.Net462"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary Source="pack://application:,,,/WpfExtensions.Xaml;component/Converters/ImportOperators.xaml" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/WpfExtensions.Xaml;component/Converters/ImportOperators.xaml" />
+                <ResourceDictionary Source="Animations.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

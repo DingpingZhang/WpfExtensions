@@ -15,6 +15,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -31,18 +32,47 @@
                     Command="{Binding NavigateCommand}"
                     CommandParameter="{Binding Path=Text, ElementName=TextBox}" />
         </Grid>
-        <router:BrowserRouter Grid.Row="1">
-            <router:Route Path="/markup">
-                <router:Route.Component>
-                    <local:MarkupDemo />
-                </router:Route.Component>
-            </router:Route>
-            <router:Route Path="/route">
-                <router:Route.Component>
-                    <local:RouteDemo />
-                </router:Route.Component>
-            </router:Route>
-        </router:BrowserRouter>
+        <Border Grid.Row="1"
+                BorderThickness="2"
+                BorderBrush="Green"
+                Margin="5">
+            <router:BrowserRouter>
+                <router:Route Path="/markup"
+                              UnloadTimeout="0:0:2">
+                    <router:Route.Component>
+                        <local:MarkupDemo Style="{StaticResource FloatInUpStyle}" />
+                    </router:Route.Component>
+                </router:Route>
+                <router:Route Path="/route"
+                              UnloadTimeout="0:0:2">
+                    <router:Route.Component>
+                        <local:RouteDemo Style="{StaticResource FloatInUpStyle}" />
+                    </router:Route.Component>
+                </router:Route>
+            </router:BrowserRouter>
+        </Border>
+
+        <Border Grid.Row="2"
+                BorderThickness="2"
+                BorderBrush="Blue"
+                Margin="5">
+            <router:BrowserRouter>
+                <router:Route Path="/markup"
+                              UnloadTimeout="0:0:2">
+                    <router:Route.Component>
+                        <local:MarkupDemo Style="{StaticResource FloatInUpStyle}" />
+                    </router:Route.Component>
+                </router:Route>
+                <router:DefaultRoute>
+                    <router:DefaultRoute.Component>
+                        <TextBlock Text="404: NOT FOUND! "
+                                   FontSize="50"
+                                   FontWeight="Bold"
+                                   Foreground="Red" />
+                    </router:DefaultRoute.Component>
+                </router:DefaultRoute>
+            </router:BrowserRouter>
+        </Border>
     </Grid>
 
 </Window>

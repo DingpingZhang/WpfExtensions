@@ -18,9 +18,10 @@
         <Border BorderThickness="2"
                 BorderBrush="BlueViolet">
             <router:BrowserRouter>
-                <router:Route Path="/markup">
+                <router:Route Path="/markup"
+                              UnloadTimeout="0:0:2">
                     <router:Route.Component>
-                        <local:MarkupDemo />
+                        <local:MarkupDemo Style="{StaticResource FloatInUpStyle}" />
                     </router:Route.Component>
                 </router:Route>
                 <router:Route Path="/view1">
@@ -37,6 +38,14 @@
                                    FontWeight="Bold" />
                     </router:Route.Component>
                 </router:Route>
+                <router:DefaultRoute >
+                    <router:DefaultRoute.Component>
+                        <TextBlock Text="404: NOT FOUND! "
+                                   FontSize="50"
+                                   FontWeight="Bold"
+                                   Foreground="Red"/>
+                    </router:DefaultRoute.Component>
+                </router:DefaultRoute>
             </router:BrowserRouter>
         </Border>
     </StackPanel>
