@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
@@ -9,7 +10,7 @@ using WpfExtensions.Xaml.ExtensionMethods;
 
 namespace WpfExtensions.Xaml.Router
 {
-    public class RouteCollection : ObservableCollection<Route> { }
+    public class RouteCollection : Collection<RouteBase> { }
 
     [ContentProperty(nameof(Routes))]
     public class BrowserRouter : UserControl
@@ -25,6 +26,28 @@ namespace WpfExtensions.Xaml.Router
             set => SetValue(RoutesProperty, value);
         }
 
+        #region Attch events
+
+        public static readonly RoutedEvent UnloadingEvent = EventManager.RegisterRoutedEvent(
+            "Unloading", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(BrowserRouter));
+
+        public static void AddUnloadingHandler(DependencyObject d, RoutedEventHandler handler)
+        {
+            if (d is UIElement uiElement)
+            {
+                uiElement.AddHandler(UnloadingEvent, handler);
+            }
+        }
+        public static void RemoveUnloadingHandler(DependencyObject d, RoutedEventHandler handler)
+        {
+            if (d is UIElement uiElement)
+            {
+                uiElement.RemoveHandler(UnloadingEvent, handler);
+            }
+        }
+
+        #endregion
+
         #region Static members
 
         private static readonly HashSet<BrowserRouter> GlobalTopRouters = new HashSet<BrowserRouter>();
@@ -39,7 +62,10 @@ namespace WpfExtensions.Xaml.Router
 
             foreach (var topRouter in GlobalTopRouters)
             {
-                topRouter.NavigateFor(0);
+                // Routers of the same level should be loaded at the same time.
+#pragma warning disable 4014
+                topRouter.NavigateAsync(0);
+#pragma warning restore 4014
             }
         }
 
@@ -47,6 +73,7 @@ namespace WpfExtensions.Xaml.Router
 
         private readonly Collection<BrowserRouter> _children = new Collection<BrowserRouter>();
         private BrowserRouter _parent;
+        private RouteBase _currentRoute;
 
         public BrowserRouter()
         {
@@ -56,15 +83,16 @@ namespace WpfExtensions.Xaml.Router
             Unloaded += OnRouterUnloaded;
         }
 
-        private void OnRouterLoaded(object sender, RoutedEventArgs e)
+        private async void OnRouterLoaded(object sender, RoutedEventArgs e)
         {
             _parent = this.TryFindParent<BrowserRouter>();
             _parent?.AddChild(this);
-            NavigateFor(GetLevel());
             if (_parent == null)
             {
                 GlobalTopRouters.Add(this);
             }
+
+            await NavigateAsync(GetRouterLevel());
         }
 
         private void OnRouterUnloaded(object sender, RoutedEventArgs e)
@@ -79,44 +107,55 @@ namespace WpfExtensions.Xaml.Router
             _children.Add(router);
         }
 
-        private void NavigateFor(int level)
+        private async Task NavigateAsync(int routerLevel)
         {
-            if (_currentPathFragments == null || _currentPathFragments.Count <= level || level < 0) return;
+            if (_currentPathFragments == null || _currentPathFragments.Count <= routerLevel || routerLevel < 0) return;
 
-            var path = _currentPathFragments[level];
-
-            var trimPath = path.Trim(PathSeparators);
-            var matchedRoute = Routes.FirstOrDefault(item =>
-                trimPath.Equals(item.Path.Trim(PathSeparators), StringComparison.InvariantCultureIgnoreCase));
+            var matchedRoute = FindRouteByPath(_currentPathFragments[routerLevel]);
 
             if (matchedRoute != null)
             {
-                if (Content != null && Content.Equals(matchedRoute.Component) && _children.Any())
+                if (_currentRoute == matchedRoute)
                 {
-                    level++;
+                    routerLevel++;
                     foreach (var child in _children)
                     {
-                        child.NavigateFor(level);
+                        await child.NavigateAsync(routerLevel);
                     }
                 }
                 else
                 {
+                    if (Content is UIElement oldUiElement)
+                    {
+                        oldUiElement.RaiseEvent(new RoutedEventArgs(UnloadingEvent, oldUiElement));
+                        await Task.Delay(_currentRoute.UnloadTimeout);
+                    }
+
                     Content = matchedRoute.Component;
                     // In order to activate bindings of this view,
                     // if not, sometimes the binding value will be `DependencyProperty.UnsetValue`.
                     // I don't know the reason for it. Can someone tell me?
                     Content = null;
                     Content = matchedRoute.Component;
+
+                    _currentRoute = matchedRoute;
                 }
             }
             else
             {
-                // TODO: Navigate to 404 page.
-                MessageBox.Show("404: NOT FOUND THIS PAGE!");
+                throw new InvalidOperationException("404: NOT FOUND. ");
             }
         }
 
-        private int GetLevel()
+        private RouteBase FindRouteByPath(string pathFragment)
+        {
+            var trimPath = pathFragment.Trim(PathSeparators);
+            return Routes.OfType<Route>().FirstOrDefault(item =>
+                trimPath.Equals(item.Path.Trim(PathSeparators), StringComparison.InvariantCultureIgnoreCase)) ??
+                (RouteBase)Routes.OfType<DefaultRoute>().FirstOrDefault();
+        }
+
+        private int GetRouterLevel()
         {
             var level = 0;
             var parent = _parent;
