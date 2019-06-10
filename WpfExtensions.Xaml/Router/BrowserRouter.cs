@@ -10,23 +10,23 @@ using WpfExtensions.Xaml.ExtensionMethods;
 
 namespace WpfExtensions.Xaml.Router
 {
-    public class RouteCollection : Collection<RouteBase> { }
+    public class RouteCollection : Collection<Route>
+    {
+        protected override void InsertItem(int index, Route item)
+        {
+            if (Items.Any(existedItem => Route.Equals(existedItem, item)))
+            {
+                throw new InvalidOperationException($"Cannot add duplicate routing paths: {item.Path}");
+            }
+
+            base.InsertItem(index, item);
+        }
+    }
 
     [ContentProperty(nameof(Routes))]
     public class BrowserRouter : UserControl
     {
         public static char[] PathSeparators = { '/', '\\', '.' };
-
-        public static readonly DependencyProperty RoutesProperty = DependencyProperty.Register(
-            "Routes", typeof(RouteCollection), typeof(BrowserRouter), new PropertyMetadata(default(RouteCollection)));
-
-        public RouteCollection Routes
-        {
-            get => (RouteCollection)GetValue(RoutesProperty);
-            set => SetValue(RoutesProperty, value);
-        }
-
-        #region Attch events
 
         public static readonly RoutedEvent UnloadingEvent = EventManager.RegisterRoutedEvent(
             "Unloading", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(BrowserRouter));
@@ -38,6 +38,7 @@ namespace WpfExtensions.Xaml.Router
                 uiElement.AddHandler(UnloadingEvent, handler);
             }
         }
+
         public static void RemoveUnloadingHandler(DependencyObject d, RoutedEventHandler handler)
         {
             if (d is UIElement uiElement)
@@ -46,7 +47,14 @@ namespace WpfExtensions.Xaml.Router
             }
         }
 
-        #endregion
+        public static readonly DependencyProperty RoutesProperty = DependencyProperty.Register(
+            "Routes", typeof(RouteCollection), typeof(BrowserRouter), new PropertyMetadata(default(RouteCollection)));
+
+        public RouteCollection Routes
+        {
+            get => (RouteCollection)GetValue(RoutesProperty);
+            set => SetValue(RoutesProperty, value);
+        }
 
         #region Static members
 
@@ -73,7 +81,7 @@ namespace WpfExtensions.Xaml.Router
 
         private readonly Collection<BrowserRouter> _children = new Collection<BrowserRouter>();
         private BrowserRouter _parent;
-        private RouteBase _currentRoute;
+        private Route _currentRoute;
 
         public BrowserRouter()
         {
@@ -86,10 +94,13 @@ namespace WpfExtensions.Xaml.Router
         private async void OnRouterLoaded(object sender, RoutedEventArgs e)
         {
             _parent = this.TryFindParent<BrowserRouter>();
-            _parent?.AddChild(this);
             if (_parent == null)
             {
                 GlobalTopRouters.Add(this);
+            }
+            else
+            {
+                _parent._children.Add(this);
             }
 
             await NavigateAsync(GetRouterLevel());
@@ -100,11 +111,6 @@ namespace WpfExtensions.Xaml.Router
             GlobalTopRouters.Remove(this);
             _parent?._children.Remove(this);
             _parent = null;
-        }
-
-        private void AddChild(BrowserRouter router)
-        {
-            _children.Add(router);
         }
 
         private async Task NavigateAsync(int routerLevel)
@@ -120,7 +126,10 @@ namespace WpfExtensions.Xaml.Router
                     routerLevel++;
                     foreach (var child in _children)
                     {
-                        await child.NavigateAsync(routerLevel);
+                        // Routers of the same level should be loaded at the same time.
+#pragma warning disable 4014
+                        child.NavigateAsync(routerLevel);
+#pragma warning restore 4014
                     }
                 }
                 else
@@ -147,12 +156,12 @@ namespace WpfExtensions.Xaml.Router
             }
         }
 
-        private RouteBase FindRouteByPath(string pathFragment)
+        private Route FindRouteByPath(string pathFragment)
         {
-            var trimPath = pathFragment.Trim(PathSeparators);
-            return Routes.OfType<Route>().FirstOrDefault(item =>
-                trimPath.Equals(item.Path.Trim(PathSeparators), StringComparison.InvariantCultureIgnoreCase)) ??
-                (RouteBase)Routes.OfType<DefaultRoute>().FirstOrDefault();
+            return Routes.FirstOrDefault(item =>
+                       Route.EqualsPath(item.TrimmedPath, pathFragment)) ??
+                   Routes.FirstOrDefault(item =>
+                       Route.EqualsPath(item.TrimmedPath, Route.DefaultPath));
         }
 
         private int GetRouterLevel()
