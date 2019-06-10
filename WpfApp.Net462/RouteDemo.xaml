@@ -38,14 +38,14 @@
                                    FontWeight="Bold" />
                     </router:Route.Component>
                 </router:Route>
-                <router:DefaultRoute >
-                    <router:DefaultRoute.Component>
+                <router:Route Path="{x:Static router:Route.DefaultPath}">
+                    <router:Route.Component>
                         <TextBlock Text="404: NOT FOUND! "
                                    FontSize="50"
                                    FontWeight="Bold"
-                                   Foreground="Red"/>
-                    </router:DefaultRoute.Component>
-                </router:DefaultRoute>
+                                   Foreground="Red" />
+                    </router:Route.Component>
+                </router:Route>
             </router:BrowserRouter>
         </Border>
     </StackPanel>
