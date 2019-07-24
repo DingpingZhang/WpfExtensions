@@ -50,17 +50,15 @@ namespace WpfExtensions.Xaml.Markup
                 var keyValue = values[_owner._keyIndex];
                 if (keyValue is string @string)
                 {
-                    return values.Length > 1
+                    return (values.Length + _owner.Args.Count) > 1
                         ? string.Format(@string, _owner.Args.Indexes.Select(item => item.InBindings
                             ? values[item.Index]
                             : _owner.Args[item.Index]).ToArray())
                         : values.Single();
                 }
-                else
-                {
-                    throw new ArgumentException($"The {nameof(I18nStringExtension)} does not support {keyValue?.GetType()} type, " +
-                                                $"please try to use {nameof(I18nExtension)}");
-                }
+
+                throw new ArgumentException($"The {nameof(I18nStringExtension)} does not support {keyValue?.GetType()} type, " +
+                                            $"please try to use {nameof(I18nExtension)}");
             }
 
             public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

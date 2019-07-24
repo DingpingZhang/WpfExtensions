@@ -166,7 +166,7 @@
                                                         {markup:I18n {x:Static i18NRes:ResKeys.TestString_WithFormat1}}}" />
                                 <TextBlock Text="{markup:I18n {x:Static i18NRes:ResKeys.TestString_WithoutFormat}}" />
                                 <TextBlock Text="{markup:I18nString {x:Static i18NRes:ResKeys.TestString_WithFormat1}, 
-                                                                {Binding InputText}}" />
+                                                                '123'}" />
                                 <TextBlock Text="{markup:I18nString {x:Static i18NRes:ResKeys.TestString_WithFormat3},
                                                                 {Binding InputText},
                                                                 'RANDOM TEXT',
