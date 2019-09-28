@@ -12,9 +12,10 @@ namespace WpfExtensions.Infrastructure.Extensions
         {
             private readonly ICommand _command;
             private readonly TimeSpan _dueTime;
+
             private DateTime _lastExecutedTime = DateTime.MinValue;
-            private object _lastParameter;
-            private bool _isWaiting;
+            private volatile object _lastParameter;
+            private volatile bool _isWaiting;
 
             public ThrottleCommand(ICommand command, TimeSpan dueTime)
             {
@@ -23,14 +24,6 @@ namespace WpfExtensions.Infrastructure.Extensions
             }
 
             public async void Execute(object parameter) => await InnerExecuteAsync(parameter);
-            //{
-            //    var nowTime = DateTime.Now;
-            //    if (_dueTime < nowTime - _lastExecutedTime)
-            //    {
-            //        _lastExecutedTime = nowTime;
-            //        _command.Execute(parameter);
-            //    }
-            //}
 
             public bool CanExecute(object parameter) => _command.CanExecute(parameter);
 
@@ -39,17 +32,18 @@ namespace WpfExtensions.Infrastructure.Extensions
                 _lastParameter = parameter;
 
                 if (_isWaiting) return;
+                _isWaiting = true;
 
                 var interval = DateTime.Now - _lastExecutedTime;
                 if (_dueTime > interval)
                 {
-                    _isWaiting = true;
                     await Task.Delay(_dueTime - interval);
-                    _isWaiting = false;
                 }
 
                 _lastExecutedTime = DateTime.Now;
                 _command.Execute(_lastParameter);
+
+                _isWaiting = false;
             }
 
             public event EventHandler CanExecuteChanged
