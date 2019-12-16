@@ -17,36 +17,28 @@
                    Margin="10" />
         <Border BorderThickness="2"
                 BorderBrush="BlueViolet">
-            <router:BrowserRouter>
+            <router:Switch>
                 <router:Route Path="/markup"
                               UnloadTimeout="0:0:2">
-                    <router:Route.Component>
-                        <local:MarkupDemo Style="{StaticResource FloatInUpStyle}" />
-                    </router:Route.Component>
+                    <local:MarkupDemo Style="{StaticResource FloatInUpStyle}" />
                 </router:Route>
                 <router:Route Path="/view1">
-                    <router:Route.Component>
-                        <TextBlock Text="View 1"
-                                   FontSize="50"
-                                   FontWeight="Bold" />
-                    </router:Route.Component>
+                    <TextBlock Text="View 1"
+                               FontSize="50"
+                               FontWeight="Bold" />
                 </router:Route>
                 <router:Route Path="/view2">
-                    <router:Route.Component>
-                        <TextBlock Text="View 2"
-                                   FontSize="50"
-                                   FontWeight="Bold" />
-                    </router:Route.Component>
+                    <TextBlock Text="View 2"
+                               FontSize="50"
+                               FontWeight="Bold" />
                 </router:Route>
-                <router:Route Path="{x:Static router:Route.DefaultPath}">
-                    <router:Route.Component>
-                        <TextBlock Text="404: NOT FOUND! "
-                                   FontSize="50"
-                                   FontWeight="Bold"
-                                   Foreground="Red" />
-                    </router:Route.Component>
+                <router:Route Path="{x:Static router:Route.Default}">
+                    <TextBlock Text="404: NOT FOUND! "
+                               FontSize="50"
+                               FontWeight="Bold"
+                               Foreground="Red" />
                 </router:Route>
-            </router:BrowserRouter>
+            </router:Switch>
         </Border>
     </StackPanel>
 </UserControl>

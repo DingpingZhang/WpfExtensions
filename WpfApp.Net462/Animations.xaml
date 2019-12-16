@@ -19,7 +19,7 @@
                                          From="200"
                                          To="0">
                             <DoubleAnimation.EasingFunction>
-                                <CubicEase  EasingMode="EaseOut" />
+                                <CubicEase EasingMode="EaseOut" />
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
                         <DoubleAnimation BeginTime="00:00:00"
@@ -28,13 +28,13 @@
                                          From="0"
                                          To="1">
                             <DoubleAnimation.EasingFunction>
-                                <CircleEase  EasingMode="EaseIn" />
+                                <CircleEase EasingMode="EaseIn" />
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
-            <EventTrigger RoutedEvent="router:BrowserRouter.Unloading">
+            <EventTrigger RoutedEvent="router:Switch.Unloading">
                 <BeginStoryboard>
                     <Storyboard>
                         <DoubleAnimation BeginTime="00:00:00"

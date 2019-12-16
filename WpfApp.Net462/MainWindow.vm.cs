@@ -42,7 +42,7 @@ namespace WpfApp.Net462
                 I18nManager.Instance.CurrentUICulture = I18nManager.Instance.CurrentUICulture.Equals(En) ? ZhCn : En;
             });
             NavigateCommand = new RelayCommand<string>(
-                path => BrowserRouter.Navigate(path),
+                Switch.To,
                 path => !string.IsNullOrWhiteSpace(path));
         }
     }

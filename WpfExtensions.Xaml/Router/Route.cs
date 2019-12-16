@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Markup;
 
 namespace WpfExtensions.Xaml.Router
 {
+    [ContentProperty(nameof(Component))]
     public class Route : FrameworkElement
     {
-        public const string DefaultPath = "{02789585-66E4-4C31-ACB5-FEC68B48023D}";
+        public const string Default = "{02789585-66E4-4C31-ACB5-FEC68B48023D}";
 
         public static readonly DependencyProperty PathProperty = DependencyProperty.Register(
             "Path", typeof(string), typeof(Route), new PropertyMetadata(null, (o, args) =>
             {
                 var @this = (Route)o;
-                @this.TrimmedPath = @this.Path.Trim(BrowserRouter.PathSeparators);
+                @this.TrimmedPath = @this.Path.Trim(Switch.PathSeparators);
             }));
         public static readonly DependencyProperty ComponentProperty = DependencyProperty.Register(
             "Component", typeof(object), typeof(Route), new PropertyMetadata(default(object)));

@@ -24,12 +24,12 @@ namespace WpfExtensions.Xaml.Router
     }
 
     [ContentProperty(nameof(Routes))]
-    public class BrowserRouter : UserControl
+    public class Switch : UserControl
     {
-        public static char[] PathSeparators = { '/', '\\', '.' };
+        public static char[] PathSeparators = { '/', '\\' };
 
         public static readonly RoutedEvent UnloadingEvent = EventManager.RegisterRoutedEvent(
-            "Unloading", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(BrowserRouter));
+            "Unloading", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(Switch));
 
         public static void AddUnloadingHandler(DependencyObject d, RoutedEventHandler handler)
         {
@@ -48,7 +48,7 @@ namespace WpfExtensions.Xaml.Router
         }
 
         public static readonly DependencyProperty RoutesProperty = DependencyProperty.Register(
-            "Routes", typeof(RouteCollection), typeof(BrowserRouter), new PropertyMetadata(default(RouteCollection)));
+            "Routes", typeof(RouteCollection), typeof(Switch), new PropertyMetadata(default(RouteCollection)));
 
         public RouteCollection Routes
         {
@@ -58,11 +58,11 @@ namespace WpfExtensions.Xaml.Router
 
         #region Static members
 
-        private static readonly HashSet<BrowserRouter> GlobalTopRouters = new HashSet<BrowserRouter>();
+        private static readonly HashSet<Switch> GlobalTopRouters = new HashSet<Switch>();
 
         private static IReadOnlyList<string> _currentPathFragments;
 
-        public static void Navigate(string path)
+        public static void To(string path)
         {
             if (string.IsNullOrWhiteSpace(path)) return;
 
@@ -79,11 +79,11 @@ namespace WpfExtensions.Xaml.Router
 
         #endregion
 
-        private readonly Collection<BrowserRouter> _children = new Collection<BrowserRouter>();
-        private BrowserRouter _parent;
+        private readonly Collection<Switch> _children = new Collection<Switch>();
+        private Switch _parent;
         private Route _currentRoute;
 
-        public BrowserRouter()
+        public Switch()
         {
             Routes = new RouteCollection();
 
@@ -93,7 +93,7 @@ namespace WpfExtensions.Xaml.Router
 
         private async void OnRouterLoaded(object sender, RoutedEventArgs e)
         {
-            _parent = this.TryFindParent<BrowserRouter>();
+            _parent = this.TryFindParent<Switch>();
             if (_parent == null)
             {
                 GlobalTopRouters.Add(this);
@@ -103,7 +103,7 @@ namespace WpfExtensions.Xaml.Router
                 _parent._children.Add(this);
             }
 
-            await NavigateAsync(GetRouterLevel());
+            await NavigateAsync(GetRouterLevel(_parent));
         }
 
         private void OnRouterUnloaded(object sender, RoutedEventArgs e)
@@ -117,42 +117,41 @@ namespace WpfExtensions.Xaml.Router
         {
             if (_currentPathFragments == null || _currentPathFragments.Count <= routerLevel || routerLevel < 0) return;
 
-            var matchedRoute = FindRouteByPath(_currentPathFragments[routerLevel]);
+            var fragment = _currentPathFragments[routerLevel];
+            var matchedRoute = FindRouteByPath(fragment);
 
-            if (matchedRoute != null)
+            if (matchedRoute == null)
             {
-                if (_currentRoute == matchedRoute)
+                throw new InvalidOperationException($"Unable to find the specified route ({fragment}).");
+            }
+
+            if (_currentRoute == matchedRoute)
+            {
+                routerLevel++;
+                foreach (var child in _children)
                 {
-                    routerLevel++;
-                    foreach (var child in _children)
-                    {
-                        // Routers of the same level should be loaded at the same time.
+                    // Routers of the same level should be loaded at the same time.
 #pragma warning disable 4014
-                        child.NavigateAsync(routerLevel);
+                    child.NavigateAsync(routerLevel);
 #pragma warning restore 4014
-                    }
-                }
-                else
-                {
-                    if (Content is UIElement oldUiElement)
-                    {
-                        oldUiElement.RaiseEvent(new RoutedEventArgs(UnloadingEvent, oldUiElement));
-                        await Task.Delay(_currentRoute.UnloadTimeout);
-                    }
-
-                    Content = matchedRoute.Component;
-                    // In order to activate bindings of this view,
-                    // if not, sometimes the binding value will be `DependencyProperty.UnsetValue`.
-                    // I don't know the reason for it. Can someone tell me?
-                    Content = null;
-                    Content = matchedRoute.Component;
-
-                    _currentRoute = matchedRoute;
                 }
             }
             else
             {
-                throw new InvalidOperationException("404: NOT FOUND. ");
+                if (Content is UIElement oldUiElement)
+                {
+                    oldUiElement.RaiseEvent(new RoutedEventArgs(UnloadingEvent, oldUiElement));
+                    await Task.Delay(_currentRoute.UnloadTimeout);
+                }
+
+                Content = matchedRoute.Component;
+                // In order to activate bindings of this view,
+                // if not, sometimes the binding value will be `DependencyProperty.UnsetValue`.
+                // I don't know the reason for it. Can someone tell me?
+                Content = null;
+                Content = matchedRoute.Component;
+
+                _currentRoute = matchedRoute;
             }
         }
 
@@ -161,13 +160,13 @@ namespace WpfExtensions.Xaml.Router
             return Routes.FirstOrDefault(item =>
                        Route.EqualsPath(item.TrimmedPath, pathFragment)) ??
                    Routes.FirstOrDefault(item =>
-                       Route.EqualsPath(item.TrimmedPath, Route.DefaultPath));
+                       Route.EqualsPath(item.TrimmedPath, Route.Default));
         }
 
-        private int GetRouterLevel()
+        private static int GetRouterLevel(Switch current)
         {
             var level = 0;
-            var parent = _parent;
+            var parent = current;
             while (parent != null)
             {
                 level++;
