@@ -4,12 +4,15 @@ using System.Linq;
 using System.Management;
 using System.Text.RegularExpressions;
 using Microsoft.Win32;
+using Prism.Logging;
 using WpfExtensions.Infrastructure.Extensions;
 
 namespace WpfExtensions.Infrastructure
 {
     public static class SystemInfo
     {
+        public static readonly ILoggerFacade Logger = DefaultLogger.Get(typeof(SystemInfo));
+
         private const string ExtractionFailed = "<Extraction Failed>";
 
         public static readonly string Caption;
@@ -66,7 +69,7 @@ namespace WpfExtensions.Infrastructure
             }
             catch (Exception e)
             {
-                //Logger.Error("An unexpected exception occured while getting management info. ", e); // TODO: Logging
+                Logger.Error("An unexpected exception occured while getting management info. ", e);
 
                 return null;
             }
@@ -86,14 +89,13 @@ namespace WpfExtensions.Infrastructure
         {
             const string subKey = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
 
-            using (RegistryKey ndpKey = RegistryKey
+            using var ndpKey = RegistryKey
                 .OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32)
-                .OpenSubKey(subKey))
-            {
-                return ndpKey?.GetValue("Release") != null
-                    ? CheckFor45PlusVersion((int)ndpKey.GetValue("Release"))
-                    : DotNetFramework.Unknown;
-            }
+                .OpenSubKey(subKey);
+
+            return ndpKey?.GetValue("Release") != null
+                ? CheckFor45PlusVersion((int)ndpKey.GetValue("Release"))
+                : DotNetFramework.Unknown;
         }
 
         // Checking the version using >= will enable forward compatibility.

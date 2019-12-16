@@ -9,7 +9,7 @@ namespace WpfExtensions.Infrastructure.Mvvm
         private Action<object, object, IContainerProvider> _configureViewAndViewModel;
         private IContainerProvider _container;
 
-        public IContainerProvider Container => _container ?? (_container = _containerFactory());
+        public IContainerProvider Container => _container ??= _containerFactory();
 
         public ViewModelResolver(Func<IContainerProvider> containerFactory)
         {
