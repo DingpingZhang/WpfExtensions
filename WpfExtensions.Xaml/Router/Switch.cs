@@ -26,7 +26,7 @@ namespace WpfExtensions.Xaml.Router
     [ContentProperty(nameof(Routes))]
     public class Switch : UserControl
     {
-        public static char[] PathSeparators = { '/', '\\' };
+        public static readonly char[] PathSeparators = { '/', '\\' };
 
         public static readonly RoutedEvent UnloadingEvent = EventManager.RegisterRoutedEvent(
             "Unloading", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(Switch));
