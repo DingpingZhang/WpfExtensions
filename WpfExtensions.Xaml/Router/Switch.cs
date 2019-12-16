@@ -125,7 +125,7 @@ namespace WpfExtensions.Xaml.Router
                 throw new InvalidOperationException($"Unable to find the specified route ({fragment}).");
             }
 
-            if (_currentRoute == matchedRoute)
+            if (ReferenceEquals(_currentRoute, matchedRoute))
             {
                 routerLevel++;
                 foreach (var child in _children)
