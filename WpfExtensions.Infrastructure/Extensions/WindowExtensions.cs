@@ -2,14 +2,12 @@
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
-using Prism.Logging;
 
-// ReSharper disable once CheckNamespace
 namespace WpfExtensions.Infrastructure.Extensions
 {
     public static class WindowExtensions
     {
-        private static readonly ILoggerFacade Logger = DefaultLogger.Get(typeof(WindowExtensions));
+        private static readonly ILogger Logger = DefaultLogger.Get(typeof(WindowExtensions));
 
         #region Win32 API functions
 

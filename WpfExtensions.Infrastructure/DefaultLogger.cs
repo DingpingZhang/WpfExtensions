@@ -1,31 +1,53 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
-using Prism.Logging;
 
 namespace WpfExtensions.Infrastructure
 {
-    public class DefaultLogger : ILoggerFacade
+    public class DefaultLogger : ILogger
     {
-        public static Func<Type, ILoggerFacade> Factory { get; set; }
-
-        public static ILoggerFacade Get(Type type) => Factory?.Invoke(type) ?? new DefaultLogger(type);
+        internal static ILogger Get(Type type) => Configurations.LoggerFactory?.Invoke(type) ?? new DefaultLogger(type);
 
         private readonly Type _type;
 
         protected DefaultLogger(Type type) => _type = type;
 
-        void ILoggerFacade.Log(string message, Category category, Priority priority)
+        public void Error(string message, Exception e = null)
         {
+            Write(nameof(Error), message, e);
+        }
+
+        public void Warning(string message, Exception e = null)
+        {
+            Write(nameof(Warning), message, e);
+        }
+
+        public void Info(string message, Exception e = null)
+        {
+            Write(nameof(Info), message, e);
+        }
+
+        public void Debug(string message, Exception e = null)
+        {
+            Write(nameof(Debug), message, e);
+        }
+
+        private void Write(string category, string message, Exception e)
+        {
+            message = $"{message}{Environment.NewLine}";
+
+            if (e != null)
+            {
+                message = $"{message}{e.Message}{Environment.NewLine}" +
+                          $"{e.StackTrace}{Environment.NewLine}";
+            }
+
             message = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} " +
                       $"[{Thread.CurrentThread.ManagedThreadId}] " +
-                      $"{category.ToString().ToUpper()} " +
+                      $"{category.ToUpper()} " +
                       $"{_type.FullName}{Environment.NewLine}" +
                       $"{message}{Environment.NewLine}";
 
-            Write(message);
+            System.Diagnostics.Debug.Write(message);
         }
-
-        protected virtual void Write(string message) => Debug.Write(message);
     }
 }

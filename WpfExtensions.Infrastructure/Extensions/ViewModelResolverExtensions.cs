@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
-using Prism.Ioc;
 using WpfExtensions.Infrastructure.Mvvm;
 
 // ReSharper disable once CheckNamespace

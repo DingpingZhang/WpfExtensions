@@ -4,14 +4,13 @@ using System.Linq;
 using System.Management;
 using System.Text.RegularExpressions;
 using Microsoft.Win32;
-using Prism.Logging;
 using WpfExtensions.Infrastructure.Extensions;
 
 namespace WpfExtensions.Infrastructure
 {
     public static class SystemInfo
     {
-        public static readonly ILoggerFacade Logger = DefaultLogger.Get(typeof(SystemInfo));
+        public static readonly ILogger Logger = DefaultLogger.Get(typeof(SystemInfo));
 
         private const string ExtractionFailed = "<Extraction Failed>";
 

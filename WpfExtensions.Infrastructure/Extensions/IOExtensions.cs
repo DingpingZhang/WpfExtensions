@@ -4,16 +4,12 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Prism.Logging;
 
-//using log4net;
-
-// ReSharper disable once CheckNamespace
 namespace WpfExtensions.Infrastructure.Extensions
 {
     public static class ExtensionMethods
     {
-        private static readonly ILoggerFacade Logger = DefaultLogger.Get(typeof(ExtensionMethods));
+        private static readonly ILogger Logger = DefaultLogger.Get(typeof(ExtensionMethods));
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern bool CreateHardLink(string lpFileName, string lpExistingFileName, IntPtr lpSecurityAttributes);

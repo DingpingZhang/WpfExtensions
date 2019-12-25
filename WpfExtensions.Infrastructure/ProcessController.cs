@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Threading;
-using Prism.Logging;
-using WpfExtensions.Infrastructure.Extensions;
 
 namespace WpfExtensions.Infrastructure
 {
     public static class ProcessController
     {
-        private static readonly ILoggerFacade Logger = DefaultLogger.Get(typeof(ProcessController));
+        private static readonly ILogger Logger = DefaultLogger.Get(typeof(ProcessController));
 
         private static volatile EventWaitHandle _keepAliveEvent;
 

@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using WpfExtensions.Infrastructure.DataBinding;
 
 namespace WpfExtensions.Infrastructure.Mvvm
 {
-    public abstract class BindableBase : Prism.Mvvm.BindableBase
+    public abstract class BindableBase : INotifyPropertyChanged
     {
         private readonly IDictionary<string, object> _propertyValueStorage = new ConcurrentDictionary<string, object>();
         private readonly HashSet<string> _existedObserverPropertyNameHashSet = new HashSet<string>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual T Computed<T>(Expression<Func<T>> expression, T fallback = default, [CallerMemberName] string propertyName = null)
         {
@@ -35,6 +38,37 @@ namespace WpfExtensions.Infrastructure.Mvvm
             }
 
             return new PropertyObserver(() => RaisePropertyChanged(propertyName));
+        }
+
+        protected virtual bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(storage, value)) return false;
+
+            storage = value;
+            RaisePropertyChanged(propertyName);
+
+            return true;
+        }
+
+        protected virtual bool SetProperty<T>(ref T storage, T value, Action onChanged, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(storage, value)) return false;
+
+            storage = value;
+            onChanged?.Invoke();
+            RaisePropertyChanged(propertyName);
+
+            return true;
+        }
+
+        protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            PropertyChanged?.Invoke(this, e);
         }
 
         protected sealed class PropertyObserver : IDisposable
