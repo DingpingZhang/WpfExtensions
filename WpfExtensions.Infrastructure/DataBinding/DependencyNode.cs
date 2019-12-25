@@ -66,20 +66,32 @@ namespace WpfExtensions.Infrastructure.DataBinding
             }
         }
 
-        public void Initialize(EventHandler onExpressionChanged)
+        public IDisposable Initialize(EventHandler onExpressionChanged)
         {
             // Sometimes some nodes have multiple parent nodes, and do not need to be initialized repeatedly.
-            if (_isInitialized) return;
+            if (_isInitialized) return Disposable.Empty;
 
             _isActivated = true;
 
             Changed += onExpressionChanged;
             Subscribe();
 
-            DownstreamNodes
-                .ForEach(item => item.Initialize(onExpressionChanged));
+            var disposables = DownstreamNodes
+                .Select(item => item.Initialize(onExpressionChanged))
+                .ToArray();
 
             _isInitialized = true;
+
+            return Disposable.Create(() =>
+            {
+                _isActivated = false;
+
+                Changed -= onExpressionChanged;
+                Unsubscribe();
+
+                disposables.ForEach(item => item.Dispose());
+                _isInitialized = false;
+            });
         }
 
         private void SubscribeRecursively()

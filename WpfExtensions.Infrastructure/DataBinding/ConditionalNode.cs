@@ -40,9 +40,9 @@ namespace WpfExtensions.Infrastructure.DataBinding
             _testGetter = testGetter ?? throw new ArgumentNullException(nameof(testGetter));
         }
 
-        public void Initialize()
+        public IDisposable Initialize()
         {
-            var groups = _allNodes.GroupBy(item => item.Value, item => item.Key);
+            var groups = _allNodes.GroupBy(item => item.Value, item => item.Key).ToArray();
 
             foreach (var group in groups)
             {
@@ -60,10 +60,23 @@ namespace WpfExtensions.Infrastructure.DataBinding
                 }
             }
 
-            IfTrueChild?.Initialize();
-            IfFalseChild?.Initialize();
+            var ifTrueChildDisposable = IfTrueChild?.Initialize();
+            var ifFalseChildDisposable = IfFalseChild?.Initialize();
 
             Update(true);
+
+            return Disposable.Create(() =>
+            {
+                Update(false);
+
+                _ifTrueNodes = null;
+                _ifFalseNodes = null;
+                groups.FirstOrDefault(item => item.Key == NodeType.Test)?
+                    .ForEach(item => item.Changed -= OnChanged);
+
+                ifTrueChildDisposable?.Dispose();
+                ifFalseChildDisposable?.Dispose();
+            });
         }
 
         internal void AddAffectedNode(ConditionalNodeType type, DependencyNode node)
