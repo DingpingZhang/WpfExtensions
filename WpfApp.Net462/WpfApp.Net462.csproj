@@ -70,9 +70,6 @@
       <DependentUpon>MarkupDemo.xaml</DependentUpon>
     </Compile>
     <Compile Include="RelayCommand.cs" />
-    <Compile Include="RouteDemo.xaml.cs">
-      <DependentUpon>RouteDemo.xaml</DependentUpon>
-    </Compile>
     <Page Include="Animations.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -91,10 +88,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="MarkupDemo.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="RouteDemo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp.Net462"
-        xmlns:router="clr-namespace:WpfExtensions.Xaml.Router;assembly=WpfExtensions.Xaml"
         mc:Ignorable="d"
         Title="MainWindow"
         Height="450"
@@ -12,60 +11,7 @@
         d:DataContext="{d:DesignInstance {x:Type local:MainWindowViewModel}}">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="16" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBox x:Name="TextBox"
-                     FontSize="20"
-                     FontWeight="Bold"
-                     Foreground="#333" />
-            <Button Grid.Column="2"
-                    Content="Go To"
-                    Command="{Binding NavigateCommand}"
-                    CommandParameter="{Binding Path=Text, ElementName=TextBox}"
-                    IsDefault="True" />
-        </Grid>
-        <Border Grid.Row="1"
-                BorderThickness="2"
-                BorderBrush="Green"
-                Margin="5">
-            <router:Switch>
-                <router:Route Path="/markup"
-                              UnloadTimeout="0:0:2">
-                    <local:MarkupDemo Style="{StaticResource FloatInUpStyle}" />
-                </router:Route>
-                <router:Route Path="/route"
-                              UnloadTimeout="0:0:2">
-                    <local:RouteDemo Style="{StaticResource FloatInUpStyle}" />
-                </router:Route>
-            </router:Switch>
-        </Border>
-
-        <Border Grid.Row="2"
-                BorderThickness="2"
-                BorderBrush="Blue"
-                Margin="5">
-            <router:Switch>
-                <router:Route Path="/markup"
-                              UnloadTimeout="0:0:2">
-                    <local:MarkupDemo Style="{StaticResource FloatInUpStyle}" />
-                </router:Route>
-                <router:Route Path="{x:Static router:Route.Default}">
-                    <TextBlock Text="404: NOT FOUND! "
-                               FontSize="50"
-                               FontWeight="Bold"
-                               Foreground="Red" />
-                </router:Route>
-            </router:Switch>
-        </Border>
+        <local:MarkupDemo />
     </Grid>
 
 </Window>
