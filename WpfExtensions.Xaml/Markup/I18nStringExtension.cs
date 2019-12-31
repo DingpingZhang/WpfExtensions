@@ -70,9 +70,24 @@ namespace WpfExtensions.Xaml.Markup
 
     public class ArgCollection : Collection<object>
     {
+        // HACK: Replace the System.ValueTuple with a struct.
+        // See here for details: https://github.com/dotnet/wpf/issues/2320
+        internal struct ArgTuple
+        {
+            public bool InBindings { get; }
+
+            public int Index { get; }
+
+            public ArgTuple(bool inBindings, int index)
+            {
+                InBindings = inBindings;
+                Index = index;
+            }
+        }
+
         private readonly I18nStringExtension _owner;
 
-        internal List<(bool InBindings, int Index)> Indexes = new List<(bool InBindings, int Index)>();
+        internal List<ArgTuple> Indexes = new List<ArgTuple>();
 
         public ArgCollection(I18nStringExtension owner) => _owner = owner;
 
@@ -80,12 +95,12 @@ namespace WpfExtensions.Xaml.Markup
         {
             if (item is BindingBase binding)
             {
-                Indexes.Add((true, _owner.Bindings.Count));
+                Indexes.Add(new ArgTuple(true, _owner.Bindings.Count));
                 _owner.Bindings.Add(binding);
             }
             else
             {
-                Indexes.Add((false, Count));
+                Indexes.Add(new ArgTuple(false, Count));
                 base.InsertItem(index, item);
             }
         }
