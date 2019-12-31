@@ -1,13 +1,15 @@
-﻿using System;
+﻿#if !NETCOREAPP
+
+using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using PixelFormat = System.Drawing.Imaging.PixelFormat;
 using Point = System.Drawing.Point;
+using System.Drawing.Imaging;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace WpfExtensions.Xaml.ExtensionMethods
 {
@@ -71,3 +73,5 @@ namespace WpfExtensions.Xaml.ExtensionMethods
         }
     }
 }
+
+#endif

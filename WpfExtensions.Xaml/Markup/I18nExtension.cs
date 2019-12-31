@@ -1,10 +1,13 @@
 ﻿using System;
-using System.Drawing;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
+
+#if !NETCOREAPP
+using System.Drawing;
 using WpfExtensions.Xaml.ExtensionMethods;
+#endif
 
 namespace WpfExtensions.Xaml.Markup
 {
@@ -41,15 +44,17 @@ namespace WpfExtensions.Xaml.Markup
         {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                switch (value)
+#if NETCOREAPP
+                return value;
+#else
+
+                return value switch
                 {
-                    case Bitmap bitmap:
-                        return bitmap.ToBitmapSource();
-                    case Icon icon:
-                        return icon.ToImageSource();
-                    default:
-                        return value;
-                }
+                    Bitmap bitmap => bitmap.ToBitmapSource(),
+                    Icon icon => icon.ToImageSource(),
+                    _ => value
+                };
+#endif
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
