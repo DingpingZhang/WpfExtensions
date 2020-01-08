@@ -4,9 +4,9 @@ using System.Windows.Markup;
 namespace WpfExtensions.Xaml.Markup
 {
     [MarkupExtensionReturnType(typeof(CaseExtension))]
-    public class CaseExtension : MarkupExtension
+    public class CaseExtension : MarkupExtension, ICase
     {
-        public const int InvalidIndex = -1;
+        internal int Index { get; set; } = SwitchExtension.InvalidIndex;
 
         [ConstructorArgument(nameof(Option))]
         public object Option { get; set; }
@@ -14,7 +14,11 @@ namespace WpfExtensions.Xaml.Markup
         [ConstructorArgument(nameof(Value))]
         public object Value { get; set; }
 
-        internal int Index { get; set; } = InvalidIndex;
+        public CaseExtension(object option, object value)
+        {
+            Option = option;
+            Value = value;
+        }
 
         public override object ProvideValue(IServiceProvider serviceProvider) => this;
     }

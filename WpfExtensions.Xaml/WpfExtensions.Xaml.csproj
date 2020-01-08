@@ -49,7 +49,7 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="Markup\SwitchExtension.Ctors.cs">
+    <Compile Update="Markup\Switch\SwitchExtension.Ctors.cs">
       <DependentUpon>SwitchExtension.Ctors.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -65,7 +65,7 @@
       <LastGenOutput>I18nStringExtension.Ctors.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>
-    <None Update="Markup\SwitchExtension.Ctors.tt">
+    <None Update="Markup\Switch\SwitchExtension.Ctors.tt">
       <LastGenOutput>SwitchExtension.Ctors.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>

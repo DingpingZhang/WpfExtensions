@@ -157,7 +157,9 @@
                                    Width="20"
                                    Source="{markup:If {Binding IsLoading}, {StaticResource Icon.Paused}, {StaticResource Icon.Run}}" />
 
-                            <Image Source="{markup:I18n {x:Static i18NRes:ResKeys.test}}" Height="50" Width="50"/>
+                            <Image Source="{markup:I18n {x:Static i18NRes:ResKeys.test}}"
+                                   Height="50"
+                                   Width="50" />
 
                             <Button Style="{StaticResource LinkButtonStyle}"
                                     Content="{Binding InputText}" />
@@ -174,10 +176,26 @@
                                                                 '2311231'}" />
                             <TextBox Margin="20"
                                      Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBox Margin="20"
-                                     Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBox Margin="20"
-                                     Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="{markup:Switch {Binding InputText},
+                                             {markup:Case '1', '123'},
+                                             {markup:Case '31', '213123'},
+                                             {markup:Case '1234', {Binding InputText}}}" />
+                            <UserControl>
+                                <markup:Switch Condition="{Binding InputText}">
+                                    <markup:Case Option="1">
+                                        <TextBlock Text="{Binding InputText}"
+                                                   Foreground="BlueViolet" />
+                                    </markup:Case>
+                                    <markup:Case Option="12">
+                                        <TextBlock Text="{Binding InputText}"
+                                                   Foreground="Red" />
+                                    </markup:Case>
+                                    <markup:Case Option="123">
+                                        <TextBlock Text="{Binding InputText}"
+                                                   Foreground="Blue" />
+                                    </markup:Case>
+                                </markup:Switch>
+                            </UserControl>
                         </StackPanel>
                     </Border>
                 </markup:If.False>

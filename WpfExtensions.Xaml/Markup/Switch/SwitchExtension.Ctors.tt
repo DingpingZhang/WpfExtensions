@@ -23,7 +23,7 @@
 
 using System.Windows.Data;
 
-namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("NamespaceHint").ToString()#>
+namespace WpfExtensions.Xaml.Markup
 {
     public partial class <#= ClassName #>
     {
