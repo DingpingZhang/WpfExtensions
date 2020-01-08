@@ -51,6 +51,7 @@
         </DrawingImage>
 
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <local:MultiBindingConverter x:Key="MultiBindingConverter" />
 
         <Style x:Key="LinkButtonStyle"
                TargetType="ButtonBase">
@@ -163,7 +164,7 @@
 
                                 <TextBlock Text="{markup:If {Binding InputText, Converter={StaticResource IsNullOrEmptyOperator}}, 
                                                         {markup:I18n {x:Static i18NRes:ResKeys.TestString_WithoutFormat}}, 
-                                                        {markup:I18n {x:Static i18NRes:ResKeys.TestString_WithFormat1}}}" />
+                                                        {markup:I18n {x:Static i18NRes:ResKeys.TestString_WithFormat1}}, Converter={StaticResource MultiBindingConverter}}" />
                                 <TextBlock Text="{markup:I18n {x:Static i18NRes:ResKeys.TestString_WithoutFormat}}" />
                                 <TextBlock Text="{markup:I18nString {x:Static i18NRes:ResKeys.TestString_WithFormat1}, 
                                                                 '123'}" />
@@ -173,7 +174,7 @@
                                                                 '2311231'}" />
                                 <TextBox Margin="20"
                                          Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" />
-                                
+
                                 <UserControl>
                                     <TextBlock Text="{markup:Switch {Binding InputText}, 
                                                      {markup:Case '123', '321'},

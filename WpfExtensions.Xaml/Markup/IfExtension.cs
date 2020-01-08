@@ -7,7 +7,7 @@ using WpfExtensions.Xaml.ExtensionMethods;
 
 namespace WpfExtensions.Xaml.Markup
 {
-    public class IfExtension : MultiBinding
+    public class IfExtension : MultiBindingWithoutConverter
     {
         private const int InvalidIndex = -1;
 
@@ -34,12 +34,6 @@ namespace WpfExtensions.Xaml.Markup
         public object False
         {
             set => SetProperty(value, ref _falseIndex, out _false);
-        }
-
-        public new IMultiValueConverter Converter
-        {
-            get => base.Converter;
-            private set => base.Converter = value;
         }
 
         public IfExtension() => Converter = new MultiValueConverter(this);

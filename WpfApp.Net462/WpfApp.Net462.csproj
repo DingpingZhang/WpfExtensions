@@ -69,6 +69,7 @@
     <Compile Include="MarkupDemo.xaml.cs">
       <DependentUpon>MarkupDemo.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MultiBindingConverter.cs" />
     <Compile Include="RelayCommand.cs" />
     <Page Include="Animations.xaml">
       <SubType>Designer</SubType>

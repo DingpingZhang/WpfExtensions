@@ -9,11 +9,10 @@ using System.Windows.Markup;
 
 namespace WpfExtensions.Xaml.Markup
 {
-
     [ContentProperty(nameof(Args))]
     [MarkupExtensionReturnType(typeof(object))]
     // ReSharper disable once InconsistentNaming
-    public partial class I18nStringExtension : MultiBinding
+    public partial class I18nStringExtension : MultiBindingWithoutConverter
     {
         private int _keyIndex;
         private ComponentResourceKey _key;
@@ -32,12 +31,6 @@ namespace WpfExtensions.Xaml.Markup
 
         [ConstructorArgument(nameof(ResourceConverter))]
         public IValueConverter ResourceConverter { get; set; }
-
-        public new IMultiValueConverter Converter
-        {
-            get => base.Converter;
-            private set => base.Converter = value;
-        }
 
         private class MultiValueConverter : IMultiValueConverter
         {
