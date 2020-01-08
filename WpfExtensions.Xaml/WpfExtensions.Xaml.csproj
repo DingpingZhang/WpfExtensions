@@ -1,11 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFramework>net40</TargetFramework>
+    <TargetFrameworks>netcoreapp3.0;net45</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
     <Authors>Dingping Zhang</Authors>
-    <Version>0.0.7</Version>
+    <Version>1.0.1</Version>
     <Description>Some common custom markup extensions for WPF.</Description>
     <PackageProjectUrl>https://github.com/DingpingZhang/WpfExtensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DingpingZhang/WpfExtensions</RepositoryUrl>
@@ -14,29 +14,8 @@
     <PackageLicenseUrl>https://github.com/DingpingZhang/WpfExtensions/blob/master/LICENSE</PackageLicenseUrl>
     <Product>WpfExtensions.Xaml</Product>
     <PackageId>WpfExtensions.Xaml</PackageId>
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Converters\ImportOperators.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="Converters\ImportOperators.xaml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      <Generator>XamlIntelliSenseFileGenerator</Generator>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Update="Markup\ComposeExtension.Ctors.cs">
@@ -49,11 +28,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="Markup\SwitchExtension.Ctors.cs">
-      <DependentUpon>SwitchExtension.Ctors.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -63,10 +37,6 @@
     </None>
     <None Update="Markup\I18nStringExtension.Ctors.tt">
       <LastGenOutput>I18nStringExtension.Ctors.cs</LastGenOutput>
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
-    <None Update="Markup\SwitchExtension.Ctors.tt">
-      <LastGenOutput>SwitchExtension.Ctors.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>
   </ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Windows.Input;
+using WpfExtensions.Infrastructure.Commands;
 using WpfExtensions.Xaml;
 
 namespace WpfApp.Net462
@@ -27,6 +28,8 @@ namespace WpfApp.Net462
         public ICommand LoadCommand { get; }
 
         public ICommand SwitchCultureCommand { get; }
+
+        public ICommand NavigateCommand { get; }
 
         public MainWindowViewModel()
         {

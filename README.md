@@ -16,10 +16,9 @@ Combine multiple Converters into one pipeline.
 Using the `Conditional expression` in XAML.
 
 ```xml
-<Button Command="{markup:If
-                 {Binding BoolProperty},
-                 {Binding OkCommand},
-                 {Binding CancelCommand}}" />
+<Button Command="{markup:If {Binding BoolProperty},
+                            {Binding OkCommand},
+                            {Binding CancelCommand}}" />
 ```
 
 ```xml
@@ -28,9 +27,9 @@ Using the `Conditional expression` in XAML.
         <markup:If.True>
             <LoadingView />
         </markup:If.True>
-        
+
         <markup:If.False>
-        	<LoadedView />
+            <LoadedView />
         </markup:If.False>
     </markup:If>
 </UserControl>
@@ -42,25 +41,29 @@ Dynamically switch languages without restarting the app.
 
 ```xml
 <TextBlock Text="{markup:I18n {x:Static language:UiStrings.MainWindow_Title}}" />
+<TextBlock Text="{markup:I18nString {x:Static language:UiStrings.SayHello}, {Binding Username}}" />
+<TextBlock Text="{markup:I18nString {x:Static language:UiStrings.StringFormat},
+                                    {Binding Arg0},
+                                    {Binding Arg1},
+                                    ...,
+                                    {Binding Arg15}}" />
 ```
 
 ## 4. `StylesExtension` (In Progress)
 
 ```xml
-<Button Style="{markup:Styles 
-               {StaticResource FlatButtonStyle}, 
-               {StaticResource AnimationStyle},
-               ...}" />
+<Button Style="{markup:Styles {StaticResource FlatButtonStyle},
+                              {StaticResource AnimationStyle},
+                              ...}" />
 ```
 
 ## 5. `SwitchExtension` (In Progress)
 
 ```xml
 <Image Source="{markup:Switch {Binding FileType},
-               {Case {x:Static res:FileType.Music}, {StaticResource MusicIcon}},
-               {Case {x:Static res:FileType.Video}, {StaticResource VideoIcon}},
-               {Case {x:Static res:FileType.Picture}, {StaticResource PictureIcon}},
-               ...
-               {Default {StaticResource UnknownFileIcon}}}" />
+                              {Case {x:Static res:FileType.Music}, {StaticResource MusicIcon}},
+                              {Case {x:Static res:FileType.Video}, {StaticResource VideoIcon}},
+                              {Case {x:Static res:FileType.Picture}, {StaticResource PictureIcon}},
+                              ...
+                              {Default {StaticResource UnknownFileIcon}}}" />
 ```
-

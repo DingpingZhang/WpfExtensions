@@ -1,14 +1,16 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
+using Prism.Logging;
 
 // ReSharper disable once CheckNamespace
 namespace WpfExtensions.Infrastructure.Extensions
 {
     public static class WindowExtensions
     {
+        private static readonly ILoggerFacade Logger = DefaultLogger.Get(typeof(WindowExtensions));
+
         #region Win32 API functions
 
         //private const int SW_SHOW_NORMAL = 1;
@@ -19,9 +21,6 @@ namespace WpfExtensions.Infrastructure.Extensions
 
         [DllImport("user32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
-
-        //[DllImport("user32.dll")]
-        //private static extern IntPtr GetForegroundWindow();
 
         [DllImport("user32.dll")]
         private static extern bool IsIconic(IntPtr hWnd);
@@ -59,8 +58,7 @@ namespace WpfExtensions.Infrastructure.Extensions
         {
             try
             {
-
-                if (window.Dispatcher.CheckAccess())
+                if (window.Dispatcher?.CheckAccess() ?? true)
                 {
                     Action();
                 }
@@ -69,9 +67,9 @@ namespace WpfExtensions.Infrastructure.Extensions
                     window.Dispatcher.Invoke(Action);
                 }
             }
-            catch
+            catch (Exception e)
             {
-                Debug.Fail($"An exception occured in the {window.Content.GetType()} dialog.");
+                Logger.Error($"An exception occured in the {window.Content.GetType()} dialog.", e);
             }
 
             void Action()

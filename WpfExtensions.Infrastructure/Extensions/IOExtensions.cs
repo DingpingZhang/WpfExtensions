@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Prism.Logging;
 
 //using log4net;
 
@@ -12,9 +13,9 @@ namespace WpfExtensions.Infrastructure.Extensions
 {
     public static class ExtensionMethods
     {
-        //private static readonly ILog Logger = LogManager.GetLogger(typeof(ExtensionMethods)); // TODO: Logging
+        private static readonly ILoggerFacade Logger = DefaultLogger.Get(typeof(ExtensionMethods));
 
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern bool CreateHardLink(string lpFileName, string lpExistingFileName, IntPtr lpSecurityAttributes);
 
         public static bool CreateHardLinkTo(this string @this, string targetPath)
@@ -46,7 +47,7 @@ namespace WpfExtensions.Infrastructure.Extensions
             if (predicate == null) predicate = File.Exists;
 
             var directoryName = Path.GetDirectoryName(@this) ?? throw new InvalidOperationException();
-            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(@this) ?? throw new InvalidOperationException();
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(@this);
             fileNameWithoutExtension = FileNameCountRegex.Replace(fileNameWithoutExtension, string.Empty).Trim();
             var extension = Path.GetExtension(@this);
             for (int i = 2; predicate(@this); i++)
@@ -92,18 +93,18 @@ namespace WpfExtensions.Infrastructure.Extensions
             {
                 if (retryCount > 5)
                 {
-                    //Logger.Error($"Try to delete the path ({path}) failed. ", e);
+                    Logger.Error($"Try to delete the path ({path}) failed. ", e);
                     return false;
                 }
 
-                //Logger.Error($"Retry to delete the path ({path}) failed {retryCount} times. ", e);
+                Logger.Error($"Retry to delete the path ({path}) failed {retryCount} times. ", e);
                 await TimeSpan.FromMilliseconds(retryCount * 500);
 
                 await TryDeleteAsync(path, retryCount + 1);
             }
             catch (Exception e)
             {
-                //Logger.Error($"Try to delete the path ({path}) failed", e);
+                Logger.Error($"Try to delete the path ({path}) failed", e);
                 return false;
             }
 

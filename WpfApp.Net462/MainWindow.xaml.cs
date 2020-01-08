@@ -1,4 +1,6 @@
-﻿namespace WpfApp.Net462
+﻿using System.Windows;
+
+namespace WpfApp.Net462
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

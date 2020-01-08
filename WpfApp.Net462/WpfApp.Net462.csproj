@@ -66,7 +66,14 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
+    <Compile Include="MarkupDemo.xaml.cs">
+      <DependentUpon>MarkupDemo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RelayCommand.cs" />
+    <Page Include="Animations.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -80,6 +87,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MarkupDemo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainWindow.vm.cs" />
@@ -126,6 +137,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\WpfExtensions.Infrastructure\WpfExtensions.Infrastructure.csproj">
+      <Project>{567E7A9A-627B-443E-8012-3F3A26852C54}</Project>
+      <Name>WpfExtensions.Infrastructure</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WpfExtensions.Xaml\WpfExtensions.Xaml.csproj">
       <Project>{51bfadbd-538e-43f6-95f1-8ff1d61f1c10}</Project>
       <Name>WpfExtensions.Xaml</Name>

@@ -1,11 +1,14 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
+using Prism.Logging;
+using WpfExtensions.Infrastructure.Extensions;
 
 namespace WpfExtensions.Infrastructure
 {
     public static class ProcessController
     {
+        private static readonly ILoggerFacade Logger = DefaultLogger.Get(typeof(ProcessController));
+
         private static volatile EventWaitHandle _keepAliveEvent;
 
         public static bool IsDuplicateInstance(string processName)
@@ -21,13 +24,13 @@ namespace WpfExtensions.Infrastructure
             }
             catch (Exception e)
             {
-                Debug.Fail("Can't open the communication event. The error message is ");
+                Logger.Warning("Can't open the communication event.", e);
                 return false;
             }
 
             if (createdNew) return false;
 
-            Debug.Fail("The killed event has been opened. So there is another process has been initialized.");
+            Logger.Warning("The killed event has been opened. So there is another process has been initialized.");
             _keepAliveEvent.Close();
 
             return true;
