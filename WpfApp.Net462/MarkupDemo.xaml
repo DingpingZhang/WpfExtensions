@@ -173,10 +173,13 @@
                                                                 '2311231'}" />
                                 <TextBox Margin="20"
                                          Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" />
-                                <TextBox Margin="20"
-                                         Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" />
-                                <TextBox Margin="20"
-                                         Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" />
+                                
+                                <UserControl>
+                                    <TextBlock Text="{markup:Switch {Binding InputText}, 
+                                                     {markup:Case '123', '321'},
+                                                     {markup:Case '1234', '4321'},
+                                                     {markup:Case 'default value!'}}" />
+                                </UserControl>
                             </StackPanel>
                         </Border>
                     </markup:If.False>

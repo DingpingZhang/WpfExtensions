@@ -48,29 +48,18 @@ namespace WpfExtensions.Xaml.Markup
                 var currentOption = values[_switchExtension._conditionIndex];
                 if (currentOption == DependencyProperty.UnsetValue) return Binding.DoNothing;
 
-                var @case = _switchExtension.Cases.FirstOrDefault(item => Equals(currentOption, item.Option));
-                if (@case != null)
-                {
-                    var index = GetIndex(@case);
-                    return index == InvalidIndex ? @case.Value : values[index];
-                }
+                var @case = _switchExtension.Cases.FirstOrDefault(item => Equals(currentOption, item.Option)) ??
+                            _switchExtension.Cases.FirstOrDefault(item => Equals(CaseExtension.DefaultOption, item.Option));
 
-                return null;
+                if (@case == null) return null;
+
+                var index = @case.Index;
+                return index == InvalidIndex ? @case.Value : values[index];
             }
 
             public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
             {
                 throw new NotSupportedException();
-            }
-
-            private static int GetIndex(ICase item)
-            {
-                return item switch
-                {
-                    Case @case => @case.Index,
-                    CaseExtension caseExtension => caseExtension.Index,
-                    _ => InvalidIndex
-                };
             }
         }
     }

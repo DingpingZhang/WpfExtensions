@@ -4,15 +4,25 @@ using System.Windows.Markup;
 namespace WpfExtensions.Xaml.Markup
 {
     [MarkupExtensionReturnType(typeof(CaseExtension))]
-    public class CaseExtension : MarkupExtension, ICase
+    [ContentProperty(nameof(Value))]
+    public class CaseExtension : MarkupExtension
     {
+        internal static readonly object DefaultOption = new object();
+
         internal int Index { get; set; } = SwitchExtension.InvalidIndex;
 
         [ConstructorArgument(nameof(Option))]
-        public object Option { get; set; }
+        public object Option { get; set; } = DefaultOption;
 
         [ConstructorArgument(nameof(Value))]
         public object Value { get; set; }
+
+        public CaseExtension() { }
+
+        public CaseExtension(object value)
+        {
+            Value = value;
+        }
 
         public CaseExtension(object option, object value)
         {
