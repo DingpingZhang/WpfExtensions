@@ -11,8 +11,6 @@ namespace WpfExtensions.Xaml.Markup
     {
         private const int InvalidIndex = -1;
 
-        private int _count;
-
         private int _conditionIndex = InvalidIndex;
         private int _trueIndex = InvalidIndex;
         private int _falseIndex = InvalidIndex;
@@ -62,7 +60,7 @@ namespace WpfExtensions.Xaml.Markup
             if (value is BindingBase binding)
             {
                 Bindings.Add(binding);
-                index = _count++;
+                index = Bindings.Count - 1;
                 storage = default;
             }
             else
