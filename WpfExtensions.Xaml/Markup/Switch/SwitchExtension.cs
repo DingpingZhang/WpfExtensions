@@ -48,8 +48,8 @@ namespace WpfExtensions.Xaml.Markup
                 var currentOption = values[_switchExtension._conditionIndex];
                 if (currentOption == DependencyProperty.UnsetValue) return Binding.DoNothing;
 
-                var @case = _switchExtension.Cases.FirstOrDefault(item => Equals(currentOption, item.Option)) ??
-                            _switchExtension.Cases.FirstOrDefault(item => Equals(CaseExtension.DefaultOption, item.Option));
+                var @case = _switchExtension.Cases.FirstOrDefault(item => Equals(currentOption, item.Label)) ??
+                            _switchExtension.Cases.FirstOrDefault(item => Equals(CaseExtension.DefaultLabel, item.Label));
 
                 if (@case == null) return null;
 
