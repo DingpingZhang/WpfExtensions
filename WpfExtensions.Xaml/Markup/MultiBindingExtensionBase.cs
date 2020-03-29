@@ -3,7 +3,7 @@ using System.Windows.Data;
 
 namespace WpfExtensions.Xaml.Markup
 {
-    public class MultiBindingWithoutConverter : MultiBinding
+    public abstract class MultiBindingExtensionBase : MultiBinding
     {
         public new IMultiValueConverter Converter
         {

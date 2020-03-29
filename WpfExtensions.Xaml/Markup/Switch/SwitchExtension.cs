@@ -8,7 +8,7 @@ using System.Windows.Markup;
 namespace WpfExtensions.Xaml.Markup
 {
     [ContentProperty(nameof(Cases))]
-    public partial class SwitchExtension : MultiBindingWithoutConverter
+    public partial class SwitchExtension : MultiBindingExtensionBase
     {
         internal const int InvalidIndex = -1;
 

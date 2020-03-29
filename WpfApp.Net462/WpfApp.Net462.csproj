@@ -56,6 +56,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DemoSwitch.xaml.cs">
+      <DependentUpon>DemoSwitch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="I18nRes\ResKeys.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -66,12 +69,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
-    <Compile Include="MarkupDemo.xaml.cs">
-      <DependentUpon>MarkupDemo.xaml</DependentUpon>
+    <Compile Include="DemoMarkup.cs">
+      <DependentUpon>DemoMarkup.xaml</DependentUpon>
     </Compile>
     <Compile Include="MultiBindingConverter.cs" />
     <Compile Include="RelayCommand.cs" />
     <Page Include="Animations.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DemoSwitch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -88,7 +95,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MarkupDemo.xaml">
+    <Page Include="DemoMarkup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

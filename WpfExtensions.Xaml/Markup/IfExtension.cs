@@ -7,7 +7,7 @@ using WpfExtensions.Xaml.ExtensionMethods;
 
 namespace WpfExtensions.Xaml.Markup
 {
-    public class IfExtension : MultiBindingWithoutConverter
+    public class IfExtension : MultiBindingExtensionBase
     {
         private const int InvalidIndex = -1;
 

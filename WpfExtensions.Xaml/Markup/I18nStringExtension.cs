@@ -12,7 +12,7 @@ namespace WpfExtensions.Xaml.Markup
     [ContentProperty(nameof(Args))]
     [MarkupExtensionReturnType(typeof(object))]
     // ReSharper disable once InconsistentNaming
-    public partial class I18nStringExtension : MultiBindingWithoutConverter
+    public partial class I18nStringExtension : MultiBindingExtensionBase
     {
         private int _keyIndex;
         private ComponentResourceKey _key;

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="WpfApp.Net462.MarkupDemo"
+﻿<UserControl x:Class="WpfApp.Net462.DemoMarkup"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -164,7 +164,7 @@
 
                                 <TextBlock Text="{markup:If {Binding InputText, Converter={StaticResource IsNullOrEmptyOperator}}, 
                                                         {markup:I18n {x:Static i18NRes:ResKeys.TestString_WithoutFormat}}, 
-                                                        {markup:I18n {x:Static i18NRes:ResKeys.TestString_WithFormat1}}, Converter={StaticResource MultiBindingConverter}}" />
+                                                        {markup:I18n {x:Static i18NRes:ResKeys.TestString_WithFormat1}}}" />
                                 <TextBlock Text="{markup:I18n {x:Static i18NRes:ResKeys.TestString_WithoutFormat}}" />
                                 <TextBlock Text="{markup:I18nString {x:Static i18NRes:ResKeys.TestString_WithFormat1}, 
                                                                 '123'}" />
