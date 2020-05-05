@@ -3,7 +3,7 @@ using System.Windows.Input;
 using WpfExtensions.Infrastructure.Commands;
 using WpfExtensions.Xaml;
 
-namespace WpfApp.Net462
+namespace WpfApp.Net462.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {

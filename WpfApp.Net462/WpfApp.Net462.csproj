@@ -56,7 +56,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DemoSwitch.xaml.cs">
+    <Compile Include="Views\DemoSwitch.xaml.cs">
       <DependentUpon>DemoSwitch.xaml</DependentUpon>
     </Compile>
     <Compile Include="I18nRes\ResKeys.cs">
@@ -69,20 +69,19 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
-    <Compile Include="DemoMarkup.cs">
+    <Compile Include="Views\DemoMarkup.cs">
       <DependentUpon>DemoMarkup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MultiBindingConverter.cs" />
     <Compile Include="RelayCommand.cs" />
     <Page Include="Animations.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DemoSwitch.xaml">
+    <Page Include="Views\DemoSwitch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -91,17 +90,17 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BindableBase.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="DemoMarkup.xaml">
+    <Page Include="Views\DemoMarkup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainWindow.vm.cs" />
+    <Compile Include="ViewModels\MainWindow.vm.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -154,5 +153,6 @@
       <Name>WpfExtensions.Xaml</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

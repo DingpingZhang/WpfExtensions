@@ -1,9 +1,8 @@
-﻿<UserControl x:Class="WpfApp.Net462.DemoMarkup"
+﻿<UserControl x:Class="WpfApp.Net462.Views.DemoMarkup"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:WpfApp.Net462"
              xmlns:markup="clr-namespace:WpfExtensions.Xaml.Markup;assembly=WpfExtensions.Xaml"
              xmlns:i18NRes="clr-namespace:WpfApp.Net462.I18nRes"
              mc:Ignorable="d"
@@ -51,7 +50,6 @@
         </DrawingImage>
 
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <local:MultiBindingConverter x:Key="MultiBindingConverter" />
 
         <Style x:Key="LinkButtonStyle"
                TargetType="ButtonBase">

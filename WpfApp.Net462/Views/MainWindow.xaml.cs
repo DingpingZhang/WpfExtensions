@@ -1,6 +1,7 @@
-﻿using System.Windows;
+﻿
+using WpfApp.Net462.ViewModels;
 
-namespace WpfApp.Net462
+namespace WpfApp.Net462.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

@@ -1,4 +1,4 @@
-﻿namespace WpfApp.Net462
+﻿namespace WpfApp.Net462.Views
 {
     /// <summary>
     /// Interaction logic for MarkupDemo.xaml
