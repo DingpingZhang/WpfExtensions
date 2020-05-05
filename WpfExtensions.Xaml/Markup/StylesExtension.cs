@@ -15,6 +15,12 @@ namespace WpfExtensions.Xaml.Markup
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
+            if (!(serviceProvider.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget provideValueTarget))
+                throw new ArgumentException(
+                    $"The {nameof(serviceProvider)} must implement {nameof(IProvideValueTarget)} interface.");
+
+            if (provideValueTarget.TargetObject?.GetType().FullName == "System.Windows.SharedDp") return this;
+
             return Styles.Aggregate((acc, item) => Merge(acc, item));
         }
 
