@@ -7,21 +7,26 @@ using WpfExtensions.Xaml.ExtensionMethods;
 
 namespace WpfExtensions.Xaml.Markup
 {
+    [ContentProperty(nameof(Styles))]
     [MarkupExtensionReturnType(typeof(Style))]
-    public class StylesExtension : MarkupExtension
+    public partial class StylesExtension : MarkupExtension
     {
+        public StyleCollection Styles { get; }
+
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            throw new NotImplementedException();
+            return Styles.Aggregate((acc, item) => Merge(acc, item));
         }
 
-        private static Style MergeStyles(Style left, Style right)
+        // Private methods
+
+        private static Style Merge(Style left, Style right)
         {
             if (TryGetNonNull(left, right, out var value)) return value;
 
             var result = new Style(
                 GetMergedStyleType(left.TargetType, right.TargetType),
-                MergeStyles(left.BasedOn, right.BasedOn))
+                Merge(left.BasedOn, right.BasedOn))
             {
                 // Merge Resources
                 Resources = MergeResources(left.Resources, right.Resources)
@@ -36,6 +41,7 @@ namespace WpfExtensions.Xaml.Markup
             result.Seal();
             return result;
         }
+
 
         private static Type GetMergedStyleType(Type left, Type right)
         {
@@ -60,7 +66,7 @@ namespace WpfExtensions.Xaml.Markup
         private static IEnumerable<Setter> MergeSetters(SetterBaseCollection left, SetterBaseCollection right)
         {
             return TryGetNonNull(left, right, out var value)
-                ? value?.Cast<Setter>()
+                ? value.Cast<Setter>()
                 : right.Cast<Setter>().Union(left.Cast<Setter>(), (x, y) =>
                     string.IsNullOrEmpty(y.TargetName)
                         ? Equals(x.Property, y.Property)
@@ -111,7 +117,7 @@ namespace WpfExtensions.Xaml.Markup
 
         private static bool TryGetNonNull<T>(T left, T right, out T result) where T : class
         {
-            if (Equals(left, right))
+            if (EqualityComparer<T>.Default.Equals(left, right))
             {
                 result = left;
                 return true;
