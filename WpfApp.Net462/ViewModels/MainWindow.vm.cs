@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using Prism.Mvvm;
+using System.Globalization;
 using System.Windows.Input;
 using WpfExtensions.Infrastructure.Commands;
 using WpfExtensions.Xaml;

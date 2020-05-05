@@ -1,7 +1,4 @@
-﻿
-using WpfApp.Net462.ViewModels;
-
-namespace WpfApp.Net462.Views
+﻿namespace WpfApp.Net462.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -10,8 +7,6 @@ namespace WpfApp.Net462.Views
     {
         public MainWindow()
         {
-            DataContext = new MainWindowViewModel();
-
             InitializeComponent();
         }
     }
