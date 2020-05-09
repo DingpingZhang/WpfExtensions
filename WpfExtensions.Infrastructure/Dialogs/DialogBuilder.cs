@@ -8,24 +8,23 @@ namespace WpfExtensions.Infrastructure.Dialogs
     {
         private static readonly ConcurrentDictionary<object, Window> SingletonWindows = new ConcurrentDictionary<object, Window>();
 
-        public static bool Exists<TView>(object key)
+        public static bool TryGetSingletonWindow<TView>(object key, out Window window)
         {
-            return SingletonWindows.ContainsKey(GetSingletonKey(typeof(TView), key));
+            return SingletonWindows.TryGetValue(GetSingletonKey(typeof(TView), key), out window);
         }
 
-        public static bool Exists<TView>(object key, out TView view)
+        public static IDialogBuilder Wrap<TView>(TView instance = null) where TView : FrameworkElement, new()
         {
-            var singletonKey = GetSingletonKey(typeof(TView), key);
-            var exists = SingletonWindows.ContainsKey(singletonKey);
-
-            view = exists ? (TView)SingletonWindows[singletonKey].Content : default;
-
-            return exists;
+            return Wrap(() => instance ?? new TView());
         }
 
-        public static IDialogBuilder<TView> Wrap<TView>(TView instance = null) where TView : FrameworkElement, new()
+        public static IDialogBuilder Wrap<TView>(Func<TView> factory) where TView : FrameworkElement
         {
-            return new DialogBuilderImpl<TView>(instance);
+            Guards.ThrowIfNull(factory);
+
+            var builder = new DialogBuilderImpl();
+            builder.Init(factory);
+            return builder;
         }
 
         private static object GetSingletonKey(Type type, object key)
@@ -33,103 +32,113 @@ namespace WpfExtensions.Infrastructure.Dialogs
             return key != null ? (object)(type.FullName, key) : type.FullName;
         }
 
-        public static Window Build<TView>(this IDialogBuilder<TView> @this) where TView : FrameworkElement =>
-            @this.Build<Window>();
-
-        private class DialogBuilderImpl<TView> : IDialogBuilder<TView>
-            where TView : FrameworkElement, new()
+        private class DialogBuilderImpl : IDialogBuilder
         {
-            private Func<TView> _viewBuilder;
-            private Action<TView> _viewModelInitializer;
-            private Action<Window> _windowSettings;
+            private Type _viewType;
+            private Func<FrameworkElement> _viewBuilder;
+            private Action<FrameworkElement, Window> _configure;
             private (bool IsSingleton, object Key) _singletonArgs;
 
-            public DialogBuilderImpl(TView instance = null)
+            public void Init<TView>(Func<TView> viewBuilder) where TView : FrameworkElement
             {
-                _viewBuilder = () => instance ?? new TView();
+                _viewType = typeof(TView);
+                _viewBuilder = viewBuilder;
             }
 
-            public IDialogBuilder<TView> View(Action<TView> settings)
+            public IDialogBuilder View<TView>(Action<TView> settings) where TView : FrameworkElement
             {
-                var previousAction = _viewBuilder;
-                _viewBuilder = () =>
-                {
-                    var result = previousAction?.Invoke();
-                    settings?.Invoke(result);
-                    return result;
-                };
-
-                return this;
+                return settings == null
+                    ? this
+                    : Configure<TView, object, Window>((v, vm, w) => settings(v));
             }
 
-            public IDialogBuilder<TView> ViewModel<TViewModel>(Action<TViewModel> settings)
+            public IDialogBuilder ViewModel<TViewModel>(Action<TViewModel> settings)
             {
-                var previousAction = _viewModelInitializer;
-                _viewModelInitializer = view =>
+                return settings == null
+                    ? this
+                    : Configure<FrameworkElement, TViewModel, Window>((v, vm, w) => settings(vm));
+            }
+
+            public IDialogBuilder Window<TWindow>(Action<TWindow> settings) where TWindow : Window
+            {
+                return settings == null
+                    ? this
+                    : Configure<FrameworkElement, object, TWindow>((v, vm, w) => settings(w));
+            }
+
+            public IDialogBuilder Configure<TView, TViewModel, TWindow>(Action<TView, TViewModel, TWindow> configure)
+                where TView : FrameworkElement
+                where TWindow : Window
+            {
+                var previous = _configure;
+                _configure = (view, window) =>
                 {
-                    previousAction?.Invoke(view);
+                    previous?.Invoke(view, window);
+
+                    if (!(view is TView tView))
+                        throw new ArgumentException($"The view ({view?.GetType()}) is not the {typeof(TView)} type.");
+
+                    if (!(window is TWindow tWindow))
+                        throw new ArgumentException($"The window ({window?.GetType()}) is not the {typeof(TWindow)} type.");
+
                     if (view.DataContext is TViewModel viewModel)
                     {
-                        settings?.Invoke(viewModel);
+                        configure?.Invoke(tView, viewModel, tWindow);
                     }
                 };
+
                 return this;
             }
 
-            public IDialogBuilder<TView> Window(Action<Window> settings)
-            {
-                var previousAction = _windowSettings;
-                _windowSettings = window =>
-                {
-                    previousAction?.Invoke(window);
-                    settings?.Invoke(window);
-                };
-                return this;
-            }
-
-            public IDialogBuilder<TView> AsSingleton(object singletonKey = null)
+            public IDialogBuilder AsSingleton(object singletonKey = null)
             {
                 _singletonArgs = (true, singletonKey);
                 return this;
             }
 
-            public T Build<T>(Func<T> windowProvider = null) where T : Window, new()
+            public T Build<T>(Func<T> windowProvider, bool updateSingletonConfigure = false) where T : Window
             {
-                windowProvider ??= () => new T();
-
-                var result = _singletonArgs.IsSingleton && SingletonWindows.ContainsKey(GetSingletonKey())
-                    ? (T)SingletonWindows[GetSingletonKey()]
-                    // ReSharper disable once PossibleNullReferenceException
-                    : Application.Current.Dispatcher.Invoke(() => NewDialogWindow(windowProvider));
-
-                return result;
-            }
-
-            private T NewDialogWindow<T>(Func<T> windowProvider) where T : Window, new()
-            {
-                var window = windowProvider();
-                var content = _viewBuilder();
-                window.Content = content;
+                Guards.ThrowIfNull(windowProvider);
 
                 if (_singletonArgs.IsSingleton)
                 {
-                    SingletonWindows.TryAdd(GetSingletonKey(), window);
-                    window.Closed += (sender, e) => SingletonWindows.TryRemove(GetSingletonKey(), out _);
+                    var singletonKey = GetSingletonKey(_viewType);
+                    if (SingletonWindows.TryGetValue(singletonKey, out var window))
+                    {
+                        if (updateSingletonConfigure)
+                        {
+                            _configure?.Invoke((FrameworkElement)window.Content, window);
+                        }
+
+                        return (T)window;
+                    }
+
+                    var newWindow = Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        var dialog = NewDialogWindow(windowProvider);
+                        dialog.Closed += (sender, args) => SingletonWindows.TryRemove(singletonKey, out _);
+                        return dialog;
+                    });
+
+                    SingletonWindows.TryAdd(singletonKey, newWindow);
+                    return newWindow;
                 }
 
-                _windowSettings?.Invoke(window);
+                return Application.Current.Dispatcher.Invoke(() => NewDialogWindow(windowProvider));
+            }
 
-                if (content.DataContext is DialogViewModel dialogViewModel)
-                {
-                    dialogViewModel.Window = window;
-                }
+            private T NewDialogWindow<T>(Func<T> windowProvider) where T : Window
+            {
+                var window = windowProvider();
+                var view = _viewBuilder();
+                window.Content = view;
 
-                _viewModelInitializer?.Invoke(content);
+                _configure?.Invoke(view, window);
 
                 return window;
             }
 
-            private object GetSingletonKey() => DialogBuilder.GetSingletonKey(typeof(TView), _singletonArgs.Key);
+            private object GetSingletonKey(Type type) => DialogBuilder.GetSingletonKey(type, _singletonArgs.Key);
         }
     }
 }

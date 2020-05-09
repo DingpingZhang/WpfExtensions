@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Threading;
+using Prism.Logging;
+using WpfExtensions.Infrastructure.Extensions;
 
 namespace WpfExtensions.Infrastructure.Dialogs
 {
-    public static class DialogHelper
+    public static class DialogExtensions
     {
+        private static readonly ILoggerFacade Logger = DefaultLogger.Get(typeof(DialogExtensions));
+
         /// <summary>
         /// Enables or disables mouse and keyboard input to the specified window or control. 
         /// When input is disabled, the window does not receive input such as mouse clicks and key presses. 
@@ -17,8 +22,6 @@ namespace WpfExtensions.Infrastructure.Dialogs
         /// <returns></returns>
         [DllImport("user32.dll")]
         private static extern bool EnableWindow(IntPtr hWnd, bool bEnable);
-
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(DialogHelper));
 
         public static bool ShowDialog<TResult>(this Window window, out TResult result)
         {
@@ -36,10 +39,10 @@ namespace WpfExtensions.Infrastructure.Dialogs
             window.Dispatcher.Run(() =>
             {
                 if (window.Content is FrameworkElement frameworkElement &&
-                    frameworkElement.DataContext is DialogViewModel dialogViewModel &&
-                    dialogViewModel.Result != null)
+                    frameworkElement.DataContext is IDialogReturnable dialogReturnable &&
+                    dialogReturnable.Result != null)
                 {
-                    tempResult = (TResult)dialogViewModel.Result;
+                    tempResult = (TResult)dialogReturnable.Result;
                     canGetResult = true;
                 }
             });
@@ -54,12 +57,14 @@ namespace WpfExtensions.Infrastructure.Dialogs
             return false;
         }
 
-        public static void ShowModal(this Window window) => HeadlessWindow.Using(window.ShowModal);
+        public static void ShowModal(this Window window) => UsingHeadlessWindow(window.ShowModal);
 
         public static void ShowModal(this Window @this, Window owner)
         {
+            Guards.ThrowIfNull(@this);
+
             if (@this.Owner == null && owner == null)
-                throw new InvalidOperationException($"Cannot show a modal dialog ({@this.GetFriendlyWindowName()}) that doesn't have an owner window. ");
+                throw new InvalidOperationException($"Cannot show a modal dialog ({@this.Content?.GetType()}) that doesn't have an owner window.");
 
             if (owner != null) @this.Owner = owner;
 
@@ -73,7 +78,7 @@ namespace WpfExtensions.Infrastructure.Dialogs
             var returnValue = false;
             TResult dialogResult = default;
 
-            HeadlessWindow.Using(owner => returnValue = @this.ShowModal(out dialogResult, owner));
+            UsingHeadlessWindow(owner => returnValue = @this.ShowModal(out dialogResult, owner));
 
             result = dialogResult;
             return returnValue;
@@ -91,15 +96,45 @@ namespace WpfExtensions.Infrastructure.Dialogs
             }
 
             if (@this.Content is FrameworkElement frameworkElement &&
-                frameworkElement.DataContext is DialogViewModel dialogViewModel &&
-                dialogViewModel.Result != null)
+                frameworkElement.DataContext is IDialogReturnable dialogReturnable &&
+                dialogReturnable.Result != null)
             {
-                result = (TResult)dialogViewModel.Result;
+                result = (TResult)dialogReturnable.Result;
                 return true;
             }
 
             result = default;
             return false;
+        }
+
+        private static void Run(this Dispatcher dispatcher, Action action)
+        {
+            if (dispatcher.CheckAccess())
+            {
+                action?.Invoke();
+            }
+            else
+            {
+                dispatcher.Invoke(action);
+            }
+        }
+
+        private static void UsingHeadlessWindow(Action<Window> callback)
+        {
+            var window = new Window
+            {
+                Title = "HeadlessWindow",
+                Width = 0,
+                Height = 0,
+                WindowStyle = WindowStyle.None,
+                AllowsTransparency = true,
+                ShowInTaskbar = false
+            };
+
+            // https://stackoverflow.com/a/4826741/5986595
+            new WindowInteropHelper(window).EnsureHandle();
+            callback?.Invoke(window);
+            window.Close();
         }
 
         private sealed class ShowAndWaitHelper
