@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="WpfApp.Net462.Views.DemoSwitch"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:markup="clr-namespace:WpfExtensions.Xaml.Markup;assembly=WpfExtensions.Xaml"
+             xmlns:local="clr-namespace:WpfApp.Net462"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    <Grid>
+        <markup:Switch Condition="">
+            <markup:Case Label="">
+
+            </markup:Case>
+        </markup:Switch>
+    </Grid>
+</UserControl>
