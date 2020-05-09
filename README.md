@@ -1,14 +1,15 @@
-# System.Windows.Extensions
+# WpfExtensions.Xaml.Markup
 
 ## 1. `ComposeExtension`
 
 Combine multiple Converters into one pipeline.
 
 ```xml
-<Button Visibility="{Binding SampleCollection, Converter={markup:Compose
-                    {StaticResource AnyConverter},
-                    {StaticResource NotConverter},
-                    {StaticResource BooleanToVisibilityConverter}}}" />
+<TextBlock Visibility="{Binding DescriptionText, Converter={markup:Compose
+                       {StaticResource IsNullOrEmptyOperator},
+                       {StaticResource NotConverter},
+                       {StaticResource BooleanToVisibilityConverter}}}"
+           Text="{Binding DescriptionText}" />
 ```
 
 ## 2. `IfExtension`
