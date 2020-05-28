@@ -50,11 +50,11 @@ Using the `Switch expression` in XAML.
 
 ```xml
 <UserControl>
-    <Switch Condition="{Binding SelectedViewName}">
+    <Switch To="{Binding SelectedViewName}">
         <Case Label="View1">
             <views:View1 />
         </Case>
-        <Case Label="View2">
+        <Case Label="{x:Static res:Views.View2}">
             <views:View2 />
         </Case>
         <Case>

@@ -33,18 +33,18 @@ namespace WpfExtensions.Xaml.Markup
 		 * e.g.: ctor(params <#= ItemTypeName #>[] converters) cannot be used.
 		 */
 
-		private <#= ClassName #>(Binding condition)
+		private <#= ClassName #>(Binding to)
 			: this()
 		{
-			Condition = condition;
+			To = to;
 		}
 
 <#
     for (int i = 2; i <= Count; i++)
     {
 #>
-		public <#= ClassName #>(Binding condition, <#= string.Join(", ", Enumerable.Range(0, i).Select(index => $"{ItemTypeName} item{index}")) #>)
-			: this(condition)
+		public <#= ClassName #>(Binding to, <#= string.Join(", ", Enumerable.Range(0, i).Select(index => $"{ItemTypeName} item{index}")) #>)
+			: this(to)
 		{
 <#= string.Join(";\r\n", Enumerable.Range(0, i).Select(index => $"\t\t\t{CollectionName}.Add(item{index})")) #>;
 		}

@@ -20,29 +20,29 @@ namespace WpfExtensions.Xaml.Markup
 		 * e.g.: ctor(params CaseExtension[] converters) cannot be used.
 		 */
 
-		private SwitchExtension(Binding condition)
+		private SwitchExtension(Binding to)
 			: this()
 		{
-			Condition = condition;
+			To = to;
 		}
 
-		public SwitchExtension(Binding condition, CaseExtension item0, CaseExtension item1)
-			: this(condition)
+		public SwitchExtension(Binding to, CaseExtension item0, CaseExtension item1)
+			: this(to)
 		{
 			Cases.Add(item0);
 			Cases.Add(item1);
 		}
 
-		public SwitchExtension(Binding condition, CaseExtension item0, CaseExtension item1, CaseExtension item2)
-			: this(condition)
+		public SwitchExtension(Binding to, CaseExtension item0, CaseExtension item1, CaseExtension item2)
+			: this(to)
 		{
 			Cases.Add(item0);
 			Cases.Add(item1);
 			Cases.Add(item2);
 		}
 
-		public SwitchExtension(Binding condition, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3)
-			: this(condition)
+		public SwitchExtension(Binding to, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3)
+			: this(to)
 		{
 			Cases.Add(item0);
 			Cases.Add(item1);
@@ -50,8 +50,8 @@ namespace WpfExtensions.Xaml.Markup
 			Cases.Add(item3);
 		}
 
-		public SwitchExtension(Binding condition, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4)
-			: this(condition)
+		public SwitchExtension(Binding to, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4)
+			: this(to)
 		{
 			Cases.Add(item0);
 			Cases.Add(item1);
@@ -60,8 +60,8 @@ namespace WpfExtensions.Xaml.Markup
 			Cases.Add(item4);
 		}
 
-		public SwitchExtension(Binding condition, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5)
-			: this(condition)
+		public SwitchExtension(Binding to, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5)
+			: this(to)
 		{
 			Cases.Add(item0);
 			Cases.Add(item1);
@@ -71,8 +71,8 @@ namespace WpfExtensions.Xaml.Markup
 			Cases.Add(item5);
 		}
 
-		public SwitchExtension(Binding condition, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6)
-			: this(condition)
+		public SwitchExtension(Binding to, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6)
+			: this(to)
 		{
 			Cases.Add(item0);
 			Cases.Add(item1);
@@ -83,8 +83,8 @@ namespace WpfExtensions.Xaml.Markup
 			Cases.Add(item6);
 		}
 
-		public SwitchExtension(Binding condition, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7)
-			: this(condition)
+		public SwitchExtension(Binding to, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7)
+			: this(to)
 		{
 			Cases.Add(item0);
 			Cases.Add(item1);
@@ -96,8 +96,8 @@ namespace WpfExtensions.Xaml.Markup
 			Cases.Add(item7);
 		}
 
-		public SwitchExtension(Binding condition, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8)
-			: this(condition)
+		public SwitchExtension(Binding to, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8)
+			: this(to)
 		{
 			Cases.Add(item0);
 			Cases.Add(item1);
@@ -110,8 +110,8 @@ namespace WpfExtensions.Xaml.Markup
 			Cases.Add(item8);
 		}
 
-		public SwitchExtension(Binding condition, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8, CaseExtension item9)
-			: this(condition)
+		public SwitchExtension(Binding to, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8, CaseExtension item9)
+			: this(to)
 		{
 			Cases.Add(item0);
 			Cases.Add(item1);
@@ -125,8 +125,8 @@ namespace WpfExtensions.Xaml.Markup
 			Cases.Add(item9);
 		}
 
-		public SwitchExtension(Binding condition, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8, CaseExtension item9, CaseExtension item10)
-			: this(condition)
+		public SwitchExtension(Binding to, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8, CaseExtension item9, CaseExtension item10)
+			: this(to)
 		{
 			Cases.Add(item0);
 			Cases.Add(item1);
@@ -141,8 +141,8 @@ namespace WpfExtensions.Xaml.Markup
 			Cases.Add(item10);
 		}
 
-		public SwitchExtension(Binding condition, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8, CaseExtension item9, CaseExtension item10, CaseExtension item11)
-			: this(condition)
+		public SwitchExtension(Binding to, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8, CaseExtension item9, CaseExtension item10, CaseExtension item11)
+			: this(to)
 		{
 			Cases.Add(item0);
 			Cases.Add(item1);
@@ -158,8 +158,8 @@ namespace WpfExtensions.Xaml.Markup
 			Cases.Add(item11);
 		}
 
-		public SwitchExtension(Binding condition, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8, CaseExtension item9, CaseExtension item10, CaseExtension item11, CaseExtension item12)
-			: this(condition)
+		public SwitchExtension(Binding to, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8, CaseExtension item9, CaseExtension item10, CaseExtension item11, CaseExtension item12)
+			: this(to)
 		{
 			Cases.Add(item0);
 			Cases.Add(item1);
@@ -176,8 +176,8 @@ namespace WpfExtensions.Xaml.Markup
 			Cases.Add(item12);
 		}
 
-		public SwitchExtension(Binding condition, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8, CaseExtension item9, CaseExtension item10, CaseExtension item11, CaseExtension item12, CaseExtension item13)
-			: this(condition)
+		public SwitchExtension(Binding to, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8, CaseExtension item9, CaseExtension item10, CaseExtension item11, CaseExtension item12, CaseExtension item13)
+			: this(to)
 		{
 			Cases.Add(item0);
 			Cases.Add(item1);
@@ -195,8 +195,8 @@ namespace WpfExtensions.Xaml.Markup
 			Cases.Add(item13);
 		}
 
-		public SwitchExtension(Binding condition, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8, CaseExtension item9, CaseExtension item10, CaseExtension item11, CaseExtension item12, CaseExtension item13, CaseExtension item14)
-			: this(condition)
+		public SwitchExtension(Binding to, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8, CaseExtension item9, CaseExtension item10, CaseExtension item11, CaseExtension item12, CaseExtension item13, CaseExtension item14)
+			: this(to)
 		{
 			Cases.Add(item0);
 			Cases.Add(item1);
@@ -215,8 +215,8 @@ namespace WpfExtensions.Xaml.Markup
 			Cases.Add(item14);
 		}
 
-		public SwitchExtension(Binding condition, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8, CaseExtension item9, CaseExtension item10, CaseExtension item11, CaseExtension item12, CaseExtension item13, CaseExtension item14, CaseExtension item15)
-			: this(condition)
+		public SwitchExtension(Binding to, CaseExtension item0, CaseExtension item1, CaseExtension item2, CaseExtension item3, CaseExtension item4, CaseExtension item5, CaseExtension item6, CaseExtension item7, CaseExtension item8, CaseExtension item9, CaseExtension item10, CaseExtension item11, CaseExtension item12, CaseExtension item13, CaseExtension item14, CaseExtension item15)
+			: this(to)
 		{
 			Cases.Add(item0);
 			Cases.Add(item1);

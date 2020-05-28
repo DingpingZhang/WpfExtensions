@@ -13,8 +13,8 @@ namespace WpfExtensions.Xaml.Markup
 
         protected override void InsertItem(int index, CaseExtension item)
         {
-            if (ReferenceEquals(item.Label, CaseExtension.DefaultLabel) &&
-                Items.Any(it => ReferenceEquals(it.Label, CaseExtension.DefaultLabel)))
+            if (ReferenceEquals(item.Label, Constants.DefaultLabel) &&
+                Items.Any(it => ReferenceEquals(it.Label, Constants.DefaultLabel)))
             {
                 throw new InvalidOperationException(
                     "A Switch markup extension must not contain more than one default Case markup extension.");

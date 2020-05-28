@@ -7,12 +7,10 @@ namespace WpfExtensions.Xaml.Markup
     [ContentProperty(nameof(Value))]
     public class CaseExtension : MarkupExtension
     {
-        internal static readonly object DefaultLabel = new object();
-
-        internal int Index { get; set; } = SwitchExtension.InvalidIndex;
+        internal int Index { get; set; } = Constants.InvalidIndex;
 
         [ConstructorArgument(nameof(Label))]
-        public object Label { get; set; } = DefaultLabel;
+        public object Label { get; set; } = Constants.DefaultLabel;
 
         [ConstructorArgument(nameof(Value))]
         public object Value { get; set; }
