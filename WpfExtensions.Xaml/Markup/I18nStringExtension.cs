@@ -9,11 +9,10 @@ using System.Windows.Markup;
 
 namespace WpfExtensions.Xaml.Markup
 {
-
     [ContentProperty(nameof(Args))]
     [MarkupExtensionReturnType(typeof(object))]
     // ReSharper disable once InconsistentNaming
-    public partial class I18nStringExtension : MultiBinding
+    public partial class I18nStringExtension : MultiBindingExtensionBase
     {
         private int _keyIndex;
         private ComponentResourceKey _key;
@@ -32,12 +31,6 @@ namespace WpfExtensions.Xaml.Markup
 
         [ConstructorArgument(nameof(ResourceConverter))]
         public IValueConverter ResourceConverter { get; set; }
-
-        public new IMultiValueConverter Converter
-        {
-            get => base.Converter;
-            private set => base.Converter = value;
-        }
 
         private class MultiValueConverter : IMultiValueConverter
         {
@@ -70,9 +63,24 @@ namespace WpfExtensions.Xaml.Markup
 
     public class ArgCollection : Collection<object>
     {
+        // HACK: Replace the System.ValueTuple with a struct.
+        // See here for details: https://github.com/dotnet/wpf/issues/2320
+        internal struct ArgTuple
+        {
+            public bool InBindings { get; }
+
+            public int Index { get; }
+
+            public ArgTuple(bool inBindings, int index)
+            {
+                InBindings = inBindings;
+                Index = index;
+            }
+        }
+
         private readonly I18nStringExtension _owner;
 
-        internal List<(bool InBindings, int Index)> Indexes = new List<(bool InBindings, int Index)>();
+        internal List<ArgTuple> Indexes = new List<ArgTuple>();
 
         public ArgCollection(I18nStringExtension owner) => _owner = owner;
 
@@ -80,12 +88,12 @@ namespace WpfExtensions.Xaml.Markup
         {
             if (item is BindingBase binding)
             {
-                Indexes.Add((true, _owner.Bindings.Count));
+                Indexes.Add(new ArgTuple(true, _owner.Bindings.Count));
                 _owner.Bindings.Add(binding);
             }
             else
             {
-                Indexes.Add((false, Count));
+                Indexes.Add(new ArgTuple(false, Count));
                 base.InsertItem(index, item);
             }
         }

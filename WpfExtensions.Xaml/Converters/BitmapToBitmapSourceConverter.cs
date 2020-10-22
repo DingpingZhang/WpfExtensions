@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !NETCOREAPP
+
+using System;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Data;
@@ -33,3 +35,5 @@ namespace WpfExtensions.Xaml.Converters
         }
     }
 }
+
+#endif

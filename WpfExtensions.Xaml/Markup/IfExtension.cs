@@ -7,11 +7,9 @@ using WpfExtensions.Xaml.ExtensionMethods;
 
 namespace WpfExtensions.Xaml.Markup
 {
-    public class IfExtension : MultiBinding
+    public class IfExtension : MultiBindingExtensionBase
     {
         private const int InvalidIndex = -1;
-
-        private int _count;
 
         private int _conditionIndex = InvalidIndex;
         private int _trueIndex = InvalidIndex;
@@ -38,12 +36,6 @@ namespace WpfExtensions.Xaml.Markup
             set => SetProperty(value, ref _falseIndex, out _false);
         }
 
-        public new IMultiValueConverter Converter
-        {
-            get => base.Converter;
-            private set => base.Converter = value;
-        }
-
         public IfExtension() => Converter = new MultiValueConverter(this);
 
         public IfExtension(Binding condition, object trueValue, object falseValue)
@@ -62,7 +54,7 @@ namespace WpfExtensions.Xaml.Markup
             if (value is BindingBase binding)
             {
                 Bindings.Add(binding);
-                index = _count++;
+                index = Bindings.Count - 1;
                 storage = default;
             }
             else
