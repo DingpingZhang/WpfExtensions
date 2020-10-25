@@ -1,6 +1,4 @@
-﻿// ReSharper disable once CheckNamespace
-
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -8,48 +6,57 @@ namespace WpfExtensions.Infrastructure.Extensions
 {
     public static class CommandExtensions
     {
-        private class ThrottleCommand : ICommand
+        private abstract class CommandBase : ICommand
         {
-            private readonly ICommand _command;
-            private readonly TimeSpan _dueTime;
-
-            private DateTime _lastExecutedTime = DateTime.MinValue;
-            private volatile object _lastParameter;
-            private volatile bool _isWaiting;
-
-            public ThrottleCommand(ICommand command, TimeSpan dueTime)
-            {
-                _command = command;
-                _dueTime = dueTime;
-            }
-
-            public async void Execute(object parameter) => await InnerExecuteAsync(parameter);
-
-            public bool CanExecute(object parameter) => _command.CanExecute(parameter);
-
-            private async Task InnerExecuteAsync(object parameter)
-            {
-                _lastParameter = parameter;
-
-                if (_isWaiting) return;
-                _isWaiting = true;
-
-                var interval = DateTime.Now - _lastExecutedTime;
-                if (_dueTime > interval)
-                {
-                    await Task.Delay(_dueTime - interval);
-                }
-
-                _lastExecutedTime = DateTime.Now;
-                _command.Execute(_lastParameter);
-
-                _isWaiting = false;
-            }
+            protected readonly ICommand _command;
+            protected readonly TimeSpan _interval;
 
             public event EventHandler CanExecuteChanged
             {
                 add => _command.CanExecuteChanged += value;
                 remove => _command.CanExecuteChanged -= value;
+            }
+
+            protected CommandBase(ICommand command, TimeSpan interval)
+            {
+                _command = command;
+                _interval = interval;
+            }
+
+            public bool CanExecute(object parameter) => _command.CanExecute(parameter);
+
+            public abstract void Execute(object parameter);
+        }
+
+        private class ThrottleCommand : CommandBase
+        {
+            private volatile bool _isWaiting;
+            private volatile object _lastParameter;
+            private DateTime _lastTriggeredTime = DateTime.MinValue;
+
+            public ThrottleCommand(ICommand command, TimeSpan interval) : base(command, interval) { }
+
+            public override async void Execute(object parameter) => await InnerExecuteAsync(parameter);
+
+            // RFC: http://introtorx.com/Content/v1.0.10621.0/13_TimeShiftedSequences.html#Throttle
+            private async Task InnerExecuteAsync(object parameter)
+            {
+                _lastParameter = parameter;
+                _lastTriggeredTime = DateTime.UtcNow;
+
+                if (_isWaiting) return;
+                _isWaiting = true;
+
+                var actualInterval = DateTime.UtcNow - _lastTriggeredTime;
+                while (_interval > actualInterval)
+                {
+                    await Task.Delay(_interval - actualInterval);
+                    actualInterval = DateTime.UtcNow - _lastTriggeredTime;
+                }
+
+                _command.Execute(_lastParameter);
+
+                _isWaiting = false;
             }
         }
 
@@ -60,7 +67,10 @@ namespace WpfExtensions.Infrastructure.Extensions
 
         public static void Invoke<T>(this T @this, object parameter = null) where T : ICommand
         {
-            if (@this?.CanExecute(parameter) ?? false) @this.Execute(parameter);
+            if (@this?.CanExecute(parameter) ?? false)
+            {
+                @this.Execute(parameter);
+            }
         }
     }
 }
