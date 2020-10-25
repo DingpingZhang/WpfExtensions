@@ -1,26 +1,17 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFramework>net45</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
-    <Authors>Dingping Zhang</Authors>
+    <TargetFrameworks>netcoreapp3.0;net45</TargetFrameworks>
     <Version>0.0.1</Version>
-    <PackageTags>wpf;mvvm;command</PackageTags>
-    <Copyright>Copyright (c) 2019 DingpingZhang</Copyright>
+    <PackageTags>wpf;mvvm;command;computed-property</PackageTags>
     <Product>WpfExtensions.Infrastructure</Product>
     <PackageId>WpfExtensions.Infrastructure</PackageId>
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Management" Version="4.7.0" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
 
 </Project>
