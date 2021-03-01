@@ -1,5 +1,38 @@
 # WpfExtensions.Xaml.Markup
 
+## 0. ***New** `CommandExtension`
+
+- View (XAML):
+
+```xml
+<Element Command={markup:Command Execute} />
+<Element Command={markup:Command ExecuteWithArgumentAsync, CanExecute}
+         CommandParameter={Binding Argument} />
+```
+
+- View Model (\*.cs):
+
+```csharp
+class ViewModel
+{
+    public void Execute() {}
+
+    public void ExecuteWithArgument(string arg) {}
+
+    // The `Execute` method supports async, and its default `Can Execute` method will disable the command when it is busy.
+
+    public Task ExecuteAsync() => Task.Completed;
+
+    public Task ExecuteWithArgumentAsync(string arg) => Task.Completed;
+
+    // The `Can Execute` method does not support async.
+
+    public bool CanExecute() => true;
+
+    public bool CanExecuteWithArgument(string arg) => true;
+}
+```
+
 ## 1. `ComposeExtension`
 
 Combine multiple Converters into one pipeline.

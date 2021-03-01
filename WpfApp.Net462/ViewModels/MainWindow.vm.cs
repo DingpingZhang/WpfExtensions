@@ -1,7 +1,7 @@
 ﻿using Prism.Mvvm;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.Windows.Input;
-using WpfExtensions.Infrastructure.Commands;
 using WpfExtensions.Xaml;
 
 namespace WpfApp.Net462.ViewModels
@@ -26,21 +26,24 @@ namespace WpfApp.Net462.ViewModels
             set => SetProperty(ref _inputText, value);
         }
 
-        public ICommand LoadCommand { get; }
-
-        public ICommand SwitchCultureCommand { get; }
-
         public ICommand NavigateCommand { get; }
 
         public MainWindowViewModel()
         {
             I18nManager.Instance.CurrentUICulture = ZhCn;
+        }
 
-            LoadCommand = new RelayCommand(() => IsLoading = !IsLoading);
-            SwitchCultureCommand = new RelayCommand(() =>
-            {
-                I18nManager.Instance.CurrentUICulture = I18nManager.Instance.CurrentUICulture.Equals(En) ? ZhCn : En;
-            });
+        public async Task LoadAsync(bool isLoading)
+        {
+            await Task.Delay(5000);
+
+            IsLoading = !isLoading;
+        }
+
+
+        public void SwitchCulture()
+        {
+            I18nManager.Instance.CurrentUICulture = I18nManager.Instance.CurrentUICulture.Equals(En) ? ZhCn : En;
         }
     }
 }
