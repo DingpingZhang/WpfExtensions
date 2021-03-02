@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.0;net45</TargetFrameworks>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <Description>Some common custom markup extensions for WPF.</Description>
     <PackageTags>wpf;xaml;markup-extension</PackageTags>
     <Product>WpfExtensions.Xaml</Product>
