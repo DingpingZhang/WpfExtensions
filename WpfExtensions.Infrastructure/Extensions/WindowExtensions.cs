@@ -32,7 +32,7 @@ namespace WpfExtensions.Infrastructure.Extensions
         public static bool ActivateWindow(this Window @this)
         {
             if (@this == null ||
-                !(PresentationSource.FromVisual(@this) is HwndSource hwndSource)) return false;
+                PresentationSource.FromVisual(@this) is not HwndSource hwndSource) return false;
 
             if (@this.Visibility != Visibility.Visible)
                 @this.Visibility = Visibility.Visible;

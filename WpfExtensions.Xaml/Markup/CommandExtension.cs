@@ -72,7 +72,7 @@ namespace WpfExtensions.Xaml.Markup
 
                 if (method == null)
                 {
-                    Type? contextType = context.GetType();
+                    Type contextType = context.GetType();
                     throw new NullReferenceException($"Not found the method named \"{methodName}\" in {contextType} type.");
                 }
 
@@ -107,7 +107,7 @@ namespace WpfExtensions.Xaml.Markup
 
                 if (method == null)
                 {
-                    Type? contextType = context.GetType();
+                    Type contextType = context.GetType();
                     throw new NullReferenceException($"Not found the method named \"{methodName}\" in {contextType} type.");
                 }
 

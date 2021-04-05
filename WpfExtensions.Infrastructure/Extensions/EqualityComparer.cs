@@ -6,7 +6,7 @@ namespace WpfExtensions.Infrastructure.Extensions
 {
     public static class EqualityComparer
     {
-        private static readonly ConcurrentDictionary<Type, object> EqualityComparerCache = new ConcurrentDictionary<Type, object>();
+        private static readonly ConcurrentDictionary<Type, object> EqualityComparerCache = new();
 
         public static IEqualityComparer<T> Get<T>(Func<T, T, bool> comparer)
         {

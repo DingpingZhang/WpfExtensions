@@ -8,8 +8,8 @@ namespace WpfApp.Net462.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        private static readonly CultureInfo En = new CultureInfo("en");
-        private static readonly CultureInfo ZhCn = new CultureInfo("zh-CN");
+        private static readonly CultureInfo En = new("en");
+        private static readonly CultureInfo ZhCn = new("zh-CN");
 
         private bool _isLoading;
         private string _inputText;

@@ -11,7 +11,7 @@ namespace WpfExtensions.Infrastructure.Mvvm
     public abstract class BindableBase : INotifyPropertyChanged
     {
         private readonly IDictionary<string, object> _propertyValueStorage = new ConcurrentDictionary<string, object>();
-        private readonly HashSet<string> _existedObserverPropertyNameHashSet = new HashSet<string>();
+        private readonly HashSet<string> _existedObserverPropertyNameHashSet = new();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -74,8 +74,8 @@ namespace WpfExtensions.Infrastructure.Mvvm
         protected sealed class PropertyObserver : IDisposable
         {
             private readonly Action _callback;
-            private readonly HashSet<string> _existedExpressionHashSet = new HashSet<string>();
-            private readonly List<IDisposable> _disposables = new List<IDisposable>();
+            private readonly HashSet<string> _existedExpressionHashSet = new();
+            private readonly List<IDisposable> _disposables = new();
             private Func<bool> _globalCondition;
 
             public PropertyObserver(Action callback) => _callback = callback;
@@ -88,7 +88,7 @@ namespace WpfExtensions.Infrastructure.Mvvm
                     throw new ArgumentException($"The expression ({expressionString}) already exists.");
                 }
 
-                var disposable = ExpressionObserver.Observes(expression, (value, exception) =>
+                var disposable = ExpressionObserver.Observes(expression, (value, _) =>
                 {
                     if ((_globalCondition?.Invoke() ?? true) &&
                         (condition?.Invoke(value) ?? true))

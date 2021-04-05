@@ -98,17 +98,13 @@ namespace WpfExtensions.Infrastructure.DataBinding
 
         private NodeType GetNodeTypeFromConditionalNodeType(ConditionalNodeType type)
         {
-            switch (type)
+            return type switch
             {
-                case ConditionalNodeType.Test:
-                    return NodeType.Test;
-                case ConditionalNodeType.IfTrue:
-                    return NodeType.IfTrue;
-                case ConditionalNodeType.IfFalse:
-                    return NodeType.IfFalse;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
+                ConditionalNodeType.Test => NodeType.Test,
+                ConditionalNodeType.IfTrue => NodeType.IfTrue,
+                ConditionalNodeType.IfFalse => NodeType.IfFalse,
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
         }
 
         private void OnChanged(object sender, EventArgs e)

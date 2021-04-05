@@ -9,7 +9,7 @@ namespace WpfExtensions.Xaml
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public I18nSource(ComponentResourceKey key, object owner = null)
+        public I18nSource(ComponentResourceKey key, object? owner = null)
         {
             _key = key;
 
@@ -49,6 +49,6 @@ namespace WpfExtensions.Xaml
 
         public override string ToString() => Value?.ToString() ?? string.Empty;
 
-        public static implicit operator I18nSource(ComponentResourceKey resourceKey) => new I18nSource(resourceKey);
+        public static implicit operator I18nSource(ComponentResourceKey resourceKey) => new(resourceKey);
     }
 }

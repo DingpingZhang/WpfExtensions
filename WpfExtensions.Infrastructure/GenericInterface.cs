@@ -34,8 +34,8 @@ namespace WpfExtensions.Infrastructure
 
         private class GenericInterfaceImpl : IGenericInterface
         {
-            private static readonly Regex ActionDelegateRegex = new Regex(@"^System\.Action(`\d{1,2})?", RegexOptions.Compiled);
-            private static readonly Regex FuncDelegateRegex = new Regex(@"^System\.Func`(\d{1,2})", RegexOptions.Compiled);
+            private static readonly Regex ActionDelegateRegex = new(@"^System\.Action(`\d{1,2})?", RegexOptions.Compiled);
+            private static readonly Regex FuncDelegateRegex = new(@"^System\.Func`(\d{1,2})", RegexOptions.Compiled);
 
             private readonly object _instance;
 
@@ -51,15 +51,12 @@ namespace WpfExtensions.Infrastructure
 
             public TDelegate GetMethod<TDelegate>(string methodName, params Type[] argTypes)
             {
-                switch (GetDelegateType<TDelegate>())
+                return GetDelegateType<TDelegate>() switch
                 {
-                    case DelegateType.Action:
-                        return GetAction<TDelegate>(methodName);
-                    case DelegateType.ActionWithParams:
-                        return GetActionWithParams<TDelegate>(methodName, argTypes);
-                    default:
-                        throw new NotSupportedException();
-                }
+                    DelegateType.Action => GetAction<TDelegate>(methodName),
+                    DelegateType.ActionWithParams => GetActionWithParams<TDelegate>(methodName, argTypes),
+                    _ => throw new NotSupportedException()
+                };
             }
 
             private TDelegate GetActionWithParams<TDelegate>(string methodName, params Type[] argTypes)

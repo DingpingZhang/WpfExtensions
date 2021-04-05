@@ -80,7 +80,7 @@ namespace WpfExtensions.Xaml.Markup
 
         private readonly I18nStringExtension _owner;
 
-        internal List<ArgTuple> Indexes = new List<ArgTuple>();
+        internal List<ArgTuple> Indexes = new();
 
         public ArgCollection(I18nStringExtension owner) => _owner = owner;
 

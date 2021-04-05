@@ -161,13 +161,13 @@ namespace WpfExtensions.Infrastructure.DataBinding
 
         public bool Equals(DependencyNode other)
         {
-            if (ReferenceEquals(null, other)) return false;
+            if (other is null) return false;
             return ReferenceEquals(this, other) || string.Equals(Id, other.Id);
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             return obj.GetType() == GetType() && Equals((DependencyNode)obj);
         }

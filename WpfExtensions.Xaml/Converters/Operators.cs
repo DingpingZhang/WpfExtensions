@@ -27,9 +27,9 @@ namespace WpfExtensions.Xaml.Converters
         protected override bool ConvertBack(bool value) => !value;
     }
 
-    public class IsNullOperator : ValueConverterBase<object, bool>
+    public class IsNullOperator : ValueConverterBase<object?, bool>
     {
-        protected override bool Convert(object value) => Equals(value, null);
+        protected override bool Convert(object? value) => Equals(value, null);
     }
 
     public class IsNullOrEmptyOperator : ValueConverterBase<string, bool>
@@ -41,7 +41,7 @@ namespace WpfExtensions.Xaml.Converters
     {
         protected override IList ConvertNonNullValue(IList value) => Reverse(value).ToList();
 
-        private static IEnumerable<object> Reverse(IList list)
+        private static IEnumerable<object?> Reverse(IList list)
         {
             for (int i = list.Count - 1; i >= 0; i--)
             {

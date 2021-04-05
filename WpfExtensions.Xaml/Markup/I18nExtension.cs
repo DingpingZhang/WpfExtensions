@@ -14,7 +14,7 @@ namespace WpfExtensions.Xaml.Markup
     [MarkupExtensionReturnType(typeof(object))]
     public class I18nExtension : MarkupExtension
     {
-        private static readonly I18nResourceConverter I18NResourceConverter = new I18nResourceConverter();
+        private static readonly I18nResourceConverter I18NResourceConverter = new();
 
         [ConstructorArgument(nameof(Key))]
         public ComponentResourceKey Key { get; set; }
@@ -26,7 +26,7 @@ namespace WpfExtensions.Xaml.Markup
             if (Key == null)
                 throw new NullReferenceException($"{nameof(Key)} cannot be null at the same time.");
 
-            if (!(serviceProvider.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget provideValueTarget))
+            if (serviceProvider.GetService(typeof(IProvideValueTarget)) is not IProvideValueTarget provideValueTarget)
                 throw new ArgumentException(
                     $"The {nameof(serviceProvider)} must implement {nameof(IProvideValueTarget)} interface.");
 

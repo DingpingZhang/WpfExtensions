@@ -13,7 +13,7 @@ namespace WpfExtensions.Infrastructure.DataBinding
         private static readonly Type InpcType = typeof(INotifyPropertyChanged);
 
         private readonly IDictionary<string, DependencyNode> _nodes = new Dictionary<string, DependencyNode>();
-        private readonly List<ConditionalNode> _conditionalReferences = new List<ConditionalNode>();
+        private readonly List<ConditionalNode> _conditionalReferences = new();
 
         public IReadOnlyCollection<DependencyNode> RootNodes => _nodes.Values
             .Where(item => item.IsRoot && item.DownstreamNodes.Any())
@@ -182,7 +182,7 @@ namespace WpfExtensions.Infrastructure.DataBinding
 
         #region Context manage
 
-        private Context _context = new Context();
+        private Context _context = new();
 
         private Expression VisitInContext(Func<Expression> visitCallback, Context context)
         {

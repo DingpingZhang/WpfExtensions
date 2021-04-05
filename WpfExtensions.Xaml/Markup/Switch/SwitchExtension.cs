@@ -10,11 +10,11 @@ namespace WpfExtensions.Xaml.Markup
     [ContentProperty(nameof(Cases))]
     public partial class SwitchExtension : MultiBindingExtensionBase
     {
-        private Binding _to;
+        private Binding? _to;
         private int _toIndex = Constants.InvalidIndex;
 
         [ConstructorArgument(nameof(To))]
-        public Binding To
+        public Binding? To
         {
             get => _to;
             set
@@ -41,7 +41,7 @@ namespace WpfExtensions.Xaml.Markup
 
             public MultiValueConverter(SwitchExtension switchExtension) => _switchExtension = switchExtension;
 
-            public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+            public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
             {
                 var currentOption = values[_switchExtension._toIndex];
                 if (currentOption == DependencyProperty.UnsetValue) return Binding.DoNothing;

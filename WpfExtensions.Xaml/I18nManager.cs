@@ -23,9 +23,9 @@ namespace WpfExtensions.Xaml
 
     public class I18nManager : INotifyPropertyChanged
     {
-        public static I18nManager Instance { get; } = new I18nManager();
+        public static I18nManager Instance { get; } = new();
 
-        private readonly ConcurrentDictionary<string, ResourceManager> _resourceManagerStorage = new ConcurrentDictionary<string, ResourceManager>();
+        private readonly ConcurrentDictionary<string, ResourceManager> _resourceManagerStorage = new();
         private CultureInfo _currentUICulture;
 
         public event EventHandler<CurrentUICultureChangedEventArgs> CurrentUICultureChanged;

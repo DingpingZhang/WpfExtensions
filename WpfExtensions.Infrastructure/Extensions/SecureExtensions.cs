@@ -11,7 +11,7 @@ namespace WpfExtensions.Infrastructure.Extensions
     {
         #region Private members
         private static readonly MD5 Md5Algorithm = MD5.Create();
-        private static readonly RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider();
+        private static readonly RSACryptoServiceProvider Rsa = new();
         private static readonly byte[] DefaultKey = SystemInfo.InstallDate.ToMd5().ToBaseUTF8Bytes();
         private static readonly byte[] DefaultIv = SystemInfo.SerialNumber.ToMd5().ToBaseUTF8Bytes().Take(16).ToArray();
 
@@ -36,16 +36,16 @@ namespace WpfExtensions.Infrastructure.Extensions
                 rijndaelAlgorithm.IV = iv ?? DefaultIv;
                 var encryptor = rijndaelAlgorithm.CreateEncryptor(rijndaelAlgorithm.Key, rijndaelAlgorithm.IV);
 
-                using (var msEncrypt = new MemoryStream())
-                using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                using var msEncrypt = new MemoryStream();
+                using var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
+                using (var swEncrypt = new StreamWriter(csEncrypt))
                 {
-                    using (var swEncrypt = new StreamWriter(csEncrypt))
-                    {
-                        swEncrypt.Write(text);
-                    }
-                    encryptedInfo = msEncrypt.ToArray();
+                    swEncrypt.Write(text);
                 }
+
+                encryptedInfo = msEncrypt.ToArray();
             }
+
             return BitConverter.ToString(encryptedInfo).Replace("-", string.Empty);
         }
 
@@ -54,30 +54,30 @@ namespace WpfExtensions.Infrastructure.Extensions
             if (string.IsNullOrEmpty(text)) return string.Empty;
 
             string plainText;
-            using (var rijndaelAlgorithm = new RijndaelManaged())
+            using var rijndaelAlgorithm = new RijndaelManaged
             {
-                rijndaelAlgorithm.Key = key ?? DefaultKey;
-                rijndaelAlgorithm.IV = iv ?? DefaultIv;
-                var decryptor = rijndaelAlgorithm.CreateDecryptor(rijndaelAlgorithm.Key, rijndaelAlgorithm.IV);
-                var cipherByte = new byte[text.Length / 2];
-                for (int i = 0; i < cipherByte.Length; i++)
-                {
-                    cipherByte[i] = Convert.ToByte(text.Substring(i * 2, 2), 16);
-                }
-                try
-                {
-                    using (var msDecrypt = new MemoryStream(cipherByte))
-                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
-                    using (var srDecrypt = new StreamReader(csDecrypt))
-                    {
-                        plainText = srDecrypt.ReadToEnd();
-                    }
-                }
-                catch (CryptographicException)
-                {
-                    return text;
-                }
+                Key = key ?? DefaultKey,
+                IV = iv ?? DefaultIv
+            };
+            var decryptor = rijndaelAlgorithm.CreateDecryptor(rijndaelAlgorithm.Key, rijndaelAlgorithm.IV);
+            var cipherByte = new byte[text.Length / 2];
+            for (int i = 0; i < cipherByte.Length; i++)
+            {
+                cipherByte[i] = Convert.ToByte(text.Substring(i * 2, 2), 16);
             }
+
+            try
+            {
+                using var msDecrypt = new MemoryStream(cipherByte);
+                using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read);
+                using var srDecrypt = new StreamReader(csDecrypt);
+                plainText = srDecrypt.ReadToEnd();
+            }
+            catch (CryptographicException)
+            {
+                return text;
+            }
+
             return plainText;
         }
 
@@ -89,11 +89,11 @@ namespace WpfExtensions.Infrastructure.Extensions
 
         public static string DecryptByRsa(this string text, string privateKeyXml = null)
         {
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+            RSACryptoServiceProvider rsa = new();
             rsa.FromXmlString(privateKeyXml ?? RsaPrivateKeyXmlProvider?.Invoke() ?? throw new NullReferenceException());
-            var cipherbytes = rsa.Decrypt(Convert.FromBase64String(text), false);
+            var cipherBytes = rsa.Decrypt(Convert.FromBase64String(text), false);
 
-            return Encoding.UTF8.GetString(cipherbytes);
+            return Encoding.UTF8.GetString(cipherBytes);
         }
 
     }

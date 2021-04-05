@@ -4,6 +4,6 @@
     {
         public const int InvalidIndex = -1;
 
-        public static readonly object DefaultLabel = new object();
+        public static readonly object DefaultLabel = new();
     }
 }

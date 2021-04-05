@@ -14,7 +14,7 @@ namespace WpfExtensions.Xaml.Markup
     public partial class ComposeExtension : MarkupExtension, IValueConverter
     {
         [ConstructorArgument(nameof(Converters))]
-        public ConverterCollection Converters { get; } = new ConverterCollection();
+        public ConverterCollection Converters { get; } = new();
 
         public override object ProvideValue(IServiceProvider serviceProvider) => this;
 

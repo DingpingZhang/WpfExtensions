@@ -36,11 +36,11 @@ namespace WpfExtensions.Infrastructure.Extensions
         }
 
 
-        private static readonly Regex FileNameCountRegex = new Regex(@"[\(（]\d+?[\)）]", RegexOptions.Compiled);
+        private static readonly Regex FileNameCountRegex = new(@"[\(（]\d+?[\)）]", RegexOptions.Compiled);
 
         public static string GetUniqueLocalPath(this string @this, Func<string, bool> predicate = null)
         {
-            if (predicate == null) predicate = File.Exists;
+            predicate ??= File.Exists;
 
             var directoryName = Path.GetDirectoryName(@this) ?? throw new InvalidOperationException();
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(@this);
