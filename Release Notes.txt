@@ -1,0 +1,28 @@
+1.2.2
+2021-03-02 Dingping Zhang [Feature] Add the CommandExtension markup, and the related demo.
+2020-10-25 Dingping Zhang [Bugfix] Reimplement the throttle command based on the throttle operator in Rx.
+2019-12-17 Dingping Zhang [Feature] Introduces the data binding feature.
+2019-09-28 Dingping Zhang [Bugfix] Improve the CommandExtensions.ThrottleCommand class.
+2019-07-24 DingpingZhang [Bugfix] The I18String markup can not be formatted when args does not contain a Binding value.
+
+1.2.1
+2021-03-02 Dingping Zhang [Feature] Add the CommandExtension markup, and the related demo.
+2020-10-25 Dingping Zhang [Bugfix] Reimplement the throttle command based on the throttle operator in Rx.
+2019-12-17 Dingping Zhang [Feature] Introduces the data binding feature.
+2019-09-28 Dingping Zhang [Bugfix] Improve the CommandExtensions.ThrottleCommand class.
+2019-07-24 DingpingZhang [Bugfix] The I18String markup can not be formatted when args does not contain a Binding value.
+
+1.2.1
+2021-03-02 Dingping Zhang [Feature] Add the CommandExtension markup, and the related demo.
+2020-10-25 Dingping Zhang [Bugfix] Reimplement the throttle command based on the throttle operator in Rx.
+2019-12-17 Dingping Zhang [Feature] Introduces the data binding feature.
+2019-09-28 Dingping Zhang [Bugfix] Improve the CommandExtensions.ThrottleCommand class.
+2019-07-24 DingpingZhang [Bugfix] The I18String markup can not be formatted when args does not contain a Binding value.
+
+1.2.1
+2021-03-02 Dingping Zhang [Feature] Add the CommandExtension markup, and the related demo.
+2020-10-25 Dingping Zhang [Bugfix] Reimplement the throttle command based on the throttle operator in Rx.
+2019-12-17 Dingping Zhang [Feature] Introduces the data binding feature.
+2019-09-28 Dingping Zhang [Bugfix] Improve the CommandExtensions.ThrottleCommand class.
+2019-07-24 DingpingZhang [Bugfix] The I18String markup can not be formatted when args does not contain a Binding value.
+
