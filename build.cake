@@ -1,12 +1,82 @@
 #addin nuget:?package=Cake.Git&version=1.0.1
+#addin nuget:?package=Cake.FileHelpers&version=4.0.1
 
 using System.Text.RegularExpressions;
 using System.Linq;
 
-var target = Argument("target", "Build");
+//////////////////////////////////////////////////////////////////////
+// ARGUMENTS
+//////////////////////////////////////////////////////////////////////
+
+var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 
-var solution = "WpfExtensions.sln";
+//////////////////////////////////////////////////////////////////////
+// CUSTOM CONFIGURES
+//////////////////////////////////////////////////////////////////////
+
+/// <summary>
+/// The relative path of the build directory, which is the work dirctory of task actions.
+/// </summary>
+var buildDir = "Build";
+
+/// <summary>
+/// The relative path of the *.sln file.
+/// </summary>
+var solutionFile = "WpfExtensions.sln";
+
+/// <summary>
+/// The regex pattern of the version in tags.
+/// </summary>
+var versionPattern = @"[Vv]?(\d+?)\.(\d+?)\.(\d+?)";
+
+/// <summary>
+/// The root dirctory of the workspace.
+/// </summary>
+var rootDir = Environment.CurrentDirectory;
+
+//////////////////////////////////////////////////////////////////////
+// SETUP
+//////////////////////////////////////////////////////////////////////
+
+Setup(context =>
+{
+    // Executed BEFORE the first task.
+
+    // Arguments validation
+    if(configuration.ToLower() != "release" &&
+        configuration.ToLower() != "enterprise")
+    {
+        throw new Exception("Unknown configuration, it should be 'Relaese' or 'Enterprise'");
+    }
+});
+
+//////////////////////////////////////////////////////////////////////
+// TEARDOWN
+//////////////////////////////////////////////////////////////////////
+
+Teardown(context =>
+{
+    // Executed AFTER the last task.
+
+    //Cleanup
+    var tempDirs = new string[]
+    {
+        // TODO
+    };
+
+    foreach(var tempDir in tempDirs)
+    {   
+        if(DirectoryExists(tempDir))
+        {
+            DeleteDirectory(tempDir, new DeleteDirectorySettings()
+            {
+                Recursive = true,
+                Force = true
+            });
+        }
+    };
+});
 
 //////////////////////////////////////////////////////////////////////
 // TASKS
@@ -15,44 +85,81 @@ var solution = "WpfExtensions.sln";
 Task("Clean")
     .Does(() =>
 {
+    CleanDirectory(buildDir);
+});
+
+Task("BumpVersion")
+    .Does(() =>
+{
+    // Get git info.
+    var latestTag = GitTags(rootDir).LastOrDefault();
+    var logs = GitLogTag(rootDir, latestTag.FriendlyName);
+    var nextVersion = GetBumpVersion(latestTag.FriendlyName, versionPattern, IsBumpMinor(logs));
+
+    // Writes the release notes file.
+    var releaseNotesPath = System.IO.Path.Combine(rootDir, "Release Notes.txt");
+    var releaseNotesText = $"{nextVersion}{Environment.NewLine}{GetReleaseNotes(logs)}{Environment.NewLine}{Environment.NewLine}";
+
+    if (FileExists(releaseNotesPath)) {
+        var prevText = FileReadText(releaseNotesPath);
+        FileWriteText(releaseNotesPath, $"{releaseNotesText}{prevText}");
+    } else {
+        FileWriteText(releaseNotesPath, releaseNotesText);
+    }
+
+    // Git Commit and push.
+    var prevAuthor = logs.Last().Author;
+
+    GitAddAll(rootDir);
+    GitCommit(rootDir, prevAuthor.Name, prevAuthor.Email, $"Bump version to {nextVersion}");
+    GitTag(rootDir, nextVersion);
+    // TODO: Push
+});
+
+Task("RestorePackages")
+    .Description("Restores packages from nuget in the legacy style *.proj file.")
+    .Does(() =>
+{
+    // The package.config file is not support the `msbuild -restore` target.
+    var legacyProjectFiles = new string[] {
+        // TODO
+    };
+    var settings = new NuGetRestoreSettings {
+        PackagesDirectory = Directory ("./packages")
+    };
+
+    NuGetRestore (legacyProjectFiles.Select(item => new FilePath(item)), settings);
 });
 
 Task("Build")
-    .Description("Bump version to next.")
-    .IsDependentOn("Clean")
+    .IsDependentOn("RestorePackages")
     .Does(() =>
 {
-    var targetDir = Environment.CurrentDirectory;
-    var latestTag = GitTags(targetDir).LastOrDefault();
-    // var logs = GitLogTag(targetDir, latestTag.FriendlyName);
-    var logs = GitLogTag(targetDir, "1.0.0");
+    var settings = new MSBuildSettings {
+        Verbosity = Verbosity.Minimal,
+        Configuration = configuration,
+        ToolVersion = MSBuildToolVersion.VS2019,
+        PlatformTarget = PlatformTarget.x64,
+        // Using `msbuild -restore` target for SDK-style `*.csproj` files.
+        Restore = true,
+    };
 
-    var prevAuthor = logs.Last().Author;
-    var nextVersion = GetBumpVersion(latestTag.FriendlyName, IsBumpMinor(logs));
-    var releaseNotes = GetReleaseNotes(logs);
-
-    var releaseNotesPath = System.IO.Path.Combine(targetDir, "Release Notes.txt");
-    var releaseNotesText = $"{nextVersion}{Environment.NewLine}{releaseNotes}{Environment.NewLine}{Environment.NewLine}";
-    if (FileExists(releaseNotesPath)) {
-        var prevText = System.IO.File.ReadAllText(releaseNotesPath);
-        System.IO.File.WriteAllText(releaseNotesPath, $"{releaseNotesText}{prevText}");
-    } else {
-        System.IO.File.WriteAllText(releaseNotesPath, releaseNotesText);
-    }
-
-    GitAddAll(targetDir);
-    GitCommit(targetDir, prevAuthor.Name, prevAuthor.Email, $"Bump version to {nextVersion}");
-    GitTag(targetDir, nextVersion);
+    MSBuild(solutionFile, settings);
 });
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION
 //////////////////////////////////////////////////////////////////////
 
+Task("Default")
+    .IsDependentOn("Clean")
+    .IsDependentOn("BumpVersion")
+    .IsDependentOn("Build");
+
 RunTarget(target);
 
 //////////////////////////////////////////////////////////////////////
-// FUNCTIONS
+// HELP FUNCTIONS
 //////////////////////////////////////////////////////////////////////
 
 private static bool IsBumpMinor(IEnumerable<GitCommit> commits) {
@@ -71,8 +178,8 @@ private static string GetReleaseNotes(IEnumerable<GitCommit> commits) {
             .Select(item => $"{item.Author.When:yyyy-MM-dd} {item.Author.Name} {item.Message.TrimEnd('\r', '\n')}"));
 }
 
-private static string GetBumpVersion(string version, bool bumpMinor = false, string pattern = null) {
-    var regex = new Regex(pattern ?? @"v?(\d+?)\.(\d+?)\.(\d+?)", RegexOptions.Compiled);
+private static string GetBumpVersion(string version, string pattern, bool bumpMinor = false) {
+    var regex = new Regex(pattern, RegexOptions.Compiled);
     var match = regex.Match(version);
 
     if (match.Success) {
