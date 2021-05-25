@@ -30,6 +30,9 @@ var solutionFile = "WpfExtensions.sln";
 /// </summary>
 var versionPattern = @"[Vv]?(?<majar>\d+?)\.(?<minor>\d+?)\.(?<patch>\d+?)";
 
+var gitCommitLabelPattern = @"^\[(?:(?<minorLabel>feature|enhance)|(?<patchLabel>fix|bugfix|refactor|refine))\].*?$";
+// var gitCommitLabelPattern = @"^(?:(?<minorLabel>feature|enhance)|(?<patchLabel>fix|bugfix|refactor|refine)):.*?$";
+
 /// <summary>
 /// The root dirctory of the workspace.
 /// </summary>
@@ -94,11 +97,12 @@ Task("BumpVersion")
     // Get git info.
     var latestTag = GitTags(rootDir).LastOrDefault();
     var logs = GitLogTag(rootDir, latestTag.FriendlyName);
-    var nextVersion = GetBumpVersion(latestTag.FriendlyName, versionPattern, IsBumpMinor(logs));
+    var (releaseNotes, canBumpMinor) = ParseCommits(logs, gitCommitLabelPattern);
+    var nextVersion = GetNextVersion(latestTag.FriendlyName, versionPattern, canBumpMinor);
 
     // Writes the release notes file.
     var releaseNotesPath = System.IO.Path.Combine(rootDir, "Release Notes.txt");
-    var releaseNotesText = $"{nextVersion}{Environment.NewLine}{GetReleaseNotes(logs)}{Environment.NewLine}{Environment.NewLine}";
+    var releaseNotesText = $"{nextVersion}{Environment.NewLine}{releaseNotes}{Environment.NewLine}{Environment.NewLine}";
 
     if (FileExists(releaseNotesPath)) {
         var prevText = FileReadText(releaseNotesPath);
@@ -113,7 +117,7 @@ Task("BumpVersion")
     GitAddAll(rootDir);
     GitCommit(rootDir, prevAuthor.Name, prevAuthor.Email, $"Bump version to {nextVersion}");
     GitTag(rootDir, nextVersion);
-    // TODO: Push
+    // GitPushRef(rootDir, "origin", "HEAD:refs/for/master");
 });
 
 Task("RestorePackages")
@@ -162,23 +166,26 @@ RunTarget(target);
 // HELP FUNCTIONS
 //////////////////////////////////////////////////////////////////////
 
-private static bool IsBumpMinor(IEnumerable<GitCommit> commits) {
-    return commits
-        .Select(item => item.Message)
-        .Any(item => string.Equals(item, "[feature]", StringComparison.OrdinalIgnoreCase));
-}
+private static (string releaseNotes, bool canBumpMinor) ParseCommits(IEnumerable<GitCommit> commits, string pattern) {
+    var regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-private static string GetReleaseNotes(IEnumerable<GitCommit> commits) {
-    var regex = new Regex(@"^\[?(feature|bugfix)\]?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    var importantCommits = commits
+        .Select(item => (commit: item, match: regex.Match(item.Message)))
+        .Where(item => item.match.Success)
+        .Select(item => (commit: item.commit, isMinorLabel: item.match.Groups["minorLabel"].Success))
+        .ToArray();
 
-    return string.Join(
+    var releaseNotes = string.Join(
         Environment.NewLine,
-        commits
-            .Where(item => regex.IsMatch(item.Message))
-            .Select(item => $"{item.Author.When:yyyy-MM-dd} {item.Author.Name} {item.Message.TrimEnd('\r', '\n')}"));
+        importantCommits.Select(item => {
+            var commit = item.commit;
+            return $"{commit.Author.When:yyyy-MM-dd} {commit.Author.Name} {commit.Message.TrimEnd('\r', '\n')}";
+        }));
+
+    return (releaseNotes, canBumpMinor: importantCommits.Any(item => item.isMinorLabel));
 }
 
-private static string GetBumpVersion(string version, string pattern, bool bumpMinor = false) {
+private static string GetNextVersion(string version, string pattern, bool canBumpMinor = false) {
     var match = Regex.Match(version, pattern);
 
     if (match.Success) {
@@ -186,7 +193,7 @@ private static string GetBumpVersion(string version, string pattern, bool bumpMi
         var minor = int.Parse(match.Groups["minor"].Value);
         var patch = int.Parse(match.Groups["patch"].Value);
 
-        if (bumpMinor) {
+        if (canBumpMinor) {
             minor++;
         } else {
             patch++;
