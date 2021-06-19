@@ -92,8 +92,8 @@ namespace WpfExtensions.Binding
         private Expression VisitVirtualNode(Func<Expression> visitMethod, Expression node)
         {
             // Create virtual node and build context
-            DependencyNode dependencyNode = null;
-            if (_context.DownstreamNode != null)
+            DependencyNode? dependencyNode = null;
+            if (_context.DownstreamNode is not null)
             {
                 dependencyNode = GetOrCreateNode(node, () => new DependencyNode(node));
             }
@@ -106,8 +106,8 @@ namespace WpfExtensions.Binding
             var testReference = CreateConditionalNode(node);
             _conditionalReferences.Add(testReference);
 
-            DependencyNode dependencyNode = null;
-            if (InpcType.IsAssignableFrom(node.Type) && _context.DownstreamNode != null)
+            DependencyNode? dependencyNode = null;
+            if (InpcType.IsAssignableFrom(node.Type) && _context.DownstreamNode is not null)
             {
                 // Create virtual node
                 dependencyNode = GetOrCreateNode(node, () => new DependencyNode(node));
@@ -143,11 +143,11 @@ namespace WpfExtensions.Binding
                     break;
                 case ConditionalNodeType.IfTrue:
                     conditionalNode = new ConditionalNode(test);
-                    _context.ConditionalNode.IfTrueChild = conditionalNode;
+                    _context.ConditionalNode!.IfTrueChild = conditionalNode;
                     break;
                 case ConditionalNodeType.IfFalse:
                     conditionalNode = new ConditionalNode(test);
-                    _context.ConditionalNode.IfFalseChild = conditionalNode;
+                    _context.ConditionalNode!.IfFalseChild = conditionalNode;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -169,10 +169,10 @@ namespace WpfExtensions.Binding
 
             if (_context.ConditionalNodeType != ConditionalNodeType.None)
             {
-                _context.ConditionalNode.AddAffectedNode(_context.ConditionalNodeType, dependencyNode);
+                _context.ConditionalNode!.AddAffectedNode(_context.ConditionalNodeType, dependencyNode);
             }
 
-            if (_context.DownstreamNode != null)
+            if (_context.DownstreamNode is not null)
             {
                 dependencyNode.DownstreamNodes.Add(_context.DownstreamNode);
             }
@@ -200,18 +200,18 @@ namespace WpfExtensions.Binding
 
         private class Context
         {
-            public Context Parent { get; set; }
+            public Context? Parent { get; set; }
 
             public ConditionalNodeType ConditionalNodeType { get; set; }
 
-            public DependencyNode DownstreamNode { get; set; }
+            public DependencyNode? DownstreamNode { get; set; }
 
-            public ConditionalNode ConditionalNode { get; set; }
+            public ConditionalNode? ConditionalNode { get; set; }
 
-            public Context Clone(Action<Context> configure = null)
+            public Context Clone(Action<Context> configure)
             {
                 var duplicate = (Context)MemberwiseClone();
-                configure?.Invoke(duplicate);
+                configure(duplicate);
 
                 return duplicate;
             }

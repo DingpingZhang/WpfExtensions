@@ -14,7 +14,7 @@ namespace WpfExtensions.Binding
             return new DependencyGraph(visitor.RootNodes, visitor.ConditionalNodes);
         }
 
-        public static IDisposable Observes<T>(Expression<Func<T>> expression, Action<T, Exception> onValueChanged)
+        public static IDisposable Observes<T>(Expression<Func<T>> expression, Action<T, Exception?> onValueChanged)
         {
             var valueGetter = expression.Compile();
 
@@ -35,7 +35,7 @@ namespace WpfExtensions.Binding
             void OnPropertyChanged(object sender, EventArgs e)
             {
                 var newValue = valueGetter.TryGet(out var exception);
-                onValueChanged?.Invoke(newValue, exception);
+                onValueChanged(newValue!, exception);
 
                 Debug.WriteLine($"[{DateTime.Now}][Value Changed] NewValue = {newValue}");
             }

@@ -9,77 +9,41 @@ namespace WpfExtensions.Binding
 {
     public abstract class BindableBase : INotifyPropertyChanged
     {
-        private readonly IDictionary<string, object> _propertyValueStorage = new ConcurrentDictionary<string, object>();
-        private readonly HashSet<string> _existedObserverPropertyNameHashSet = new();
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual T Computed<T>(Expression<Func<T>> expression, T fallback = default, [CallerMemberName] string propertyName = null)
+        private interface IValueWrapper
         {
-            if (!_propertyValueStorage.ContainsKey(propertyName ?? throw new ArgumentNullException(nameof(propertyName))))
-            {
-                _propertyValueStorage.Add(propertyName, fallback);
-                ExpressionObserver.Observes(expression, (value, exception) =>
-                {
-                    _propertyValueStorage[propertyName] = exception == null ? value : fallback;
-                    RaisePropertyChanged(propertyName);
-                });
-            }
-
-            return (T)_propertyValueStorage[propertyName];
         }
 
-        protected PropertyObserver Make(string propertyName)
+        protected interface IPropertyObserver : IDisposable
         {
-            if (!_existedObserverPropertyNameHashSet.Add(propertyName))
-            {
-                throw new ArgumentException($"The property ({propertyName}) already exists.");
-            }
+            IPropertyObserver Observes<T>(Expression<Func<T>> expression, Func<T, bool>? condition = null);
 
-            return new PropertyObserver(() => RaisePropertyChanged(propertyName));
+            void When(Func<bool> condition);
         }
 
-        protected virtual bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
+        private class ValueWrapper<T> : IValueWrapper
         {
-            if (EqualityComparer<T>.Default.Equals(storage, value)) return false;
+            // Avoid value types being boxed and unboxed.
+            public T Value { get; set; }
 
-            storage = value;
-            RaisePropertyChanged(propertyName);
-
-            return true;
+            public ValueWrapper(T value) => Value = value;
         }
 
-        protected virtual bool SetProperty<T>(ref T storage, T value, Action onChanged, [CallerMemberName] string propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(storage, value)) return false;
-
-            storage = value;
-            onChanged?.Invoke();
-            RaisePropertyChanged(propertyName);
-
-            return true;
-        }
-
-        protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-        }
-
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            PropertyChanged?.Invoke(this, e);
-        }
-
-        protected sealed class PropertyObserver : IDisposable
+        private class PropertyObserver : IPropertyObserver
         {
             private readonly Action _callback;
+            private readonly Action<string, Exception> _onError;
             private readonly HashSet<string> _existedExpressionHashSet = new();
             private readonly List<IDisposable> _disposables = new();
-            private Func<bool> _globalCondition;
 
-            public PropertyObserver(Action callback) => _callback = callback;
+            private Func<bool>? _globalCondition;
 
-            public PropertyObserver Observes<T>(Expression<Func<T>> expression, Func<T, bool> condition = null)
+            public PropertyObserver(Action callback, Action<string, Exception> onError)
+            {
+                _callback = callback;
+                _onError = onError;
+            }
+
+            public IPropertyObserver Observes<T>(Expression<Func<T>> expression, Func<T, bool>? condition = null)
             {
                 var expressionString = expression.ToString();
                 if (!_existedExpressionHashSet.Add(expressionString))
@@ -87,12 +51,17 @@ namespace WpfExtensions.Binding
                     throw new ArgumentException($"The expression ({expressionString}) already exists.");
                 }
 
-                var disposable = ExpressionObserver.Observes(expression, (value, _) =>
+                var disposable = ExpressionObserver.Observes(expression, (value, exception) =>
                 {
                     if ((_globalCondition?.Invoke() ?? true) &&
                         (condition?.Invoke(value) ?? true))
                     {
-                        _callback?.Invoke();
+                        _callback();
+                    }
+
+                    if (exception is not null)
+                    {
+                        _onError(expressionString, exception);
                     }
                 });
                 _disposables.Add(disposable);
@@ -103,6 +72,104 @@ namespace WpfExtensions.Binding
             public void When(Func<bool> condition) => _globalCondition = condition;
 
             public void Dispose() => _disposables.ForEach(item => item.Dispose());
+        }
+
+        private readonly IDictionary<string, IValueWrapper> _propertyValueStorage = new ConcurrentDictionary<string, IValueWrapper>();
+        private readonly HashSet<string> _existedObserverPropertyNameHashSet = new();
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public event EventHandler<ComputedPropertyErrorEventArgs>? ComputedPropertyError;
+        public event EventHandler<PropertyObserverErrorEventArgs>? PropertyObserverError;
+
+        protected T Computed<T>(Expression<Func<T>> expression, T fallback, [CallerMemberName] string? propertyName = null)
+        {
+            return ComputedInternal(expression, fallback, propertyName);
+        }
+
+        protected T? Computed<T>(Expression<Func<T>> expression, [CallerMemberName] string? propertyName = null)
+        {
+            return ComputedInternal<T, T?>(expression, default, propertyName);
+        }
+
+        private TOut ComputedInternal<T, TOut>(Expression<Func<T>> expression, TOut fallback, [CallerMemberName] string? propertyName = null)
+            where T : TOut
+        {
+            if (!_propertyValueStorage.ContainsKey(propertyName ?? throw new ArgumentNullException(nameof(propertyName))))
+            {
+                _propertyValueStorage.Add(propertyName, new ValueWrapper<TOut>(fallback));
+                ExpressionObserver.Observes(expression, (value, exception) =>
+                {
+                    var storage = (ValueWrapper<TOut>)_propertyValueStorage[propertyName];
+                    if (exception is null)
+                    {
+                        storage.Value = value;
+                    }
+                    else
+                    {
+                        storage.Value = fallback;
+                        OnComputedPropertyError(new ComputedPropertyErrorEventArgs(propertyName, exception));
+                    }
+
+                    // Notify ui to pull the latest value after updating the storage.
+                    RaisePropertyChanged(propertyName);
+                });
+            }
+
+            return ((ValueWrapper<TOut>)_propertyValueStorage[propertyName]).Value;
+        }
+
+        protected IPropertyObserver Make(string propertyName)
+        {
+            if (!_existedObserverPropertyNameHashSet.Add(propertyName))
+            {
+                throw new ArgumentException($"The property ({propertyName}) already exists.");
+            }
+
+            return new PropertyObserver(
+                () => RaisePropertyChanged(propertyName),
+                (expressionString, exception) => OnPropertyObserverError(
+                    new PropertyObserverErrorEventArgs(propertyName, expressionString, exception)));
+        }
+
+        protected virtual bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(storage, value)) return false;
+
+            storage = value;
+            RaisePropertyChanged(propertyName);
+
+            return true;
+        }
+
+        protected virtual bool SetProperty<T>(ref T storage, T value, Action onChanged, [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(storage, value)) return false;
+
+            storage = value;
+            onChanged();
+            RaisePropertyChanged(propertyName);
+
+            return true;
+        }
+
+        protected void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            PropertyChanged?.Invoke(this, e);
+        }
+
+        private void OnComputedPropertyError(ComputedPropertyErrorEventArgs e)
+        {
+            ComputedPropertyError?.Invoke(this, e);
+        }
+
+        private void OnPropertyObserverError(PropertyObserverErrorEventArgs e)
+        {
+            PropertyObserverError?.Invoke(this, e);
         }
     }
 }

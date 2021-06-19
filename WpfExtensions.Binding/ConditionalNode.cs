@@ -20,8 +20,8 @@ namespace WpfExtensions.Binding
         private readonly Func<bool> _testGetter;
         private readonly IDictionary<DependencyNode, NodeType> _allNodes = new Dictionary<DependencyNode, NodeType>();
 
-        private IReadOnlyCollection<DependencyNode> _ifTrueNodes;
-        private IReadOnlyCollection<DependencyNode> _ifFalseNodes;
+        private IReadOnlyCollection<DependencyNode>? _ifTrueNodes;
+        private IReadOnlyCollection<DependencyNode>? _ifFalseNodes;
 
         public bool IsRoot { get; }
 
@@ -30,9 +30,9 @@ namespace WpfExtensions.Binding
         public bool IsEmpty => _allNodes.All(item => item.Value >= NodeType.Both) &&
                                IfTrueChild == null && IfFalseChild == null;
 
-        public ConditionalNode IfTrueChild { get; set; }
+        public ConditionalNode? IfTrueChild { get; set; }
 
-        public ConditionalNode IfFalseChild { get; set; }
+        public ConditionalNode? IfFalseChild { get; set; }
 
         public ConditionalNode(Func<bool> testGetter, bool isRoot = false)
         {
@@ -120,7 +120,7 @@ namespace WpfExtensions.Binding
 
             if (IsActivated)
             {
-                var testResult = _testGetter.TryGet(out var exception);
+                bool testResult = _testGetter.TryGet(out var exception);
 
                 if (exception == null)
                 {
@@ -139,7 +139,7 @@ namespace WpfExtensions.Binding
             }
         }
 
-        private static void UpdateInternal(ConditionalNode child, IEnumerable<DependencyNode> nodes, bool activate)
+        private static void UpdateInternal(ConditionalNode? child, IEnumerable<DependencyNode>? nodes, bool activate)
         {
             if (child != null)
             {

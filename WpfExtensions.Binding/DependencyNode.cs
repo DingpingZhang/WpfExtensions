@@ -11,7 +11,7 @@ namespace WpfExtensions.Binding
     {
         public string Id { get; }
 
-        public string PropertyName { get; }
+        public string? PropertyName { get; }
 
         public bool IsRoot { get; }
 
@@ -21,7 +21,7 @@ namespace WpfExtensions.Binding
 
         public ICollection<DependencyNode> DownstreamNodes { get; } = new HashSet<DependencyNode>();
 
-        public Func<INotifyPropertyChanged> InpcGetter { get; }
+        public Func<INotifyPropertyChanged>? InpcGetter { get; }
 
         public DependencyNode(Expression node, bool isRoot = false)
         {
@@ -41,11 +41,11 @@ namespace WpfExtensions.Binding
 
         #region Observes property changed
 
-        private INotifyPropertyChanged _inpcObjectCache;
+        private INotifyPropertyChanged? _inpcObjectCache;
         private bool _isInitialized;
         private bool _isActivated;
 
-        public event EventHandler Changed;
+        public event EventHandler? Changed;
 
         public bool IsActivated
         {
@@ -139,13 +139,19 @@ namespace WpfExtensions.Binding
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            Debug.WriteLine($"[{DateTime.Now}][Property Changed] {sender}.{e?.PropertyName}");
+            Debug.WriteLine($"[{DateTime.Now}][Property Changed] {sender}.{e.PropertyName}");
 
-            if (string.IsNullOrWhiteSpace(e?.PropertyName)) return;
+            if (string.IsNullOrWhiteSpace(e.PropertyName))
+            {
+                return;
+            }
 
             var changedNode = DownstreamNodes.FirstOrDefault(item => item.PropertyName == e.PropertyName);
 
-            if (changedNode == null) return;
+            if (changedNode is null)
+            {
+                return;
+            }
 
             changedNode.UnsubscribeRecursively();
             if (changedNode.IsActivated)
@@ -159,20 +165,28 @@ namespace WpfExtensions.Binding
 
         #region Equatable memebers
 
-        public bool Equals(DependencyNode other)
+        public bool Equals(DependencyNode? other)
         {
             if (other is null) return false;
             return ReferenceEquals(this, other) || string.Equals(Id, other.Id);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (obj is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
+            if (obj is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
             return obj.GetType() == GetType() && Equals((DependencyNode)obj);
         }
 
-        public override int GetHashCode() => Id != null ? Id.GetHashCode() : 0;
+        public override int GetHashCode() => Id.GetHashCode();
 
         public static bool operator ==(DependencyNode left, DependencyNode right) => Equals(left, right);
 

@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace WpfExtensions.Binding
 {
     internal static class ExtensionMethods
     {
-        public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> callback)
+        public static void ForEach<T>(this IEnumerable<T>? enumerable, Action<T> callback)
         {
-            if (enumerable == null) return;
+            if (enumerable == null)
+            {
+                return;
+            }
 
             foreach (var item in enumerable)
             {
@@ -16,7 +18,7 @@ namespace WpfExtensions.Binding
             }
         }
 
-        public static T TryGet<T>(this Func<T> getter, out Exception exception)
+        public static T? TryGet<T>(this Func<T>? getter, out Exception? exception)
         {
             try
             {
