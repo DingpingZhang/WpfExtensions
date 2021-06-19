@@ -8,7 +8,6 @@
     <Product>WpfExtensions.Xaml</Product>
     <PackageId>WpfExtensions.Xaml</PackageId>
     <UseWPF>true</UseWPF>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

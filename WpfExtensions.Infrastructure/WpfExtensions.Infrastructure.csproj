@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.0;net45</TargetFrameworks>
-    <Version>0.0.1</Version>
+    <Version>0.1.0</Version>
     <PackageTags>wpf;mvvm;command;computed-property</PackageTags>
     <Product>WpfExtensions.Infrastructure</Product>
     <PackageId>WpfExtensions.Infrastructure</PackageId>

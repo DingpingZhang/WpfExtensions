@@ -9,6 +9,7 @@
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/DingpingZhang/WpfExtensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DingpingZhang/WpfExtensions</RepositoryUrl>
+    <Nullable>enable</Nullable>
 
   </PropertyGroup>
 

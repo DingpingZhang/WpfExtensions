@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WpfExtensions.Infrastructure.DataBinding
+namespace WpfExtensions.Binding
 {
     internal class DependencyGraph
     {

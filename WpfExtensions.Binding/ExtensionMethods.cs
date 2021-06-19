@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace WpfExtensions.Infrastructure.DataBinding
+namespace WpfExtensions.Binding
 {
     internal static class ExtensionMethods
     {
@@ -14,11 +14,6 @@ namespace WpfExtensions.Infrastructure.DataBinding
             {
                 callback?.Invoke(item);
             }
-        }
-
-        public static bool IsNullOrEmpty<T>(this IEnumerable<T> enumerable)
-        {
-            return !enumerable?.Any() ?? true;
         }
 
         public static T TryGet<T>(this Func<T> getter, out Exception exception)

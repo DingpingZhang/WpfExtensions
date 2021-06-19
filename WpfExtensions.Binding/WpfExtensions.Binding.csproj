@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.1.0</Version>
+    <Description>Provides scalability support for data binding.</Description>
+    <PackageTags>wpf;data-binding;mvvm;binding</PackageTags>
+    <Product>WpfExtensions.Binding</Product>
+    <PackageId>WpfExtensions.Binding</PackageId>
+  </PropertyGroup>
+
+</Project>

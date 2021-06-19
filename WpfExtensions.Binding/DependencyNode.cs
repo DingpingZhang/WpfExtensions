@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace WpfExtensions.Infrastructure.DataBinding
+namespace WpfExtensions.Binding
 {
     internal class DependencyNode : IEquatable<DependencyNode>
     {

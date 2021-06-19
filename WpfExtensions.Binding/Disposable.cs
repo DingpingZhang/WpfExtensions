@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace WpfExtensions.Infrastructure
+namespace WpfExtensions.Binding
 {
-    public sealed class Disposable : IDisposable
+    internal sealed class Disposable : IDisposable
     {
         public static readonly IDisposable Empty = Create(null);
 

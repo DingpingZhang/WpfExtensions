@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace WpfExtensions.Infrastructure.DataBinding
+namespace WpfExtensions.Binding
 {
     internal enum ConditionalNodeType { None, Test, IfTrue, IfFalse }
 
