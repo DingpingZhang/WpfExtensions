@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace WpfExtensions.Binding
+namespace WpfExtensions.Binding.Expressions
 {
-    internal enum ConditionalNodeType { None, Test, IfTrue, IfFalse }
-
     internal class ConditionalNode
     {
         [Flags]

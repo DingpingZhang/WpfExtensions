@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WpfExtensions.Binding
+namespace WpfExtensions.Binding.Expressions
 {
     internal static class ExtensionMethods
     {

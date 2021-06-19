@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using WpfExtensions.Binding.Expressions;
 
 namespace WpfExtensions.Binding
 {

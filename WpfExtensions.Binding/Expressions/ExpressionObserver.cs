@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace WpfExtensions.Binding
+namespace WpfExtensions.Binding.Expressions
 {
     public static class ExpressionObserver
     {
