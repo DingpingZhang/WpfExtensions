@@ -56,6 +56,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\StringToDoubleConverter.cs" />
+    <Compile Include="ViewModels\BindingDemo.vm.cs" />
+    <Compile Include="Views\BindingDemo.xaml.cs">
+      <DependentUpon>BindingDemo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DemoSwitch.xaml.cs">
       <DependentUpon>DemoSwitch.xaml</DependentUpon>
     </Compile>
@@ -73,6 +78,10 @@
       <DependentUpon>DemoMarkup.xaml</DependentUpon>
     </Compile>
     <Page Include="Animations.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\BindingDemo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -142,6 +151,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\WpfExtensions.Binding\WpfExtensions.Binding.csproj">
+      <Project>{924DBAD5-43DA-4BCC-814D-845B4C4E8AFE}</Project>
+      <Name>WpfExtensions.Binding</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WpfExtensions.Infrastructure\WpfExtensions.Infrastructure.csproj">
       <Project>{567E7A9A-627B-443E-8012-3F3A26852C54}</Project>
       <Name>WpfExtensions.Infrastructure</Name>
@@ -159,5 +172,6 @@
       <Version>7.2.0.1422</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

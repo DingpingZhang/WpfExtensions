@@ -14,7 +14,7 @@
         d:DataContext="{d:DesignInstance {x:Type vm:MainWindowViewModel}}">
 
     <Grid>
-        <views:DemoMarkup />
+        <views:BindingDemo />
     </Grid>
 
 </Window>
