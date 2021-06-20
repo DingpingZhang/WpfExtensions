@@ -4,7 +4,7 @@ English | [中文](./README.zh-CN.md)
 
 This project comes from some scattered works I did while working on Wpf development, and is a supplement to existing Mvvm frameworks. They don't solve any major problems, they just provide some syntactic sugar and let people write a few lines of code less. Its services are not limited to Wpf development, other similar Xaml frameworks, such as Uwp, Maui, etc. should also be able to use, but I has never tested on other frameworks.
 
-项目的结构如下：
+The project is structured as follows:
 
 - `WpfExtensions.Xaml`：A number of `MarkupExtension`s are provided to simplify Xaml development.
 - `WpfExtensions.Binding`：To simplify the code for property dependency updates, a function similar to the one in Vue.js for computed-property is provided.
