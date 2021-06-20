@@ -1,14 +1,14 @@
 # WpfExtensions
 
-English | [中文](./README.zh-CN.md)
+[English](./README.md) | 中文
 
-This project comes from some scattered works I did while working on Wpf development, and is a supplement to existing Mvvm frameworks. They don't solve any major problems, they just provide some syntactic sugar and let people write a few lines of code less. Its services are not limited to Wpf development, other similar Xaml frameworks, such as Uwp, Maui, etc. should also be able to use, but I has never tested on other frameworks.
+本项目源于作者在从事 Wpf 开发时的一些游戏之作，是对现有 Mvvm 框架的补充。要说解决了什么重大问题，到也没有，仅仅是提供了一些语法糖，让人少写几行代码而已。其服务对象也不局限于 Wpf 开发，其它类似的 Xaml 框架，如 Uwp、Maui 等应该也可以使用，只是作者从未在其它框架上测试过。
 
 项目的结构如下：
 
-- `WpfExtensions.Xaml`：A number of `MarkupExtension`s are provided to simplify Xaml development.
-- `WpfExtensions.Binding`：To simplify the code for property dependency updates, a function similar to the one in Vue.js for computed-property is provided.
-- `WpfExtensions.Infrastructure`：Some scattered features, when the time is ripe, will be separated out and released as separate modules.
+- `WpfExtensions.Xaml`：提供了一些 `MarkupExtension` 以简化 Xaml 开发。
+- `WpfExtensions.Binding`：为简化属性依赖更新的代码，提供了类似 Vue.js 中的计算属性功能。
+- `WpfExtensions.Infrastructure`：一些杂项，等待时机成熟后将被分离出来，作为独立的模块发布。
 
 ## NuGet
 
@@ -19,9 +19,9 @@ This project comes from some scattered works I did while working on Wpf developm
 
 ## 1. WpfExtensions.Binding
 
-This module is designed to solve the problem of property update dependency, which is often encountered in development: the value of a property is calculated from multiple other property, then when these dependent properties changed, the resultant property also needs to notify the UI to update. For example: `RectArea = Width * Height`, all three properties in this formula need to be bound to the UI, and the display of the `RectArea` will be automatically refreshed when `Width` and `Height` are changed.
+该模块是为了解决属性更新依赖的问题，开发中经常会遇到：一个属性的值，是由其它多个数据计算得到的，那么当这些被依赖的数据发生改变时，结果属性也需要通知 UI 更新。如：`RectArea = Width * Height`，该公式中的三个属性都需要绑定到 UI 上，并且输入 `Width` 和 `Height` 后，`RectArea` 的显示将自动刷新。
 
-To achieve this effect, the traditional implementation is as follows, and it's not hard to find: it's quite a pain to write, and each dependent property has to add a line of code to notify the result property to refresh.
+为达到这一效果，传统地实现如下，不难发现：写起来挺麻烦的，每个被依赖的属性中，都要加一行代码去通知结果属性刷新。
 
 ```csharp
 // View Model
@@ -46,7 +46,7 @@ public double Height {
 public double RectArea => Width * Height;
 ```
 
-So after using `WpfExtensions.Binding`, can it be shorter?
+那么使用 `WpfExtensions.Binding` 之后，是否可以短一点呢？
 
 ```csharp
 // View Model is derived from WpfExtensions.Binding.BindableBase.
@@ -63,7 +63,7 @@ public double Height {
 public double RectArea => Computed(() => Width * Height);
 ```
 
-Perhaps this example is too simple. If the same property affects multiple results, then multiple result properties have to be raised in that property. Such an intricate update dependency is not easy to maintain.
+或许这个例子过于简单，但想象：如果同一个属性影响多个结果，那么就要在该属性中 Raise 多个结果属性。这样错综复杂的更新依赖关系，是不容易维护的。好吧，就算一般项目里不会出现比较复杂的更新依赖，那反正这个 Binding 库就十几 KB，引用了又不亏。
 
 ## 2. WpfExtensions.Xaml
 
