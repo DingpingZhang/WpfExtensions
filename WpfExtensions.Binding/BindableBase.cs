@@ -79,25 +79,37 @@ namespace WpfExtensions.Binding
         private readonly HashSet<string> _existedObserverPropertyNameHashSet = new();
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        public event EventHandler<ComputedPropertyErrorEventArgs>? ComputedPropertyError;
-        public event EventHandler<PropertyObserverErrorEventArgs>? PropertyObserverError;
 
         protected T Computed<T>(Expression<Func<T>> expression, T fallback, [CallerMemberName] string? propertyName = null)
         {
-            return ComputedInternal(expression, fallback, propertyName);
+            return ComputedInternal(expression, fallback, propertyName!);
         }
 
         protected T? Computed<T>(Expression<Func<T>> expression, [CallerMemberName] string? propertyName = null)
         {
-            return ComputedInternal<T, T?>(expression, default, propertyName);
+            return ComputedInternal<T, T?>(expression, default, propertyName!);
         }
 
-        private TOut ComputedInternal<T, TOut>(Expression<Func<T>> expression, TOut fallback, [CallerMemberName] string? propertyName = null)
+        private TOut ComputedInternal<T, TOut>(Expression<Func<T>> expression, TOut fallback, string propertyName)
             where T : TOut
         {
+            // The expression is first evaluated once during property initialization.
+            TOut EvaluateExpression()
+            {
+                try
+                {
+                    return expression.Compile()();
+                }
+                catch (Exception exception)
+                {
+                    HandleComputedPropertyError(propertyName, exception);
+                    return fallback;
+                }
+            }
+
             if (!_propertyValueStorage.ContainsKey(propertyName ?? throw new ArgumentNullException(nameof(propertyName))))
             {
-                _propertyValueStorage.Add(propertyName, new ValueWrapper<TOut>(fallback));
+                _propertyValueStorage.Add(propertyName, new ValueWrapper<TOut>(EvaluateExpression()));
                 ExpressionObserver.Observes(expression, (value, exception) =>
                 {
                     var storage = (ValueWrapper<TOut>)_propertyValueStorage[propertyName];
@@ -108,7 +120,7 @@ namespace WpfExtensions.Binding
                     else
                     {
                         storage.Value = fallback;
-                        OnComputedPropertyError(new ComputedPropertyErrorEventArgs(propertyName, exception));
+                        HandleComputedPropertyError(propertyName, exception);
                     }
 
                     // Notify ui to pull the latest value after updating the storage.
@@ -128,8 +140,7 @@ namespace WpfExtensions.Binding
 
             return new PropertyObserver(
                 () => RaisePropertyChanged(propertyName),
-                (expressionString, exception) => OnPropertyObserverError(
-                    new PropertyObserverErrorEventArgs(propertyName, expressionString, exception)));
+                (expressionString, exception) => HandlePropertyObserverError(propertyName, expressionString, exception));
         }
 
         protected virtual bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string? propertyName = null)
@@ -163,14 +174,12 @@ namespace WpfExtensions.Binding
             PropertyChanged?.Invoke(this, e);
         }
 
-        private void OnComputedPropertyError(ComputedPropertyErrorEventArgs e)
+        protected virtual void HandleComputedPropertyError(string propertyName, Exception exception)
         {
-            ComputedPropertyError?.Invoke(this, e);
         }
 
-        private void OnPropertyObserverError(PropertyObserverErrorEventArgs e)
+        protected virtual void HandlePropertyObserverError(string propertyName, string expressionString, Exception exception)
         {
-            PropertyObserverError?.Invoke(this, e);
         }
     }
 }

@@ -5,8 +5,8 @@ namespace WpfApp.Net462.ViewModels
 {
     public class BindingDemoViewModel : BindableBase
     {
-        private double _a;
-        private double _b;
+        private double _a = 2;
+        private double _b = 4;
         private double _c;
 
         public double A
@@ -27,8 +27,8 @@ namespace WpfApp.Net462.ViewModels
             set => SetProperty(ref _c, value);
         }
 
-        //public (double x1, double x2) Result => Computed(() => Calculate(A, B, C));
-        public (double x1, double x2) Result => Calculate(A, B, C);
+        public (double x1, double x2) Result => Computed(() => Calculate(A, B, C), (double.NaN, double.NaN));
+        //public (double x1, double x2) Result => Calculate(A, B, C);
 
         private static (double x1, double x2) Calculate(double a, double b, double c)
         {
@@ -44,7 +44,7 @@ namespace WpfApp.Net462.ViewModels
 
         public BindingDemoViewModel()
         {
-            Make(nameof(Result)).Observes(() => EachOf(A, B, C));
+            //Make(nameof(Result)).Observes(() => EachOf(A, B, C));
         }
 
         private static string EachOf(params object[] _) => string.Empty;
