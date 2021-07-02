@@ -15,7 +15,7 @@
 | Package                 | NuGet                                                                                                                   |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | `WpfExtensions.Xaml`    | [![version](https://img.shields.io/badge/version-1.2.0-brightgreen)](https://www.nuget.org/packages/WpfExtensions.Xaml) |
-| `WpfExtensions.Binding` | [![version](https://img.shields.io/badge/version-0.1.0-orange)](https://www.nuget.org/packages/WpfExtensions.Binding)   |
+| `WpfExtensions.Binding` | [![version](https://img.shields.io/badge/version-0.1.1-orange)](https://www.nuget.org/packages/WpfExtensions.Binding)   |
 
 ## 1. WpfExtensions.Binding
 
