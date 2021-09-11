@@ -12,7 +12,6 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <Nullable>enable</Nullable>
-
   </PropertyGroup>
 
 </Project>

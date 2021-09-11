@@ -34,13 +34,8 @@ namespace WpfExtensions.Binding.Expressions
                 // 1. Normal case (Inpc -> Prop): The root-node will be created in the VisitConstant method,
                 // and creates relay-node here.
                 if (InpcType.IsAssignableFrom(ownerNode.Type) &&
-                    node.Member.MemberType == MemberTypes.Property)
+                    node.Member.MemberType is MemberTypes.Property or MemberTypes.Field)
                 {
-                    //if (InpcType.IsAssignableFrom(node.Type) && _context.DownstreamNode != null) // (Inpc & Prop) -> Prop
-                    //{
-                    //    return new DependencyNode(node);
-                    //}
-
                     // (Inpc & Prop), (Any | Prop) -> Prop
                     return new DependencyNode(node);
                 }
