@@ -1,20 +1,16 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace WpfExtensions.Binding.Expressions
 {
-    public static class ExpressionObserver
+    public class ExpressionObserver : IExpressionObserver
     {
-        internal static DependencyGraph GenerateDependencyGraph<T>(Expression<Func<T>> expression)
-        {
-            var visitor = new SingleLineLambdaVisitor();
-            visitor.Visit(expression);
-            return new DependencyGraph(visitor.RootNodes, visitor.ConditionalNodes);
-        }
+        public static IExpressionObserver Singleton { get; } = new ExpressionObserver();
 
-        public static IDisposable Observes<T>(Expression<Func<T>> expression, Action<T, Exception?> onValueChanged)
+        private ExpressionObserver() { }
+
+        public IDisposable Observes<T>(Expression<Func<T>> expression, Action<T, Exception?> callback)
         {
             var valueGetter = expression.Compile();
 
@@ -35,10 +31,15 @@ namespace WpfExtensions.Binding.Expressions
             void OnPropertyChanged(object sender, EventArgs e)
             {
                 var newValue = valueGetter.TryGet(out var exception);
-                onValueChanged(newValue!, exception);
-
-                Debug.WriteLine($"[{DateTime.Now}][Value Changed] NewValue = {newValue}");
+                callback(newValue!, exception);
             }
+        }
+
+        private static DependencyGraph GenerateDependencyGraph<T>(Expression<Func<T>> expression)
+        {
+            var visitor = new SingleLineLambdaVisitor();
+            visitor.Visit(expression);
+            return new DependencyGraph(visitor.RootNodes, visitor.ConditionalNodes);
         }
     }
 }
