@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -12,10 +12,12 @@ namespace WpfExtensions.Binding.Expressions
         private const string ClosureClassName = "DisplayClass"; // Regex: <>__DisplayClass_\d+?_\d+?
         private static readonly Type InpcType = typeof(INotifyPropertyChanged);
 
-        private readonly IDictionary<string, DependencyNode> _nodes = new Dictionary<string, DependencyNode>();
+        private readonly IDictionary<string, DependencyNode?> _nodes = new Dictionary<string, DependencyNode?>();
         private readonly List<ConditionalNode> _conditionalReferences = new();
 
         public IReadOnlyCollection<DependencyNode> RootNodes => _nodes.Values
+            .Where(item => item is not null)
+            .Select(item => item!)
             .Where(item => item.IsRoot && item.DownstreamNodes.Any())
             .ToList()
             .AsReadOnly();
@@ -28,35 +30,74 @@ namespace WpfExtensions.Binding.Expressions
         // Property chain, and closure root field node.
         protected override Expression VisitMember(MemberExpression node)
         {
-            var ownerNode = node.Expression;
-            var dependencyNode = GetOrCreateNode(node, () =>
+            Expression? ownerNode = node.Expression;
+            DependencyNode? dependencyNode = GetOrCreateNode(node, () =>
             {
-                // 1. Normal case (Inpc -> Prop): The root-node will be created in the VisitConstant method,
-                // and creates relay-node here.
-                if (InpcType.IsAssignableFrom(ownerNode.Type) &&
-                    node.Member.MemberType is MemberTypes.Property or MemberTypes.Field)
+                // Case: root node is static property.
+                if (IsStaticRoot(node, ownerNode))
+                {
+                    return new DependencyNode(node, true);
+                }
+
+                // Case: resolve nested property in the chain. (Inpc -> Prop)
+                // The root-node will be created in the VisitConstant method, and creates relay-node here.
+                if (IsNestedNode(node, ownerNode))
                 {
                     // (Inpc & Prop), (Any | Prop) -> Prop
                     return new DependencyNode(node);
                 }
 
-                // 2. Closure case ((<>c__DisplayClass_0_0).(Inpc)field): The root-node will be created here,
-                // and the closure class (<>x__DisplayClass_X_X) will be discarded in the VisitConstant method.
-                if (ownerNode.NodeType == ExpressionType.Constant &&
-                    ownerNode.Type.Name.Contains(ClosureClassName) &&
-                    node.Member.MemberType == MemberTypes.Field &&
-                    InpcType.IsAssignableFrom(node.Type))
+                // WARN: changes of closure variable will not be observed.
+                if (IsClosureVariable(node, ownerNode))
                 {
-                    return new DependencyNode(node, true);
+                    if (InpcType.IsAssignableFrom(node.Type))
+                    {
+                        // Case: root node is a closure variable, like: ((<>c__DisplayClass_0_0).(Inpc)field).
+                        // The root-node will be created here, and the closure class (<>x__DisplayClass_X_X)
+                        // will be discarded in the VisitConstant method.
+                        return new DependencyNode(node, true);
+                    }
+                    else
+                    {
+                        // Case: don't track variables that not implement INotifyPropertyChanged interface.
+                        return null;
+                    }
                 }
 
                 throw new NotSupportedException("The expression of the type cannot be supported.");
             });
 
-            // New context
-            var context = _context.Clone(item => item.DownstreamNode = dependencyNode);
+            if (dependencyNode is null)
+            {
+                return base.VisitMember(node);
+            }
+            else
+            {
+                // New context
+                Context context = _context.Clone(item => item.DownstreamNode = dependencyNode);
+                return VisitInContext(() => base.VisitMember(node), context);
+            }
+        }
 
-            return VisitInContext(() => base.VisitMember(node), context);
+        private static bool IsNestedNode(MemberExpression node, Expression ownerNode)
+        {
+            return InpcType.IsAssignableFrom(ownerNode!.Type) &&
+                // TODO: Remove field.
+                node.Member.MemberType is MemberTypes.Property or MemberTypes.Field;
+        }
+
+        private static bool IsClosureVariable(MemberExpression node, Expression ownerNode)
+        {
+            return ownerNode.NodeType == ExpressionType.Constant &&
+                ownerNode.Type.Name.Contains(ClosureClassName) &&
+                node.Member.MemberType == MemberTypes.Field;
+        }
+
+        private static bool IsStaticRoot(MemberExpression node, Expression? ownerNode)
+        {
+            return ownerNode is null &&
+                node.Member.MemberType is MemberTypes.Property &&
+                !((PropertyInfo)node.Member).CanWrite;
         }
 
         // Root node.
@@ -151,7 +192,7 @@ namespace WpfExtensions.Binding.Expressions
             return conditionalNode;
         }
 
-        private DependencyNode GetOrCreateNode<T>(T node, Func<DependencyNode> creator)
+        private DependencyNode? GetOrCreateNode<T>(T node, Func<DependencyNode?> creator)
             where T : Expression
         {
             var key = node.ToString();
@@ -160,7 +201,12 @@ namespace WpfExtensions.Binding.Expressions
                 _nodes.Add(key, creator());
             }
 
-            var dependencyNode = _nodes[key];
+            DependencyNode? dependencyNode = _nodes[key];
+
+            if (dependencyNode is null)
+            {
+                return null;
+            }
 
             if (_context.ConditionalNodeType != ConditionalNodeType.None)
             {
