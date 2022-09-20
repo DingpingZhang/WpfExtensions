@@ -1,16 +1,15 @@
-﻿namespace WpfExtensions.Infrastructure.Mvvm
+﻿namespace WpfExtensions.Infrastructure.Mvvm;
+
+public interface IViewLoadedAndUnloadedAware
 {
-    public interface IViewLoadedAndUnloadedAware
-    {
-        void OnLoaded();
+    void OnLoaded();
 
-        void OnUnloaded();
-    }
+    void OnUnloaded();
+}
 
-    public interface IViewLoadedAndUnloadedAware<in TView>
-    {
-        void OnLoaded(TView view);
+public interface IViewLoadedAndUnloadedAware<in TView>
+{
+    void OnLoaded(TView view);
 
-        void OnUnloaded(TView view);
-    }
+    void OnUnloaded(TView view);
 }

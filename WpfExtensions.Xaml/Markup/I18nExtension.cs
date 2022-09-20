@@ -9,58 +9,57 @@ using System.Drawing;
 using WpfExtensions.Xaml.ExtensionMethods;
 #endif
 
-namespace WpfExtensions.Xaml.Markup
+namespace WpfExtensions.Xaml.Markup;
+
+[MarkupExtensionReturnType(typeof(object))]
+public class I18nExtension : MarkupExtension
 {
-    [MarkupExtensionReturnType(typeof(object))]
-    public class I18nExtension : MarkupExtension
+    private static readonly I18nResourceConverter I18NResourceConverter = new();
+
+    [ConstructorArgument(nameof(Key))]
+    public ComponentResourceKey Key { get; set; }
+
+    public I18nExtension(ComponentResourceKey key) => Key = key;
+
+    public override object ProvideValue(IServiceProvider serviceProvider)
     {
-        private static readonly I18nResourceConverter I18NResourceConverter = new();
+        if (Key == null)
+            throw new NullReferenceException($"{nameof(Key)} cannot be null at the same time.");
 
-        [ConstructorArgument(nameof(Key))]
-        public ComponentResourceKey Key { get; set; }
+        if (serviceProvider.GetService(typeof(IProvideValueTarget)) is not IProvideValueTarget provideValueTarget)
+            throw new ArgumentException(
+                $"The {nameof(serviceProvider)} must implement {nameof(IProvideValueTarget)} interface.");
 
-        public I18nExtension(ComponentResourceKey key) => Key = key;
+        if (provideValueTarget.TargetObject?.GetType().FullName == "System.Windows.SharedDp") return this;
 
-        public override object ProvideValue(IServiceProvider serviceProvider)
+        return new Binding(nameof(I18nSource.Value))
         {
-            if (Key == null)
-                throw new NullReferenceException($"{nameof(Key)} cannot be null at the same time.");
+            Source = new I18nSource(Key, provideValueTarget.TargetObject),
+            Mode = BindingMode.OneWay,
+            Converter = I18NResourceConverter
+        }.ProvideValue(serviceProvider);
+    }
 
-            if (serviceProvider.GetService(typeof(IProvideValueTarget)) is not IProvideValueTarget provideValueTarget)
-                throw new ArgumentException(
-                    $"The {nameof(serviceProvider)} must implement {nameof(IProvideValueTarget)} interface.");
-
-            if (provideValueTarget.TargetObject?.GetType().FullName == "System.Windows.SharedDp") return this;
-
-            return new Binding(nameof(I18nSource.Value))
-            {
-                Source = new I18nSource(Key, provideValueTarget.TargetObject),
-                Mode = BindingMode.OneWay,
-                Converter = I18NResourceConverter
-            }.ProvideValue(serviceProvider);
-        }
-
-        private class I18nResourceConverter : IValueConverter
+    private class I18nResourceConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            {
 #if NETCOREAPP
-                return value;
+            return value;
 #else
 
-                return value switch
-                {
-                    Bitmap bitmap => bitmap.ToBitmapSource(),
-                    Icon icon => icon.ToImageSource(),
-                    _ => value
-                };
-#endif
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            return value switch
             {
-                throw new NotSupportedException();
-            }
+                Bitmap bitmap => bitmap.ToBitmapSource(),
+                Icon icon => icon.ToImageSource(),
+                _ => value
+            };
+#endif
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
         }
     }
 }

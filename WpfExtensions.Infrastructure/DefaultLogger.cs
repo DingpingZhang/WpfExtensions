@@ -1,53 +1,52 @@
 ﻿using System;
 using System.Threading;
 
-namespace WpfExtensions.Infrastructure
+namespace WpfExtensions.Infrastructure;
+
+public class DefaultLogger : ILogger
 {
-    public class DefaultLogger : ILogger
+    internal static ILogger Get(Type type) => Configurations.LoggerFactory?.Invoke(type) ?? new DefaultLogger(type);
+
+    private readonly Type _type;
+
+    protected DefaultLogger(Type type) => _type = type;
+
+    public void Error(string message, Exception e = null)
     {
-        internal static ILogger Get(Type type) => Configurations.LoggerFactory?.Invoke(type) ?? new DefaultLogger(type);
+        Write(nameof(Error), message, e);
+    }
 
-        private readonly Type _type;
+    public void Warning(string message, Exception e = null)
+    {
+        Write(nameof(Warning), message, e);
+    }
 
-        protected DefaultLogger(Type type) => _type = type;
+    public void Info(string message, Exception e = null)
+    {
+        Write(nameof(Info), message, e);
+    }
 
-        public void Error(string message, Exception e = null)
+    public void Debug(string message, Exception e = null)
+    {
+        Write(nameof(Debug), message, e);
+    }
+
+    private void Write(string category, string message, Exception e)
+    {
+        message = $"{message}{Environment.NewLine}";
+
+        if (e != null)
         {
-            Write(nameof(Error), message, e);
+            message = $"{message}{e.Message}{Environment.NewLine}" +
+                      $"{e.StackTrace}{Environment.NewLine}";
         }
 
-        public void Warning(string message, Exception e = null)
-        {
-            Write(nameof(Warning), message, e);
-        }
+        message = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} " +
+                  $"[{Thread.CurrentThread.ManagedThreadId}] " +
+                  $"{category.ToUpper()} " +
+                  $"{_type.FullName}{Environment.NewLine}" +
+                  $"{message}{Environment.NewLine}";
 
-        public void Info(string message, Exception e = null)
-        {
-            Write(nameof(Info), message, e);
-        }
-
-        public void Debug(string message, Exception e = null)
-        {
-            Write(nameof(Debug), message, e);
-        }
-
-        private void Write(string category, string message, Exception e)
-        {
-            message = $"{message}{Environment.NewLine}";
-
-            if (e != null)
-            {
-                message = $"{message}{e.Message}{Environment.NewLine}" +
-                          $"{e.StackTrace}{Environment.NewLine}";
-            }
-
-            message = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} " +
-                      $"[{Thread.CurrentThread.ManagedThreadId}] " +
-                      $"{category.ToUpper()} " +
-                      $"{_type.FullName}{Environment.NewLine}" +
-                      $"{message}{Environment.NewLine}";
-
-            System.Diagnostics.Debug.Write(message);
-        }
+        System.Diagnostics.Debug.Write(message);
     }
 }

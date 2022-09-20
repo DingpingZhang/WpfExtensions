@@ -2,23 +2,22 @@
 
 using System.Collections.Generic;
 
-namespace WpfExtensions.Infrastructure.Extensions
+namespace WpfExtensions.Infrastructure.Extensions;
+
+public static class DictionaryExtensions
 {
-    public static class DictionaryExtensions
+    public static TValue Get<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key) where TValue : new()
     {
-        public static TValue Get<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key) where TValue : new()
+        if (!@this.ContainsKey(key))
         {
-            if (!@this.ContainsKey(key))
-            {
-                @this[key] = new TValue();
-            }
-
-            return @this[key];
+            @this[key] = new TValue();
         }
 
-        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key)
-        {
-            return @this.ContainsKey(key) ? @this[key] : default;
-        }
+        return @this[key];
+    }
+
+    public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key)
+    {
+        return @this.ContainsKey(key) ? @this[key] : default;
     }
 }

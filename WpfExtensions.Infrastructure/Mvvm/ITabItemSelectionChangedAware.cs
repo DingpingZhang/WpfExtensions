@@ -1,9 +1,8 @@
-﻿namespace WpfExtensions.Infrastructure.Mvvm
-{
-    public interface ITabItemSelectionChangedAware
-    {
-        void OnSelected();
+﻿namespace WpfExtensions.Infrastructure.Mvvm;
 
-        void OnUnselected();
-    }
+public interface ITabItemSelectionChangedAware
+{
+    void OnSelected();
+
+    void OnUnselected();
 }

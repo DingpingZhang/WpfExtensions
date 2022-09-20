@@ -1,17 +1,16 @@
 ﻿using System;
 
-namespace WpfExtensions.Binding.Expressions
+namespace WpfExtensions.Binding.Expressions;
+
+internal sealed class Disposable : IDisposable
 {
-    internal sealed class Disposable : IDisposable
-    {
-        public static readonly IDisposable Empty = Create(() => { });
+    public static readonly IDisposable Empty = Create(() => { });
 
-        public static IDisposable Create(Action action) => new Disposable(action);
+    public static IDisposable Create(Action action) => new Disposable(action);
 
-        private readonly Action _action;
+    private readonly Action _action;
 
-        private Disposable(Action action) => _action = action;
+    private Disposable(Action action) => _action = action;
 
-        public void Dispose() => _action();
-    }
+    public void Dispose() => _action();
 }

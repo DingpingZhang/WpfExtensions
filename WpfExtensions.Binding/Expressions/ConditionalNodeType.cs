@@ -1,10 +1,9 @@
-﻿namespace WpfExtensions.Binding.Expressions
+﻿namespace WpfExtensions.Binding.Expressions;
+
+internal enum ConditionalNodeType
 {
-    internal enum ConditionalNodeType
-    {
-        None,
-        Test,
-        IfTrue,
-        IfFalse
-    }
+    None,
+    Test,
+    IfTrue,
+    IfFalse
 }

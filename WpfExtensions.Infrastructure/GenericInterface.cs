@@ -3,118 +3,117 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
-namespace WpfExtensions.Infrastructure
+namespace WpfExtensions.Infrastructure;
+
+public interface IGenericInterface
 {
-    public interface IGenericInterface
+    Type Type { get; }
+
+    Type[] GenericArguments { get; }
+
+    TDelegate GetMethod<TDelegate>(string methodName, params Type[] argTypes);
+}
+
+public static class GenericInterfaceExtensions
+{
+    public static IGenericInterface AsGenericInterface(this object @this, Type type)
     {
-        Type Type { get; }
+        var interfaceType = (
+                from @interface in @this.GetType().GetInterfaces()
+                where @interface.IsGenericType
+                let definition = @interface.GetGenericTypeDefinition()
+                where definition == type
+                select @interface
+            )
+            .SingleOrDefault();
 
-        Type[] GenericArguments { get; }
-
-        TDelegate GetMethod<TDelegate>(string methodName, params Type[] argTypes);
+        return interfaceType != null
+            ? new GenericInterfaceImpl(@this, interfaceType)
+            : null;
     }
 
-    public static class GenericInterfaceExtensions
+    private class GenericInterfaceImpl : IGenericInterface
     {
-        public static IGenericInterface AsGenericInterface(this object @this, Type type)
-        {
-            var interfaceType = (
-                    from @interface in @this.GetType().GetInterfaces()
-                    where @interface.IsGenericType
-                    let definition = @interface.GetGenericTypeDefinition()
-                    where definition == type
-                    select @interface
-                )
-                .SingleOrDefault();
+        private static readonly Regex ActionDelegateRegex = new(@"^System\.Action(`\d{1,2})?", RegexOptions.Compiled);
+        private static readonly Regex FuncDelegateRegex = new(@"^System\.Func`(\d{1,2})", RegexOptions.Compiled);
 
-            return interfaceType != null
-                ? new GenericInterfaceImpl(@this, interfaceType)
-                : null;
+        private readonly object _instance;
+
+        public Type Type { get; }
+
+        public Type[] GenericArguments => Type.GetGenericArguments();
+
+        public GenericInterfaceImpl(object instance, Type interfaceType)
+        {
+            _instance = instance;
+            Type = interfaceType;
         }
 
-        private class GenericInterfaceImpl : IGenericInterface
+        public TDelegate GetMethod<TDelegate>(string methodName, params Type[] argTypes)
         {
-            private static readonly Regex ActionDelegateRegex = new(@"^System\.Action(`\d{1,2})?", RegexOptions.Compiled);
-            private static readonly Regex FuncDelegateRegex = new(@"^System\.Func`(\d{1,2})", RegexOptions.Compiled);
-
-            private readonly object _instance;
-
-            public Type Type { get; }
-
-            public Type[] GenericArguments => Type.GetGenericArguments();
-
-            public GenericInterfaceImpl(object instance, Type interfaceType)
+            return GetDelegateType<TDelegate>() switch
             {
-                _instance = instance;
-                Type = interfaceType;
+                DelegateType.Action => GetAction<TDelegate>(methodName),
+                DelegateType.ActionWithParams => GetActionWithParams<TDelegate>(methodName, argTypes),
+                _ => throw new NotSupportedException()
+            };
+        }
+
+        private TDelegate GetActionWithParams<TDelegate>(string methodName, params Type[] argTypes)
+        {
+            var methodInfo = Type.GetMethod(methodName) ?? throw new ArgumentException(nameof(methodName));
+            var argTypeList = argTypes.Any() ? argTypes : typeof(TDelegate).GetGenericArguments();
+            (ParameterExpression expression, Type type)[] argObjectParameters = argTypeList
+                .Select(item => (Expression.Parameter(typeof(object)), item))
+                .ToArray();
+
+            var method = Expression.Lambda<TDelegate>(
+                    Expression.Call(
+                        Expression.Constant(_instance),
+                        methodInfo,
+                        argObjectParameters.Select(item => Expression.Convert(item.expression, item.type))),
+                    argObjectParameters.Select(item => item.expression))
+                .Compile();
+
+            return method;
+        }
+
+        private TDelegate GetAction<TDelegate>(string methodName)
+        {
+            var methodInfo = Type.GetMethod(methodName) ?? throw new ArgumentException(nameof(methodName));
+            var method = Expression.Lambda<TDelegate>(
+                    Expression.Call(
+                        Expression.Constant(_instance),
+                        methodInfo))
+                .Compile();
+
+            return method;
+        }
+
+        private static DelegateType GetDelegateType<TDelegate>()
+        {
+            var actionMatch = ActionDelegateRegex.Match(typeof(TDelegate).FullName ?? throw new InvalidOperationException());
+            if (actionMatch.Success)
+            {
+                return actionMatch.Groups.Count > 1 ? DelegateType.ActionWithParams : DelegateType.Action;
             }
 
-            public TDelegate GetMethod<TDelegate>(string methodName, params Type[] argTypes)
+            var funcMatch = FuncDelegateRegex.Match(typeof(TDelegate).FullName ?? throw new InvalidOperationException());
+            if (funcMatch.Success)
             {
-                return GetDelegateType<TDelegate>() switch
-                {
-                    DelegateType.Action => GetAction<TDelegate>(methodName),
-                    DelegateType.ActionWithParams => GetActionWithParams<TDelegate>(methodName, argTypes),
-                    _ => throw new NotSupportedException()
-                };
+                return int.Parse(actionMatch.Groups[1].Value) > 1 ? DelegateType.FuncWithParams : DelegateType.Func;
             }
 
-            private TDelegate GetActionWithParams<TDelegate>(string methodName, params Type[] argTypes)
-            {
-                var methodInfo = Type.GetMethod(methodName) ?? throw new ArgumentException(nameof(methodName));
-                var argTypeList = argTypes.Any() ? argTypes : typeof(TDelegate).GetGenericArguments();
-                (ParameterExpression expression, Type type)[] argObjectParameters = argTypeList
-                    .Select(item => (Expression.Parameter(typeof(object)), item))
-                    .ToArray();
+            return DelegateType.NotSupported;
+        }
 
-                var method = Expression.Lambda<TDelegate>(
-                        Expression.Call(
-                            Expression.Constant(_instance),
-                            methodInfo,
-                            argObjectParameters.Select(item => Expression.Convert(item.expression, item.type))),
-                        argObjectParameters.Select(item => item.expression))
-                    .Compile();
-
-                return method;
-            }
-
-            private TDelegate GetAction<TDelegate>(string methodName)
-            {
-                var methodInfo = Type.GetMethod(methodName) ?? throw new ArgumentException(nameof(methodName));
-                var method = Expression.Lambda<TDelegate>(
-                        Expression.Call(
-                            Expression.Constant(_instance),
-                            methodInfo))
-                    .Compile();
-
-                return method;
-            }
-
-            private static DelegateType GetDelegateType<TDelegate>()
-            {
-                var actionMatch = ActionDelegateRegex.Match(typeof(TDelegate).FullName ?? throw new InvalidOperationException());
-                if (actionMatch.Success)
-                {
-                    return actionMatch.Groups.Count > 1 ? DelegateType.ActionWithParams : DelegateType.Action;
-                }
-
-                var funcMatch = FuncDelegateRegex.Match(typeof(TDelegate).FullName ?? throw new InvalidOperationException());
-                if (funcMatch.Success)
-                {
-                    return int.Parse(actionMatch.Groups[1].Value) > 1 ? DelegateType.FuncWithParams : DelegateType.Func;
-                }
-
-                return DelegateType.NotSupported;
-            }
-
-            private enum DelegateType
-            {
-                NotSupported,
-                Action,
-                Func,
-                ActionWithParams,
-                FuncWithParams
-            }
+        private enum DelegateType
+        {
+            NotSupported,
+            Action,
+            Func,
+            ActionWithParams,
+            FuncWithParams
         }
     }
 }

@@ -25,22 +25,22 @@ using System.Windows;
 
 namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("NamespaceHint").ToString()#>
 {
-	public static class ResKeys
-	{
+    public static class ResKeys
+    {
 <#
     var resourceKeys = XElement.Load(this.Host.ResolvePath(ResourceFileName))
         .Elements("data")
         .Select(item => item.Attribute("name")?.Value)
         .Where(item => item != null);
 
-	var resourceDesignerName = Path.GetFileNameWithoutExtension(ResourceFileName);
+    var resourceDesignerName = Path.GetFileNameWithoutExtension(ResourceFileName);
 
     foreach (string resourceKey in resourceKeys)
     {
 #>
-		public static readonly ComponentResourceKey <#= resourceKey #> = new ComponentResourceKey(typeof(<#= resourceDesignerName #>), nameof(<#= resourceKey #>));
+        public static readonly ComponentResourceKey <#= resourceKey #> = new ComponentResourceKey(typeof(<#= resourceDesignerName #>), nameof(<#= resourceKey #>));
 <#
     }
 #>
-	}
+    }
 }

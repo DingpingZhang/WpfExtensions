@@ -1,9 +1,8 @@
-﻿namespace WpfExtensions.Xaml.Markup
-{
-    internal static class Constants
-    {
-        public const int InvalidIndex = -1;
+﻿namespace WpfExtensions.Xaml.Markup;
 
-        public static readonly object DefaultLabel = new();
-    }
+internal static class Constants
+{
+    public const int InvalidIndex = -1;
+
+    public static readonly object DefaultLabel = new();
 }

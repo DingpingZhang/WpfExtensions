@@ -3,42 +3,41 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace WpfExtensions.Binding.Expressions
+namespace WpfExtensions.Binding.Expressions;
+
+public static class ExpressionObserver
 {
-    public static class ExpressionObserver
+    internal static DependencyGraph GenerateDependencyGraph<T>(Expression<Func<T>> expression)
     {
-        internal static DependencyGraph GenerateDependencyGraph<T>(Expression<Func<T>> expression)
+        var visitor = new SingleLineLambdaVisitor();
+        visitor.Visit(expression);
+        return new DependencyGraph(visitor.RootNodes, visitor.ConditionalNodes);
+    }
+
+    public static IDisposable Observes<T>(Expression<Func<T>> expression, Action<T, Exception?> onValueChanged)
+    {
+        var valueGetter = expression.Compile();
+
+        var graph = GenerateDependencyGraph(expression);
+        var dependencyRootNodeDisposables = graph.DependencyRootNodes
+            .Select(item => item.Initialize(OnPropertyChanged))
+            .ToArray();
+        var conditionalRootNodeDisposables = graph.ConditionalRootNodes
+            .Select(item => item.Initialize())
+            .ToArray();
+
+        return Disposable.Create(() =>
         {
-            var visitor = new SingleLineLambdaVisitor();
-            visitor.Visit(expression);
-            return new DependencyGraph(visitor.RootNodes, visitor.ConditionalNodes);
-        }
+            dependencyRootNodeDisposables.ForEach(item => item.Dispose());
+            conditionalRootNodeDisposables.ForEach(item => item.Dispose());
+        });
 
-        public static IDisposable Observes<T>(Expression<Func<T>> expression, Action<T, Exception?> onValueChanged)
+        void OnPropertyChanged(object sender, EventArgs e)
         {
-            var valueGetter = expression.Compile();
+            var newValue = valueGetter.TryGet(out var exception);
+            onValueChanged(newValue!, exception);
 
-            var graph = GenerateDependencyGraph(expression);
-            var dependencyRootNodeDisposables = graph.DependencyRootNodes
-                .Select(item => item.Initialize(OnPropertyChanged))
-                .ToArray();
-            var conditionalRootNodeDisposables = graph.ConditionalRootNodes
-                .Select(item => item.Initialize())
-                .ToArray();
-
-            return Disposable.Create(() =>
-            {
-                dependencyRootNodeDisposables.ForEach(item => item.Dispose());
-                conditionalRootNodeDisposables.ForEach(item => item.Dispose());
-            });
-
-            void OnPropertyChanged(object sender, EventArgs e)
-            {
-                var newValue = valueGetter.TryGet(out var exception);
-                onValueChanged(newValue!, exception);
-
-                Debug.WriteLine($"[{DateTime.Now}][Value Changed] NewValue = {newValue}");
-            }
+            Debug.WriteLine($"[{DateTime.Now}][Value Changed] NewValue = {newValue}");
         }
     }
 }

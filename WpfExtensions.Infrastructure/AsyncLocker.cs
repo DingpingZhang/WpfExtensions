@@ -1,107 +1,106 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace WpfExtensions.Infrastructure
+namespace WpfExtensions.Infrastructure;
+
+public class AsyncLocker
 {
-    public class AsyncLocker
+    private event Action Unlocked;
+
+    private bool _isLocked;
+
+    public bool IsLocked
     {
-        private event Action Unlocked;
-
-        private bool _isLocked;
-
-        public bool IsLocked
+        get => _isLocked;
+        set
         {
-            get => _isLocked;
-            set
+            if (_isLocked == value) return;
+            _isLocked = value;
+            if (!value) Unlocked?.Invoke();
+        }
+    }
+
+    public void Await(Action action, bool discardIfLocked = false)
+    {
+        if (!IsLocked)
+        {
+            try
             {
-                if (_isLocked == value) return;
-                _isLocked = value;
-                if (!value) Unlocked?.Invoke();
+                IsLocked = true;
+                action?.Invoke();
+            }
+            finally
+            {
+                IsLocked = false;
             }
         }
-
-        public void Await(Action action, bool discardIfLocked = false)
+        else if (!discardIfLocked)
         {
-            if (!IsLocked)
-            {
-                try
-                {
-                    IsLocked = true;
-                    action?.Invoke();
-                }
-                finally
-                {
-                    IsLocked = false;
-                }
-            }
-            else if (!discardIfLocked)
-            {
-                Unlocked += OnUnlocked;
-            }
-
-            void OnUnlocked()
-            {
-                Unlocked -= OnUnlocked;
-                Await(action, discardIfLocked);
-            }
+            Unlocked += OnUnlocked;
         }
 
-        public async void Await(Func<Task> task, bool discardIfLocked = false)
+        void OnUnlocked()
         {
-            if (task == null) throw new ArgumentNullException(nameof(task));
+            Unlocked -= OnUnlocked;
+            Await(action, discardIfLocked);
+        }
+    }
 
-            if (!IsLocked)
-            {
-                try
-                {
-                    IsLocked = true;
-                    await task();
-                }
-                catch (OperationCanceledException) { /* ignore */ }
-                finally
-                {
-                    IsLocked = false;
-                }
-            }
-            else if (!discardIfLocked)
-            {
-                Unlocked += OnUnlocked;
-            }
+    public async void Await(Func<Task> task, bool discardIfLocked = false)
+    {
+        if (task == null) throw new ArgumentNullException(nameof(task));
 
-            void OnUnlocked()
+        if (!IsLocked)
+        {
+            try
             {
-                Unlocked -= OnUnlocked;
-                Await(task, discardIfLocked);
+                IsLocked = true;
+                await task();
+            }
+            catch (OperationCanceledException) { /* ignore */ }
+            finally
+            {
+                IsLocked = false;
             }
         }
-
-        public async Task AwaitAsync(Func<Task> task, bool discardIfLocked = false)
+        else if (!discardIfLocked)
         {
-            if (task == null) throw new ArgumentNullException(nameof(task));
+            Unlocked += OnUnlocked;
+        }
 
-            if (!IsLocked)
-            {
-                try
-                {
-                    IsLocked = true;
-                    await task();
-                }
-                catch (OperationCanceledException) { /* ignore */ }
-                finally
-                {
-                    IsLocked = false;
-                }
-            }
-            else if (!discardIfLocked)
-            {
-                Unlocked += OnUnlocked;
-            }
+        void OnUnlocked()
+        {
+            Unlocked -= OnUnlocked;
+            Await(task, discardIfLocked);
+        }
+    }
 
-            async void OnUnlocked()
+    public async Task AwaitAsync(Func<Task> task, bool discardIfLocked = false)
+    {
+        if (task == null) throw new ArgumentNullException(nameof(task));
+
+        if (!IsLocked)
+        {
+            try
             {
-                Unlocked -= OnUnlocked;
-                await AwaitAsync(task, discardIfLocked);
+                IsLocked = true;
+                await task();
             }
+            catch (OperationCanceledException) { /* ignore */ }
+            finally
+            {
+                IsLocked = false;
+            }
+        }
+        else if (!discardIfLocked)
+        {
+            Unlocked += OnUnlocked;
+        }
+
+        async void OnUnlocked()
+        {
+            Unlocked -= OnUnlocked;
+            await AwaitAsync(task, discardIfLocked);
         }
     }
 }

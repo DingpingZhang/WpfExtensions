@@ -5,204 +5,203 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace WpfExtensions.Binding.Expressions
+namespace WpfExtensions.Binding.Expressions;
+
+internal class DependencyNode : IEquatable<DependencyNode>
 {
-    internal class DependencyNode : IEquatable<DependencyNode>
+    public string Id { get; }
+
+    public string? PropertyName { get; }
+
+    public bool IsRoot { get; }
+
+    public bool IsVirtual => !IsRoot && string.IsNullOrWhiteSpace(PropertyName) && InpcGetter != null;
+
+    public bool IsLeaf => !DownstreamNodes.Any();
+
+    public ICollection<DependencyNode> DownstreamNodes { get; } = new HashSet<DependencyNode>();
+
+    public Func<INotifyPropertyChanged>? InpcGetter { get; }
+
+    public DependencyNode(Expression node, bool isRoot = false)
     {
-        public string Id { get; }
+        Id = node.ToString();
+        IsRoot = isRoot;
 
-        public string? PropertyName { get; }
-
-        public bool IsRoot { get; }
-
-        public bool IsVirtual => !IsRoot && string.IsNullOrWhiteSpace(PropertyName) && InpcGetter != null;
-
-        public bool IsLeaf => !DownstreamNodes.Any();
-
-        public ICollection<DependencyNode> DownstreamNodes { get; } = new HashSet<DependencyNode>();
-
-        public Func<INotifyPropertyChanged>? InpcGetter { get; }
-
-        public DependencyNode(Expression node, bool isRoot = false)
+        if (typeof(INotifyPropertyChanged).IsAssignableFrom(node.Type))
         {
-            Id = node.ToString();
-            IsRoot = isRoot;
-
-            if (typeof(INotifyPropertyChanged).IsAssignableFrom(node.Type))
-            {
-                InpcGetter = Expression.Lambda<Func<INotifyPropertyChanged>>(node).Compile();
-            }
-
-            if (node is MemberExpression memberExpression)
-            {
-                PropertyName = memberExpression.Member.Name;
-            }
+            InpcGetter = Expression.Lambda<Func<INotifyPropertyChanged>>(node).Compile();
         }
 
-        #region Observes property changed
-
-        private INotifyPropertyChanged? _inpcObjectCache;
-        private bool _isInitialized;
-        private bool _isActivated;
-
-        public event EventHandler? Changed;
-
-        public bool IsActivated
+        if (node is MemberExpression memberExpression)
         {
-            get => _isActivated;
-            set
-            {
-                // Make sure it won't be updated repeatedly.
-                if (_isActivated == value) return;
-                _isActivated = value;
+            PropertyName = memberExpression.Member.Name;
+        }
+    }
 
-                Unsubscribe();
-                if (value)
-                {
-                    // Update (unsubscribe and subscribe) this node,
-                    // because this node may be changed when it is disable.
-                    Subscribe();
-                }
+    #region Observes property changed
+
+    private INotifyPropertyChanged? _inpcObjectCache;
+    private bool _isInitialized;
+    private bool _isActivated;
+
+    public event EventHandler? Changed;
+
+    public bool IsActivated
+    {
+        get => _isActivated;
+        set
+        {
+            // Make sure it won't be updated repeatedly.
+            if (_isActivated == value) return;
+            _isActivated = value;
+
+            Unsubscribe();
+            if (value)
+            {
+                // Update (unsubscribe and subscribe) this node,
+                // because this node may be changed when it is disable.
+                Subscribe();
             }
         }
+    }
 
-        public IDisposable Initialize(EventHandler onExpressionChanged)
+    public IDisposable Initialize(EventHandler onExpressionChanged)
+    {
+        // Sometimes some nodes have multiple parent nodes, and do not need to be initialized repeatedly.
+        if (_isInitialized) return Disposable.Empty;
+
+        _isActivated = true;
+
+        Changed += onExpressionChanged;
+        Subscribe();
+
+        var disposables = DownstreamNodes
+            .Select(item => item.Initialize(onExpressionChanged))
+            .ToArray();
+
+        _isInitialized = true;
+
+        return Disposable.Create(() =>
         {
-            // Sometimes some nodes have multiple parent nodes, and do not need to be initialized repeatedly.
-            if (_isInitialized) return Disposable.Empty;
+            _isActivated = false;
 
-            _isActivated = true;
-
-            Changed += onExpressionChanged;
-            Subscribe();
-
-            var disposables = DownstreamNodes
-                .Select(item => item.Initialize(onExpressionChanged))
-                .ToArray();
-
-            _isInitialized = true;
-
-            return Disposable.Create(() =>
-            {
-                _isActivated = false;
-
-                Changed -= onExpressionChanged;
-                Unsubscribe();
-
-                disposables.ForEach(item => item.Dispose());
-                _isInitialized = false;
-            });
-        }
-
-        private void SubscribeRecursively()
-        {
-            Subscribe();
-
-            DownstreamNodes
-                .Where(item => !item.IsLeaf && item.IsActivated)
-                .ForEach(item => item.SubscribeRecursively());
-        }
-
-        private void UnsubscribeRecursively()
-        {
+            Changed -= onExpressionChanged;
             Unsubscribe();
 
-            DownstreamNodes
-                .Where(item => !item.IsLeaf && item.IsActivated)
-                .ForEach(item => item.UnsubscribeRecursively());
-        }
+            disposables.ForEach(item => item.Dispose());
+            _isInitialized = false;
+        });
+    }
 
-        private void Subscribe()
+    private void SubscribeRecursively()
+    {
+        Subscribe();
+
+        DownstreamNodes
+            .Where(item => !item.IsLeaf && item.IsActivated)
+            .ForEach(item => item.SubscribeRecursively());
+    }
+
+    private void UnsubscribeRecursively()
+    {
+        Unsubscribe();
+
+        DownstreamNodes
+            .Where(item => !item.IsLeaf && item.IsActivated)
+            .ForEach(item => item.UnsubscribeRecursively());
+    }
+
+    private void Subscribe()
+    {
+        // Update the INPC object
+        if (InpcGetter != null)
         {
-            // Update the INPC object
-            if (InpcGetter != null)
-            {
-                _inpcObjectCache = InpcGetter.TryGet(out _);
-                if (_inpcObjectCache == null) return;
+            _inpcObjectCache = InpcGetter.TryGet(out _);
+            if (_inpcObjectCache == null) return;
 
-                _inpcObjectCache.PropertyChanged += OnPropertyChanged;
+            _inpcObjectCache.PropertyChanged += OnPropertyChanged;
 
-                Debug.WriteLine($"[{DateTime.Now}][Bound] {this} has been bound. ");
-            }
+            Debug.WriteLine($"[{DateTime.Now}][Bound] {this} has been bound. ");
         }
+    }
 
-        private void Unsubscribe()
+    private void Unsubscribe()
+    {
+        if (_inpcObjectCache != null)
         {
-            if (_inpcObjectCache != null)
-            {
-                _inpcObjectCache.PropertyChanged -= OnPropertyChanged;
-                _inpcObjectCache = null;
+            _inpcObjectCache.PropertyChanged -= OnPropertyChanged;
+            _inpcObjectCache = null;
 
-                Debug.WriteLine($"[{DateTime.Now}][Unbound] {this} has been unbound. ");
-            }
+            Debug.WriteLine($"[{DateTime.Now}][Unbound] {this} has been unbound. ");
         }
+    }
 
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        Debug.WriteLine($"[{DateTime.Now}][Property Changed] {sender}.{e.PropertyName}");
+
+        if (string.IsNullOrWhiteSpace(e.PropertyName))
         {
-            Debug.WriteLine($"[{DateTime.Now}][Property Changed] {sender}.{e.PropertyName}");
-
-            if (string.IsNullOrWhiteSpace(e.PropertyName))
-            {
-                return;
-            }
-
-            var changedNode = DownstreamNodes.FirstOrDefault(item => item.PropertyName == e.PropertyName);
-
-            if (changedNode is null)
-            {
-                return;
-            }
-
-            changedNode.UnsubscribeRecursively();
-            if (changedNode.IsActivated)
-            {
-                changedNode.RaiseChanged();
-                changedNode.SubscribeRecursively();
-            }
+            return;
         }
 
-        #endregion
+        var changedNode = DownstreamNodes.FirstOrDefault(item => item.PropertyName == e.PropertyName);
 
-        #region Equatable memebers
-
-        public bool Equals(DependencyNode? other)
+        if (changedNode is null)
         {
-            if (other is null) return false;
-            return ReferenceEquals(this, other) || string.Equals(Id, other.Id);
+            return;
         }
 
-        public override bool Equals(object? obj)
+        changedNode.UnsubscribeRecursively();
+        if (changedNode.IsActivated)
         {
-            if (obj is null)
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            return obj.GetType() == GetType() && Equals((DependencyNode)obj);
+            changedNode.RaiseChanged();
+            changedNode.SubscribeRecursively();
         }
+    }
 
-        public override int GetHashCode() => Id.GetHashCode();
+    #endregion
 
-        public static bool operator ==(DependencyNode left, DependencyNode right) => Equals(left, right);
+    #region Equatable memebers
 
-        public static bool operator !=(DependencyNode left, DependencyNode right) => !Equals(left, right);
+    public bool Equals(DependencyNode? other)
+    {
+        if (other is null) return false;
+        return ReferenceEquals(this, other) || string.Equals(Id, other.Id);
+    }
 
-        #endregion
-
-        public override string ToString() => IsRoot
-            ? $"<Root:{GetHashCode()}>"
-            : IsVirtual
-                ? $"<Virtual:{GetHashCode()}>"
-                : $"<{(IsLeaf ? "Leaf" : "Relay")}:{PropertyName}:{GetHashCode()}>";
-
-        public virtual void RaiseChanged()
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
         {
-            Changed?.Invoke(this, EventArgs.Empty);
+            return false;
         }
+
+        if (ReferenceEquals(this, obj))
+        {
+            return true;
+        }
+
+        return obj.GetType() == GetType() && Equals((DependencyNode)obj);
+    }
+
+    public override int GetHashCode() => Id.GetHashCode();
+
+    public static bool operator ==(DependencyNode left, DependencyNode right) => Equals(left, right);
+
+    public static bool operator !=(DependencyNode left, DependencyNode right) => !Equals(left, right);
+
+    #endregion
+
+    public override string ToString() => IsRoot
+        ? $"<Root:{GetHashCode()}>"
+        : IsVirtual
+            ? $"<Virtual:{GetHashCode()}>"
+            : $"<{(IsLeaf ? "Leaf" : "Relay")}:{PropertyName}:{GetHashCode()}>";
+
+    public virtual void RaiseChanged()
+    {
+        Changed?.Invoke(this, EventArgs.Empty);
     }
 }

@@ -1,13 +1,12 @@
-﻿namespace WpfApp.Net462.Views
+﻿namespace WpfApp.Net462.Views;
+
+/// <summary>
+/// Interaction logic for DemoSwitch.xaml
+/// </summary>
+public partial class DemoSwitch
 {
-    /// <summary>
-    /// Interaction logic for DemoSwitch.xaml
-    /// </summary>
-    public partial class DemoSwitch
+    public DemoSwitch()
     {
-        public DemoSwitch()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

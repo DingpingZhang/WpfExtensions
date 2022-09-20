@@ -16,54 +16,54 @@
 
 <#
     const string ClassName = "I18nStringExtension";
-	const string ItemTypeName = "object";
-	const string CollectionName = "Args";
-	const int Count = 16;
+    const string ItemTypeName = "object";
+    const string CollectionName = "Args";
+    const int Count = 16;
 #>
 
 using System.Windows.Data;
 using System.Windows;
 
-namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("NamespaceHint").ToString()#>
+namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("NamespaceHint").ToString()#>;
+
+public partial class <#= ClassName #>
 {
-    public partial class <#= ClassName #>
+    /*
+     * Have to list these constructor overloads here,
+     * because the stupid xaml does not support the "params" keyword.
+     * e.g.: ctor(params <#= ItemTypeName #>[] converters) cannot be used.
+     */
+
+    public <#= ClassName #>() 
     {
-		/*
-		 * Have to list these constructor overloads here,
-		 * because the stupid xaml does not support the "params" keyword.
-		 * e.g.: ctor(params <#= ItemTypeName #>[] converters) cannot be used.
-		 */
+        Converter = new MultiValueConverter(this);
+        Args = new ArgCollection(this);
+    }
 
-		public <#= ClassName #>() 
-		{
-			Converter = new MultiValueConverter(this);
-			Args = new ArgCollection(this);
-		}
-
-		private <#= ClassName #>(ComponentResourceKey key)
-			: this()
-		{
-			Key = key;
-			Bindings.Add(new Binding(nameof(I18nSource.Value))
-			{
-				Source = new I18nSource(key),
-				Mode = BindingMode.OneWay,
-				Converter = ResourceConverter
-			});
-		}
+    private <#= ClassName #>(ComponentResourceKey key)
+        : this()
+    {
+        Key = key;
+        Bindings.Add(new Binding(nameof(I18nSource.Value))
+        {
+            Source = new I18nSource(key),
+            Mode = BindingMode.OneWay,
+            Converter = ResourceConverter
+        });
+    }
 
 <#
     for (int i = 1; i <= Count; i++)
     {
 #>
-		public <#= ClassName #>(ComponentResourceKey key, <#= string.Join(", ", Enumerable.Range(0, i).Select(index => $"{ItemTypeName} item{index}")) #>)
-			: this(key)
-		{
-<#= string.Join(";\r\n", Enumerable.Range(0, i).Select(index => $"\t\t\t{CollectionName}.Add(item{index})")) #>;
-		}
+    public <#= ClassName #>(ComponentResourceKey key, <#= string.Join(", ", Enumerable.Range(0, i).Select(index => $"{ItemTypeName} item{index}")) #>)
+        : this(key)
+    {
+<#= string.Join(";\r\n", Enumerable.Range(0, i).Select(index => $"        {CollectionName}.Add(item{index})")) #>;
+    }
 
 <#
     }
 #>
-    }
 }
+

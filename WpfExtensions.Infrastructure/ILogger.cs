@@ -1,15 +1,14 @@
 ﻿using System;
 
-namespace WpfExtensions.Infrastructure
+namespace WpfExtensions.Infrastructure;
+
+public interface ILogger
 {
-    public interface ILogger
-    {
-        void Error(string message, Exception e = null);
+    void Error(string message, Exception e = null);
 
-        void Warning(string message, Exception e = null);
+    void Warning(string message, Exception e = null);
 
-        void Info(string message, Exception e = null);
+    void Info(string message, Exception e = null);
 
-        void Debug(string message, Exception e = null);
-    }
+    void Debug(string message, Exception e = null);
 }

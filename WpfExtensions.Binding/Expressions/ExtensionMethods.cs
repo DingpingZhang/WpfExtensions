@@ -1,35 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WpfExtensions.Binding.Expressions
-{
-    internal static class ExtensionMethods
-    {
-        public static void ForEach<T>(this IEnumerable<T>? enumerable, Action<T> callback)
-        {
-            if (enumerable == null)
-            {
-                return;
-            }
+namespace WpfExtensions.Binding.Expressions;
 
-            foreach (var item in enumerable)
-            {
-                callback?.Invoke(item);
-            }
+internal static class ExtensionMethods
+{
+    public static void ForEach<T>(this IEnumerable<T>? enumerable, Action<T> callback)
+    {
+        if (enumerable == null)
+        {
+            return;
         }
 
-        public static T? TryGet<T>(this Func<T>? getter, out Exception? exception)
+        foreach (var item in enumerable)
         {
-            try
-            {
-                exception = null;
-                return getter != null ? getter() : default;
-            }
-            catch (Exception e)
-            {
-                exception = e;
-                return default;
-            }
+            callback?.Invoke(item);
+        }
+    }
+
+    public static T? TryGet<T>(this Func<T>? getter, out Exception? exception)
+    {
+        try
+        {
+            exception = null;
+            return getter != null ? getter() : default;
+        }
+        catch (Exception e)
+        {
+            exception = e;
+            return default;
         }
     }
 }

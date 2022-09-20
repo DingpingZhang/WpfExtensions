@@ -12,11 +12,11 @@ using System.Windows;
 
 namespace WpfApp.Net462.I18nRes
 {
-	public static class ResKeys
-	{
-		public static readonly ComponentResourceKey test = new ComponentResourceKey(typeof(Resource), nameof(test));
-		public static readonly ComponentResourceKey TestString_WithFormat1 = new ComponentResourceKey(typeof(Resource), nameof(TestString_WithFormat1));
-		public static readonly ComponentResourceKey TestString_WithFormat3 = new ComponentResourceKey(typeof(Resource), nameof(TestString_WithFormat3));
-		public static readonly ComponentResourceKey TestString_WithoutFormat = new ComponentResourceKey(typeof(Resource), nameof(TestString_WithoutFormat));
-	}
+    public static class ResKeys
+    {
+        public static readonly ComponentResourceKey test = new ComponentResourceKey(typeof(Resource), nameof(test));
+        public static readonly ComponentResourceKey TestString_WithFormat1 = new ComponentResourceKey(typeof(Resource), nameof(TestString_WithFormat1));
+        public static readonly ComponentResourceKey TestString_WithFormat3 = new ComponentResourceKey(typeof(Resource), nameof(TestString_WithFormat3));
+        public static readonly ComponentResourceKey TestString_WithoutFormat = new ComponentResourceKey(typeof(Resource), nameof(TestString_WithoutFormat));
+    }
 }

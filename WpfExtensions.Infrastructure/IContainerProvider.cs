@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace WpfExtensions.Infrastructure
+namespace WpfExtensions.Infrastructure;
+
+public interface IContainerProvider
 {
-    public interface IContainerProvider
-    {
-        object Resolve(Type type);
-    }
+    object Resolve(Type type);
 }
