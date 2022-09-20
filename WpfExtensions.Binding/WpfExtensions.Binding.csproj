@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Version>0.1.4</Version>
     <Description>Provides convenient support for data binding.</Description>
     <PackageTags>wpf;data-binding;mvvm;binding;computed-property</PackageTags>

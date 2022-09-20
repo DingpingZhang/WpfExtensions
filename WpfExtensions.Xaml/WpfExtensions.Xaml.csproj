@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.0;net45</TargetFrameworks>
-    <Version>1.2.0</Version>
+    <TargetFrameworks>net462;net472;net5.0-windows;net6.0-windows</TargetFrameworks>
+    <Version>1.2.1</Version>
     <Description>Some common custom markup extensions for WPF.</Description>
     <PackageTags>wpf;xaml;markup-extension</PackageTags>
     <Product>WpfExtensions.Xaml</Product>
