@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -53,7 +53,11 @@ internal class DependencyNode : IEquatable<DependencyNode>
         set
         {
             // Make sure it won't be updated repeatedly.
-            if (_isActivated == value) return;
+            if (_isActivated == value)
+            {
+                return;
+            }
+
             _isActivated = value;
 
             Unsubscribe();
@@ -69,7 +73,10 @@ internal class DependencyNode : IEquatable<DependencyNode>
     public IDisposable Initialize(EventHandler onExpressionChanged)
     {
         // Sometimes some nodes have multiple parent nodes, and do not need to be initialized repeatedly.
-        if (_isInitialized) return Disposable.Empty;
+        if (_isInitialized)
+        {
+            return Disposable.Empty;
+        }
 
         _isActivated = true;
 
@@ -118,7 +125,10 @@ internal class DependencyNode : IEquatable<DependencyNode>
         if (InpcGetter != null)
         {
             _inpcObjectCache = InpcGetter.TryGet(out _);
-            if (_inpcObjectCache == null) return;
+            if (_inpcObjectCache == null)
+            {
+                return;
+            }
 
             _inpcObjectCache.PropertyChanged += OnPropertyChanged;
 
@@ -167,7 +177,11 @@ internal class DependencyNode : IEquatable<DependencyNode>
 
     public bool Equals(DependencyNode? other)
     {
-        if (other is null) return false;
+        if (other is null)
+        {
+            return false;
+        }
+
         return ReferenceEquals(this, other) || string.Equals(Id, other.Id);
     }
 
@@ -195,10 +209,10 @@ internal class DependencyNode : IEquatable<DependencyNode>
     #endregion
 
     public override string ToString() => IsRoot
-        ? $"<Root:{GetHashCode()}>"
+        ? $"<Root:{PropertyName}>"
         : IsVirtual
-            ? $"<Virtual:{GetHashCode()}>"
-            : $"<{(IsLeaf ? "Leaf" : "Relay")}:{PropertyName}:{GetHashCode()}>";
+            ? $"<Virtual>"
+            : $"<{(IsLeaf ? "Leaf" : "Relay")}:{PropertyName}>";
 
     public virtual void RaiseChanged()
     {

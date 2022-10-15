@@ -30,43 +30,7 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
     // Property chain, and closure root field node.
     protected override Expression VisitMember(MemberExpression node)
     {
-        Expression? ownerNode = node.Expression;
-        DependencyNode? dependencyNode = GetOrCreateNode(node, () =>
-        {
-            // Case: root node is static property.
-            if (IsStaticRoot(node, ownerNode))
-            {
-                return new DependencyNode(node, true);
-            }
-
-            // Case: resolve nested property in the chain. (Inpc -> Prop)
-            // The root-node will be created in the VisitConstant method, and creates relay-node here.
-            if (IsNestedNode(node, ownerNode))
-            {
-                // (Inpc & Prop), (Any | Prop) -> Prop
-                return new DependencyNode(node);
-            }
-
-            // WARN: changes of closure variable will not be observed.
-            if (IsClosureVariable(node, ownerNode))
-            {
-                if (InpcType.IsAssignableFrom(node.Type))
-                {
-                    // Case: root node is a closure variable, like: ((<>c__DisplayClass_0_0).(Inpc)field).
-                    // The root-node will be created here, and the closure class (<>x__DisplayClass_X_X)
-                    // will be discarded in the VisitConstant method.
-                    return new DependencyNode(node, true);
-                }
-                else
-                {
-                    // Case: don't track variables that not implement INotifyPropertyChanged interface.
-                    return null;
-                }
-            }
-
-            throw new NotSupportedException("The expression of the type cannot be supported.");
-        });
-
+        DependencyNode? dependencyNode = GetOrCreateNode(node, CreateMemberNode);
         if (dependencyNode is null)
         {
             return base.VisitMember(node);
@@ -79,33 +43,12 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
         }
     }
 
-    private static bool IsNestedNode(MemberExpression node, Expression ownerNode)
-    {
-        return InpcType.IsAssignableFrom(ownerNode!.Type) &&
-            // TODO: Remove field.
-            node.Member.MemberType is MemberTypes.Property or MemberTypes.Field;
-    }
-
-    private static bool IsClosureVariable(MemberExpression node, Expression ownerNode)
-    {
-        return ownerNode.NodeType == ExpressionType.Constant &&
-            ownerNode.Type.Name.Contains(ClosureClassName) &&
-            node.Member.MemberType == MemberTypes.Field;
-    }
-
-    private static bool IsStaticRoot(MemberExpression node, Expression? ownerNode)
-    {
-        return ownerNode is null &&
-            node.Member.MemberType is MemberTypes.Property &&
-            !((PropertyInfo)node.Member).CanWrite;
-    }
-
     // Root node.
     protected override Expression VisitConstant(ConstantExpression node)
     {
         if (InpcType.IsAssignableFrom(node.Type))
         {
-            GetOrCreateNode(node, () => new DependencyNode(node, true));
+            GetOrCreateNode(node, CreateRootNode);
         }
 
         return node;
@@ -125,18 +68,6 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
         return VisitVirtualNode(() => base.VisitMethodCall(node), node);
     }
 
-    private Expression VisitVirtualNode(Func<Expression> visitMethod, Expression node)
-    {
-        // Create virtual node and build context
-        DependencyNode? dependencyNode = null;
-        if (_context.DownstreamNode is not null)
-        {
-            dependencyNode = GetOrCreateNode(node, () => new DependencyNode(node));
-        }
-
-        return VisitInContext(visitMethod, _context.Clone(item => item.DownstreamNode = dependencyNode));
-    }
-
     protected override Expression VisitConditional(ConditionalExpression node)
     {
         var testReference = CreateConditionalNode(node);
@@ -146,7 +77,7 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
         if (InpcType.IsAssignableFrom(node.Type) && _context.DownstreamNode is not null)
         {
             // Create virtual node
-            dependencyNode = GetOrCreateNode(node, () => new DependencyNode(node));
+            dependencyNode = GetOrCreateNode(node, CreateNode);
         }
 
         var context = _context.Clone(item =>
@@ -192,16 +123,93 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
         return conditionalNode;
     }
 
-    private DependencyNode? GetOrCreateNode<T>(T node, Func<DependencyNode?> creator)
+    private static DependencyNode? CreateMemberNode(MemberExpression node)
+    {
+        Expression? ownerNode = node.Expression;
+
+        _ = IsTypeAsOrCast(ownerNode, out ownerNode);
+
+        // Case: root node is static property.
+        if (IsStaticRoot(node, ownerNode))
+        {
+            return new DependencyNode(node, true);
+        }
+
+        // Case: resolve nested property in the chain. (Inpc -> Prop)
+        // The root-node will be created in the VisitConstant method, and creates relay-node here.
+        if (IsNestedNode(node, ownerNode))
+        {
+            // (Inpc & Prop), (Any | Prop) -> Prop
+            return new DependencyNode(node);
+        }
+
+        // WARN: changes of closure variable will not be observed.
+        if (IsClosureVariable(node, ownerNode))
+        {
+            if (InpcType.IsAssignableFrom(node.Type))
+            {
+                // Case: root node is a closure variable, like: ((<>c__DisplayClass_0_0).(Inpc)field).
+                // The root-node will be created here, and the closure class (<>x__DisplayClass_X_X)
+                // will be discarded in the VisitConstant method.
+                return new DependencyNode(node, true);
+            }
+            else
+            {
+                // Case: don't track variables that not implement INotifyPropertyChanged interface.
+                return null;
+            }
+        }
+
+        throw new NotSupportedException($"The expression of the type cannot be supported: '{node}'.");
+    }
+
+    private static DependencyNode? CreateRootNode(Expression node) => new DependencyNode(node, isRoot: true);
+
+    private static DependencyNode? CreateNode(Expression node) => new DependencyNode(node);
+
+    private static bool IsTypeAsOrCast(Expression node, out Expression operand)
+    {
+        if (node is UnaryExpression { NodeType: ExpressionType.TypeAs or ExpressionType.Convert } unary)
+        {
+            operand = unary.Operand;
+            return true;
+        }
+        else
+        {
+            operand = node;
+            return false;
+        }
+    }
+
+    private static bool IsNestedNode(MemberExpression node, Expression ownerNode)
+    {
+        return InpcType.IsAssignableFrom(ownerNode.Type) &&
+            // TODO: Remove field.
+            node.Member.MemberType is MemberTypes.Property or MemberTypes.Field;
+    }
+
+    private static bool IsClosureVariable(MemberExpression node, Expression ownerNode)
+    {
+        return ownerNode.NodeType == ExpressionType.Constant &&
+            ownerNode.Type.Name.Contains(ClosureClassName) &&
+            node.Member.MemberType == MemberTypes.Field;
+    }
+
+    private static bool IsStaticRoot(MemberExpression node, Expression? ownerNode)
+    {
+        return ownerNode is null &&
+            node.Member.MemberType is MemberTypes.Property &&
+            !((PropertyInfo)node.Member).CanWrite;
+    }
+
+    private DependencyNode? GetOrCreateNode<T>(T node, Func<T, DependencyNode?> creator)
         where T : Expression
     {
         var key = node.ToString();
-        if (!_nodes.ContainsKey(key))
+        if (!_nodes.TryGetValue(key, out var dependencyNode))
         {
-            _nodes.Add(key, creator());
+            _nodes.Add(key, dependencyNode = creator(node));
         }
-
-        DependencyNode? dependencyNode = _nodes[key];
 
         if (dependencyNode is null)
         {
@@ -224,6 +232,18 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
     #region Context manage
 
     private Context _context = new();
+
+    private Expression VisitVirtualNode(Func<Expression> visitMethod, Expression node)
+    {
+        // Create virtual node and build context
+        DependencyNode? dependencyNode = null;
+        if (_context.DownstreamNode is not null)
+        {
+            dependencyNode = GetOrCreateNode(node, CreateNode);
+        }
+
+        return VisitInContext(visitMethod, _context.Clone(item => item.DownstreamNode = dependencyNode));
+    }
 
     private Expression VisitInContext(Func<Expression> visitCallback, Context context)
     {
