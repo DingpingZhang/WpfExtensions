@@ -127,7 +127,7 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
     {
         Expression? ownerNode = node.Expression;
 
-        _ = IsTypeAsOrCast(ownerNode, out ownerNode);
+        ownerNode = UnboxUnaryExpression(ownerNode);
 
         // Case: root node is static property.
         if (IsStaticRoot(node, ownerNode))
@@ -167,18 +167,9 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
 
     private static DependencyNode? CreateNode(Expression node) => new DependencyNode(node);
 
-    private static bool IsTypeAsOrCast(Expression node, out Expression operand)
+    private static Expression? UnboxUnaryExpression(Expression? node)
     {
-        if (node is UnaryExpression { NodeType: ExpressionType.TypeAs or ExpressionType.Convert } unary)
-        {
-            operand = unary.Operand;
-            return true;
-        }
-        else
-        {
-            operand = node;
-            return false;
-        }
+        return node is UnaryExpression unary ? unary.Operand : node;
     }
 
     private static bool IsNestedNode(MemberExpression node, Expression ownerNode)
