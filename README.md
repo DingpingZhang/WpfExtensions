@@ -14,8 +14,8 @@ The project is structured as follows:
 
 | Package                 | NuGet                                                                                                                   |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `WpfExtensions.Xaml`    | [![version](https://img.shields.io/badge/version-1.2.0-brightgreen)](https://www.nuget.org/packages/WpfExtensions.Xaml) |
-| `WpfExtensions.Binding` | [![version](https://img.shields.io/badge/version-0.1.1-orange)](https://www.nuget.org/packages/WpfExtensions.Binding)   |
+| `WpfExtensions.Xaml`    | [![version](https://img.shields.io/nuget/v/WpfExtensions.Xaml.svg)](https://www.nuget.org/packages/WpfExtensions.Xaml) |
+| `WpfExtensions.Binding` | [![version](https://img.shields.io/nuget/v/WpfExtensions.Binding.svg)](https://www.nuget.org/packages/WpfExtensions.Binding)   |
 
 ## 1. WpfExtensions.Binding
 
