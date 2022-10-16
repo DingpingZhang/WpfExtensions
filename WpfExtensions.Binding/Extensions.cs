@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace WpfExtensions.Binding;
@@ -6,20 +7,16 @@ namespace WpfExtensions.Binding;
 public delegate void OnCleanup(Action cleanup);
 public delegate void WatchCallback<in T>(T value, T oldValue, OnCleanup onCleanup);
 
-public static class ReactivityExtensions
+public static class Extensions
 {
     public static IDisposable Watch<T>(this IReactivity self, Expression<Func<T>> expression, WatchCallback<T> callback)
     {
-        Func<T> getter = expression.Compile();
-        T oldValue = getter();
         Action? cleanup = null;
         void OnCleanup(Action action) => cleanup = action;
-        return self.Watch(expression, () =>
+        return self.Watch(expression, (value, oldValue) =>
         {
             cleanup?.Invoke();
-            T value = getter();
             callback(value, oldValue, OnCleanup);
-            oldValue = value;
         });
     }
 
@@ -39,5 +36,26 @@ public static class ReactivityExtensions
     {
         Func<T> getter = expression.Compile();
         return self.Watch(expression, () => callback(getter()));
+    }
+
+    public static void Run(this Scope scope, Action action)
+    {
+        using (scope.Begin())
+        {
+            action();
+        }
+    }
+
+    internal static void ForEach<T>(this IEnumerable<T>? enumerable, Action<T> callback)
+    {
+        if (enumerable == null)
+        {
+            return;
+        }
+
+        foreach (var item in enumerable)
+        {
+            callback(item);
+        }
     }
 }

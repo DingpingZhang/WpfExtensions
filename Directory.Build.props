@@ -7,7 +7,6 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LangVersion>preview</LangVersion>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageProjectUrl>https://github.com/DingpingZhang/WpfExtensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DingpingZhang/WpfExtensions</RepositoryUrl>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>

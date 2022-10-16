@@ -45,6 +45,7 @@ public sealed class Scope : IDisposable
         return _collector;
     }
 
+    /// <inheritdoc/>
     public void Dispose() => Stop(fromParent: false);
 
     internal void AddStopToken(IDisposable token)

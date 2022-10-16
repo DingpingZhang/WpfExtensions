@@ -27,4 +27,6 @@ internal class TestObject : BindableBase, ITestObject
         get => _child;
         set => SetProperty(ref _child, value);
     }
+
+    public static string GetName(string text) => text;
 }

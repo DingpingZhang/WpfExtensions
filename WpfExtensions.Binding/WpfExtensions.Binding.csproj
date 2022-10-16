@@ -7,6 +7,7 @@
     <PackageTags>wpf;data-binding;mvvm;binding;computed-property</PackageTags>
     <Product>WpfExtensions.Binding</Product>
     <PackageId>WpfExtensions.Binding</PackageId>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
 </Project>
