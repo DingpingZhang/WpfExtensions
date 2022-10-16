@@ -52,7 +52,6 @@ internal class ConditionalNode
     public IDisposable Initialize()
     {
         var groups = _allNodes.GroupBy(item => item.Value, item => item.Key).ToArray();
-
         foreach (var group in groups)
         {
             switch (group.Key)
@@ -69,8 +68,8 @@ internal class ConditionalNode
             }
         }
 
-        var ifTrueChildDisposable = IfTrueChild?.Initialize();
-        var ifFalseChildDisposable = IfFalseChild?.Initialize();
+        IDisposable? ifTrueChildDisposable = IfTrueChild?.Initialize();
+        IDisposable? ifFalseChildDisposable = IfFalseChild?.Initialize();
 
         Update(true);
 
@@ -101,7 +100,7 @@ internal class ConditionalNode
             return;
         }
 
-        var nodeType = GetNodeTypeFromConditionalNodeType(type);
+        NodeType nodeType = GetNodeTypeFromConditionalNodeType(type);
         if (!_allNodes.ContainsKey(node))
         {
             _allNodes.Add(node, nodeType);

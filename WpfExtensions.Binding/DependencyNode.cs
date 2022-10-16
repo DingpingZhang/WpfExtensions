@@ -94,7 +94,7 @@ internal class DependencyNode : IEquatable<DependencyNode>
         Changed += onExpressionChanged;
         Subscribe();
 
-        var disposables = DownstreamNodes
+        IDisposable[] disposables = DownstreamNodes
             .Select(item => item.Initialize(onExpressionChanged))
             .ToArray();
 
@@ -162,8 +162,7 @@ internal class DependencyNode : IEquatable<DependencyNode>
             return;
         }
 
-        var changedNode = DownstreamNodes.FirstOrDefault(item => item.PropertyName == e.PropertyName);
-
+        DependencyNode? changedNode = DownstreamNodes.FirstOrDefault(item => item.PropertyName == e.PropertyName);
         if (changedNode is null)
         {
             return;

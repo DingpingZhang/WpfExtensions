@@ -70,7 +70,7 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
 
     protected override Expression VisitConditional(ConditionalExpression node)
     {
-        var testReference = CreateConditionalNode(node);
+        ConditionalNode testReference = CreateConditionalNode(node);
         _conditionalReferences.Add(testReference);
 
         DependencyNode? dependencyNode = null;
@@ -80,27 +80,27 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
             dependencyNode = GetOrCreateNode(node, CreateNode);
         }
 
-        var context = _context.Clone(item =>
+        Context context = _context.Clone(item =>
         {
             item.DownstreamNode = dependencyNode;
             item.ConditionalNode = testReference;
             item.ConditionalNodeType = ConditionalNodeType.Test;
         });
 
-        var testExpression = VisitInContext(() => Visit(node.Test), context);
+        Expression testExpression = VisitInContext(() => Visit(node.Test), context);
 
         context.ConditionalNodeType = ConditionalNodeType.IfTrue;
-        var ifTrueExpression = VisitInContext(() => Visit(node.IfTrue), context);
+        Expression ifTrueExpression = VisitInContext(() => Visit(node.IfTrue), context);
 
         context.ConditionalNodeType = ConditionalNodeType.IfFalse;
-        var ifFalseExpression = VisitInContext(() => Visit(node.IfFalse), context);
+        Expression ifFalseExpression = VisitInContext(() => Visit(node.IfFalse), context);
 
         return node.Update(testExpression, ifTrueExpression, ifFalseExpression);
     }
 
     private ConditionalNode CreateConditionalNode(ConditionalExpression node)
     {
-        var test = Expression.Lambda<Func<bool>>(node.Test).Compile();
+        Func<bool> test = Expression.Lambda<Func<bool>>(node.Test).Compile();
         ConditionalNode conditionalNode;
         switch (_context.ConditionalNodeType)
         {
@@ -117,7 +117,7 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
                 _context.ConditionalNode!.IfFalseChild = conditionalNode;
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(node));
         }
 
         return conditionalNode;
@@ -137,14 +137,14 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
 
         // Case: resolve nested property in the chain. (Inpc -> Prop)
         // The root-node will be created in the VisitConstant method, and creates relay-node here.
-        if (IsNestedNode(node, ownerNode))
+        if (IsNestedNode(node, ownerNode!))
         {
             // (Inpc & Prop), (Any | Prop) -> Prop
             return new DependencyNode(node);
         }
 
         // WARN: changes of closure variable will not be observed.
-        if (IsClosureVariable(node, ownerNode))
+        if (IsClosureVariable(node, ownerNode!))
         {
             if (InpcType.IsAssignableFrom(node.Type))
             {
@@ -163,9 +163,9 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
         throw new NotSupportedException($"The expression of the type cannot be supported: '{node}'.");
     }
 
-    private static DependencyNode? CreateRootNode(Expression node) => new DependencyNode(node, isRoot: true);
+    private static DependencyNode? CreateRootNode(Expression node) => new(node, isRoot: true);
 
-    private static DependencyNode? CreateNode(Expression node) => new DependencyNode(node);
+    private static DependencyNode? CreateNode(Expression node) => new(node);
 
     private static Expression? UnboxUnaryExpression(Expression? node)
     {
@@ -196,8 +196,8 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
     private DependencyNode? GetOrCreateNode<T>(T node, Func<T, DependencyNode?> creator)
         where T : Expression
     {
-        var key = node.ToString();
-        if (!_nodes.TryGetValue(key, out var dependencyNode))
+        string key = node.ToString();
+        if (!_nodes.TryGetValue(key, out DependencyNode? dependencyNode))
         {
             _nodes.Add(key, dependencyNode = creator(node));
         }
@@ -242,7 +242,7 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
         context.Parent = _context;
         _context = context;
 
-        var expression = visitCallback();
+        Expression expression = visitCallback();
 
         // Pop
         _context = _context.Parent;

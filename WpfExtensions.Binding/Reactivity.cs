@@ -19,7 +19,7 @@ public class Reactivity : IReactivity
 
         IDisposable token = Disposable.Create(() =>
         {
-            foreach (var token in tokens)
+            foreach (IDisposable token in tokens)
             {
                 token.Dispose();
             }

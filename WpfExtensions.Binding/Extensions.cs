@@ -53,7 +53,7 @@ public static class Extensions
             return;
         }
 
-        foreach (var item in enumerable)
+        foreach (T item in enumerable)
         {
             callback(item);
         }
