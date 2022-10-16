@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace WpfExtensions.Binding;
 
+/// <summary>
+/// Represents a scope which can capture the watchers created within it
+/// so that these effects can be disposed together.
+/// </summary>
 public sealed class Scope : IDisposable
 {
     internal static Scope? ActiveEffectScope { get; set; }
@@ -16,8 +20,14 @@ public sealed class Scope : IDisposable
     private List<Scope>? _scopes;
     private Collector? _collector;
 
+    /// <summary>
+    /// An event that will be triggered when the scope is disposed.
+    /// </summary>
     public EventHandler? Disposed;
 
+    /// <summary>
+    /// Gets a <see cref="bool"/> value to indicate whether the scope has been disposed.
+    /// </summary>
     public bool IsDisposed { get; private set; }
 
     internal Scope(bool detached)
@@ -33,6 +43,14 @@ public sealed class Scope : IDisposable
         activeScope._scopes.Add(this);
     }
 
+    /// <summary>
+    /// Begin collecting watchers.
+    /// </summary>
+    /// <returns>
+    /// Returns an <see cref="IDisposable"/> instance that will stop this collecting behavior
+    /// of the scope when it is disposed.
+    /// </returns>
+    /// <exception cref="ObjectDisposedException">If the scope has been disposed.</exception>
     public IDisposable Begin()
     {
         if (IsDisposed)

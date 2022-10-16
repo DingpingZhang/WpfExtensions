@@ -5,10 +5,17 @@ using System.Linq.Expressions;
 
 namespace WpfExtensions.Binding;
 
+/// <summary>
+/// Provides API for reactive feature, which is an implementation of <see cref="IReactivity"/>.
+/// </summary>
 public class Reactivity : IReactivity
 {
+    /// <summary>
+    /// Gets a default instance of <see cref="IReactivity"/>.
+    /// </summary>
     public static IReactivity Default { get; } = new Reactivity();
 
+    /// <inheritdoc/>
     public IDisposable Watch<T>(Expression<Func<T>> expression, Action callback)
     {
         DependencyGraph graph = GenerateDependencyGraph(expression);
@@ -31,6 +38,7 @@ public class Reactivity : IReactivity
         void OnPropertyChanged(object sender, EventArgs e) => callback();
     }
 
+    /// <inheritdoc/>
     public Scope Scope(bool detached = false) => new(detached);
 
     private static DependencyGraph GenerateDependencyGraph<T>(Expression<Func<T>> expression)
