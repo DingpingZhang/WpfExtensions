@@ -1,8 +1,19 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+
+/* Unmerged change from project 'WpfExtensions.Binding (netstandard2.0)'
+Before:
+using System.Linq;
+After:
+using System.Linq;
+using WpfExtensions;
+using WpfExtensions.Binding;
+using WpfExtensions.Binding;
+using WpfExtensions.Binding.Expressions;
+*/
 using System.Linq;
 
-namespace WpfExtensions.Binding.Expressions;
+namespace WpfExtensions.Binding;
 
 internal class ConditionalNode
 {
@@ -80,10 +91,15 @@ internal class ConditionalNode
     internal void AddAffectedNode(ConditionalNodeType type, DependencyNode node)
     {
         if (type == ConditionalNodeType.None)
+        {
             throw new InvalidOperationException($"Can not add a node that is {ConditionalNodeType.None} type to the affected node collection. ");
+        }
 
         // The root node is the constant node, so it will never be updated.
-        if (node.IsRoot) return;
+        if (node.IsRoot)
+        {
+            return;
+        }
 
         var nodeType = GetNodeTypeFromConditionalNodeType(type);
         if (!_allNodes.ContainsKey(node))
@@ -94,7 +110,7 @@ internal class ConditionalNode
         _allNodes[node] |= nodeType;
     }
 
-    private NodeType GetNodeTypeFromConditionalNodeType(ConditionalNodeType type)
+    private static NodeType GetNodeTypeFromConditionalNodeType(ConditionalNodeType type)
     {
         return type switch
         {
@@ -107,7 +123,10 @@ internal class ConditionalNode
 
     private void OnChanged(object sender, EventArgs e)
     {
-        if (!IsActivated) return;
+        if (!IsActivated)
+        {
+            return;
+        }
 
         Update(true);
     }
@@ -118,13 +137,9 @@ internal class ConditionalNode
 
         if (IsActivated)
         {
-            bool testResult = _testGetter.TryGet(out var exception);
-
-            if (exception == null)
-            {
-                UpdateInternal(IfTrueChild, _ifTrueNodes, testResult);
-                UpdateInternal(IfFalseChild, _ifFalseNodes, !testResult);
-            }
+            bool testResult = _testGetter();
+            UpdateInternal(IfTrueChild, _ifTrueNodes, testResult);
+            UpdateInternal(IfFalseChild, _ifFalseNodes, !testResult);
         }
         else
         {

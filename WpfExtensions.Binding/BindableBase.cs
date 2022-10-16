@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
-using WpfExtensions.Binding.Expressions;
 
 namespace WpfExtensions.Binding;
 
@@ -52,17 +51,12 @@ public abstract class BindableBase : INotifyPropertyChanged
                 throw new ArgumentException($"The expression ({expressionString}) already exists.");
             }
 
-            var disposable = ExpressionObserver.Observes(expression, (value, exception) =>
+            var disposable = Reactivity.Default.Watch(expression, value =>
             {
                 if ((_globalCondition?.Invoke() ?? true) &&
                     (condition?.Invoke(value) ?? true))
                 {
                     _callback();
-                }
-
-                if (exception is not null)
-                {
-                    _onError(expressionString, exception);
                 }
             });
             _disposables.Add(disposable);
@@ -110,18 +104,10 @@ public abstract class BindableBase : INotifyPropertyChanged
         if (!_propertyValueStorage.ContainsKey(propertyName ?? throw new ArgumentNullException(nameof(propertyName))))
         {
             _propertyValueStorage.Add(propertyName, new ValueWrapper<TOut>(EvaluateExpression()));
-            ExpressionObserver.Observes(expression, (value, exception) =>
+            Reactivity.Default.Watch(expression, value =>
             {
                 var storage = (ValueWrapper<TOut>)_propertyValueStorage[propertyName];
-                if (exception is null)
-                {
-                    storage.Value = value;
-                }
-                else
-                {
-                    storage.Value = fallback;
-                    HandleComputedPropertyError(propertyName, exception);
-                }
+                storage.Value = value;
 
                 // Notify ui to pull the latest value after updating the storage.
                 RaisePropertyChanged(propertyName);

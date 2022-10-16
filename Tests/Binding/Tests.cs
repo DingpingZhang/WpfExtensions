@@ -1,5 +1,5 @@
 using Microsoft.VisualStudio.TestPlatform.Utilities;
-using WpfExtensions.Binding.Expressions;
+using WpfExtensions.Binding;
 
 namespace Tests.Binding;
 
@@ -10,11 +10,10 @@ public class Tests
     {
         int count = 0;
         bool flag = false;
-        var token = ExpressionObserver.Observes(() => TestObject.Default.Name == "expected", (value, e) =>
+        var token = Reactivity.Default.Watch(() => TestObject.Default.Name == "expected", value =>
         {
             count++;
             flag = value;
-            Assert.Null(e);
         });
 
         TestObject testObject = TestObject.Default;
@@ -45,11 +44,10 @@ public class Tests
 
         int count = 0;
         bool flag = false;
-        var token = ExpressionObserver.Observes(() => testObject.Number % 2 == 0, (value, e) =>
+        var token = Reactivity.Default.Watch(() => testObject.Number % 2 == 0, value =>
         {
             count++;
             flag = value;
-            Assert.Null(e);
         });
 
         testObject.Number = 8;
@@ -73,11 +71,10 @@ public class Tests
 
         int count = 0;
         string name = string.Empty;
-        var token = ExpressionObserver.Observes(() => TestObject.Default.Number % 2 == 0 ? (TestObject.Default as ITestObject).Child!.Name : TestObject.Default.Name, (value, e) =>
+        var token = Reactivity.Default.Watch(() => TestObject.Default.Number % 2 == 0 ? (TestObject.Default as ITestObject).Child!.Name : TestObject.Default.Name, value =>
         {
             count++;
             name = value;
-            Assert.Null(e);
         });
 
         ITestObject testObject = TestObject.Default;
@@ -131,11 +128,10 @@ public class Tests
 
         int count = 0;
         int number = 0;
-        var token = ExpressionObserver.Observes(() => testObject.Child!.Number, (value, e) =>
+        var token = Reactivity.Default.Watch(() => testObject.Child!.Number, value =>
         {
             count++;
             number += value;
-            Assert.Null(e);
         });
 
         testObject.Child = new TestObject();
@@ -164,9 +160,8 @@ public class Tests
 
         int count = 0;
         string name = string.Empty;
-        var token = ExpressionObserver.Observes(() => (TestObject.Default as ITestObject).Child!.Name, (value, e) =>
+        var token = Reactivity.Default.Watch(() => (TestObject.Default as ITestObject).Child!.Name, value =>
         {
-            Assert.Null(e);
             count++;
             name = value;
         });
@@ -201,9 +196,8 @@ public class Tests
 
         int count = 0;
         int number = 0;
-        var token = ExpressionObserver.Observes(() => ((ITestObject)TestObject.Default).Child!.Number, (value, e) =>
+        var token = Reactivity.Default.Watch(() => ((ITestObject)TestObject.Default).Child!.Number, value =>
         {
-            Assert.Null(e);
             count++;
             number += value;
         });

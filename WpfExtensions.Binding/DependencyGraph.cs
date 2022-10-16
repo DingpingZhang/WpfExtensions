@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace WpfExtensions.Binding.Expressions;
+namespace WpfExtensions.Binding;
 
 internal class DependencyGraph
 {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace WpfExtensions.Binding.Expressions;
+namespace WpfExtensions.Binding;
 
 internal class SingleLineLambdaVisitor : ExpressionVisitor
 {

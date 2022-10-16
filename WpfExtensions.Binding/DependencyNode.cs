@@ -3,9 +3,20 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+
+/* Unmerged change from project 'WpfExtensions.Binding (netstandard2.0)'
+Before:
+using System.Linq.Expressions;
+After:
+using System.Linq.Expressions;
+using WpfExtensions;
+using WpfExtensions.Binding;
+using WpfExtensions.Binding;
+using WpfExtensions.Binding.Expressions;
+*/
 using System.Linq.Expressions;
 
-namespace WpfExtensions.Binding.Expressions;
+namespace WpfExtensions.Binding;
 
 internal class DependencyNode : IEquatable<DependencyNode>
 {
@@ -122,15 +133,10 @@ internal class DependencyNode : IEquatable<DependencyNode>
     private void Subscribe()
     {
         // Update the INPC object
-        if (InpcGetter != null)
+        if (InpcGetter?.Invoke() is { } inpc)
         {
-            _inpcObjectCache = InpcGetter.TryGet(out _);
-            if (_inpcObjectCache == null)
-            {
-                return;
-            }
-
-            _inpcObjectCache.PropertyChanged += OnPropertyChanged;
+            inpc.PropertyChanged += OnPropertyChanged;
+            _inpcObjectCache = inpc;
 
             Debug.WriteLine($"[{DateTime.Now}][Bound] {this} has been bound. ");
         }

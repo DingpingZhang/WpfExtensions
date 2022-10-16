@@ -1,4 +1,4 @@
-﻿namespace WpfExtensions.Binding.Expressions;
+namespace WpfExtensions.Binding;
 
 internal enum ConditionalNodeType
 {

@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace WpfExtensions.Binding.Expressions;
+namespace WpfExtensions.Binding;
 
 internal sealed class Disposable : IDisposable
 {
