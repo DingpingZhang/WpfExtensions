@@ -22,6 +22,10 @@ internal class TestObject : BindableBase, ITestObject
         set => SetProperty(ref _number, value);
     }
 
+    public int Double => Computed(() => Number * 2);
+
+    public int Nested4x => Computed(() => Double * 2);
+
     TestObject? ITestObject.Child
     {
         get => _child;

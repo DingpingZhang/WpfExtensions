@@ -307,7 +307,45 @@ public class Tests
 
     }
 
-    [Fact(DisplayName = "it should collect watchers")]
+    [Fact(DisplayName = "it should watch computed properties")]
+    public void ShouldWatchComputed()
+    {
+        var obj = new TestObject();
+
+        int dummy = 0;
+
+        _ = obj.Double;
+        Reactivity.Default.Watch(() => obj.Double, value => dummy = value);
+
+        Assert.Equal(0, dummy);
+
+        obj.Number = 42;
+        Assert.Equal(84, dummy);
+
+        obj.Number = 3;
+        Assert.Equal(6, dummy);
+    }
+
+    [Fact(DisplayName = "it should watch nested computed properties")]
+    public void ShouldWatchNestedComputed()
+    {
+        var obj = new TestObject();
+
+        int dummy = 0;
+
+        _ = obj.Nested4x;
+        Reactivity.Default.Watch(() => obj.Nested4x, value => dummy = value);
+
+        Assert.Equal(0, dummy);
+
+        obj.Number = 2;
+        Assert.Equal(8, dummy);
+
+        obj.Number = 3;
+        Assert.Equal(12, dummy);
+    }
+
+    [Fact(DisplayName = "scope: it should collect watchers")]
     public void ShouldCollectWatchers()
     {
         var scope = Reactivity.Default.Scope();
@@ -342,7 +380,7 @@ public class Tests
         Assert.Equal(20172, dummy2);
     }
 
-    [Fact(DisplayName = "it should collect nested scope")]
+    [Fact(DisplayName = "scope: it should collect nested scope")]
     public void ShouldCollectNestedScope()
     {
         var scope = Reactivity.Default.Scope();
@@ -375,7 +413,7 @@ public class Tests
         Assert.Equal(84, dummy2);
     }
 
-    [Fact(DisplayName = "it should be able to dispose sub-scope individually")]
+    [Fact(DisplayName = "scope: it should be able to dispose sub-scope individually")]
     public void ShouldDisposeSubscope()
     {
         var scope = Reactivity.Default.Scope();
