@@ -8,6 +8,11 @@
     <Product>WpfExtensions.Binding</Product>
     <PackageId>WpfExtensions.Binding</PackageId>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Authors>Dingping Zhang</Authors>
-    <Copyright>Copyright (c) 2019-2022 DingpingZhang</Copyright>
+    <Copyright>Copyright (c) 2019-2023 DingpingZhang</Copyright>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LangVersion>preview</LangVersion>
