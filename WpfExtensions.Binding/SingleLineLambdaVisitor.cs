@@ -127,8 +127,6 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
     {
         Expression? ownerNode = node.Expression;
 
-        ownerNode = UnboxUnaryExpression(ownerNode);
-
         // Case: root node is static property.
         if (IsStaticRoot(node, ownerNode))
         {
@@ -167,16 +165,13 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
 
     private static DependencyNode? CreateNode(Expression node) => new(node);
 
-    private static Expression? UnboxUnaryExpression(Expression? node)
-    {
-        return node is UnaryExpression unary ? unary.Operand : node;
-    }
-
     private static bool IsNestedNode(MemberExpression node, Expression ownerNode)
     {
         return InpcType.IsAssignableFrom(ownerNode.Type) &&
-            // TODO: Remove field.
-            node.Member.MemberType is MemberTypes.Property or MemberTypes.Field;
+            node.Member.MemberType is MemberTypes.Property ||
+            // If it is a field, it is required to be readonly,
+            // because changes to the field cannot be observed.
+            node.Member.MemberType is MemberTypes.Field && ((FieldInfo)node.Member).IsInitOnly;
     }
 
     private static bool IsClosureVariable(MemberExpression node, Expression ownerNode)

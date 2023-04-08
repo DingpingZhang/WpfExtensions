@@ -68,14 +68,17 @@ public class Tests
     [Fact(DisplayName = "it should support conditional branching")]
     public void SupportConditionalBranching()
     {
-
         int count = 0;
         string name = string.Empty;
-        var token = Reactivity.Default.Watch(() => TestObject.Default.Number % 2 == 0 ? (TestObject.Default as ITestObject).Child!.Name : TestObject.Default.Name, value =>
-        {
-            count++;
-            name = value;
-        });
+        var token = Reactivity.Default.Watch(
+            () => TestObject.Default.Number % 2 == 0
+                ? TestObject.Default.Child!.Name
+                : TestObject.Default.Name,
+            value =>
+            {
+                count++;
+                name = value;
+            });
 
         ITestObject testObject = TestObject.Default;
         var test = TestObject.Default;
@@ -124,30 +127,30 @@ public class Tests
     [Fact(DisplayName = "it should support null checking in the property chain")]
     public void SupportNullChacking()
     {
-        ITestObject testObject = TestObject.Default;
+        TestObject testObject = TestObject.Default;
 
         int count = 0;
         int number = 0;
-        var token = Reactivity.Default.Watch(() => testObject.Child!.Number, value =>
+        var token = Reactivity.Default.Watch(() => testObject.Field.Child!.Number, value =>
         {
             count++;
             number += value;
         });
 
-        testObject.Child = new TestObject();
+        testObject.Field.Child = new TestObject();
         Assert.Equal(1, count);
 
-        testObject.Child.Number++;
+        testObject.Field.Child.Number++;
         Assert.Equal(1, number);
         Assert.Equal(2, count);
 
-        testObject.Child.Number = 10086;
+        testObject.Field.Child.Number = 10086;
         Assert.Equal(10087, number);
         Assert.Equal(3, count);
 
         token.Dispose();
 
-        testObject.Child.Number = 10086;
+        testObject.Field.Child.Number = 10086;
         Assert.Equal(10087, number);
         Assert.Equal(3, count);
     }
@@ -155,36 +158,39 @@ public class Tests
     [Fact(DisplayName = "it should support the 'as' keyword")]
     public void SupportAsKeyword()
     {
-        ITestObject testObject = TestObject.Default;
-        testObject.Child = new TestObject();
-
         int count = 0;
         string name = string.Empty;
-        var token = Reactivity.Default.Watch(() => (TestObject.Default as ITestObject).Child!.Name, value =>
+        var token = Reactivity.Default.Watch(() => (TestObject.Default.Abstraction as TestObject)!.Name, value =>
         {
             count++;
             name = value;
         });
 
-        testObject.Child.Name = "42";
+        TestObject.Default.Abstraction = new TestObject();
+        var testObject = (TestObject)TestObject.Default.Abstraction;
+
+        count = 0;
+
+        testObject.Name = "42";
         Assert.Equal("42", name);
         Assert.Equal(1, count);
 
-        testObject.Child.Name = "42";
+        testObject.Name = "42";
         Assert.Equal("42", name);
         Assert.Equal(1, count);
 
-        testObject.Child.Name = "24";
+        testObject.Name = "24";
         Assert.Equal("24", name);
         Assert.Equal(2, count);
 
-        testObject.Child = new TestObject { Name = "10086" };
+        TestObject.Default.Abstraction = new TestObject { Name = "10086" };
         Assert.Equal("10086", name);
         Assert.Equal(3, count);
 
         token.Dispose();
 
-        testObject.Child.Name = "123";
+        testObject = (TestObject)TestObject.Default.Abstraction;
+        testObject.Name = "123";
         Assert.Equal("10086", name);
         Assert.Equal(3, count);
     }
@@ -192,34 +198,39 @@ public class Tests
     [Fact(DisplayName = "it should support the cast operator")]
     public void SupportCastOperator()
     {
-        ITestObject testObject = TestObject.Default;
+        TestObject.Default.Abstraction = new TestObject();
 
         int count = 0;
-        int number = 0;
-        var token = Reactivity.Default.Watch(() => ((ITestObject)TestObject.Default).Child!.Number, value =>
+        string name = string.Empty;
+        var token = Reactivity.Default.Watch(() => ((TestObject)TestObject.Default.Abstraction).Name, value =>
         {
             count++;
-            number += value;
+            name = value;
         });
 
-        testObject.Child = new TestObject();
+        var testObject = (TestObject)TestObject.Default.Abstraction;
 
-        testObject.Child.Number = 42;
-        Assert.Equal(42, number);
+        testObject.Name = "42";
+        Assert.Equal("42", name);
+        Assert.Equal(1, count);
+
+        testObject.Name = "42";
+        Assert.Equal("42", name);
+        Assert.Equal(1, count);
+
+        testObject.Name = "24";
+        Assert.Equal("24", name);
         Assert.Equal(2, count);
 
-        testObject.Child.Number = 42;
-        Assert.Equal(42, number);
-        Assert.Equal(2, count);
-
-        testObject.Child.Number = 24;
-        Assert.Equal(66, number);
+        TestObject.Default.Abstraction = new TestObject { Name = "10086" };
+        Assert.Equal("10086", name);
         Assert.Equal(3, count);
 
         token.Dispose();
 
-        testObject.Child.Number = 123;
-        Assert.Equal(66, number);
+        testObject = (TestObject)TestObject.Default.Abstraction;
+        testObject.Name = "123";
+        Assert.Equal("10086", name);
         Assert.Equal(3, count);
     }
 

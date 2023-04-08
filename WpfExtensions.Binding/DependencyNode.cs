@@ -3,50 +3,37 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-
-/* Unmerged change from project 'WpfExtensions.Binding (netstandard2.0)'
-Before:
-using System.Linq.Expressions;
-After:
-using System.Linq.Expressions;
-using WpfExtensions;
-using WpfExtensions.Binding;
-using WpfExtensions.Binding;
-using WpfExtensions.Binding.Expressions;
-*/
 using System.Linq.Expressions;
 
 namespace WpfExtensions.Binding;
 
 internal class DependencyNode : IEquatable<DependencyNode>
 {
-    public string Id { get; }
-
-    public string? PropertyName { get; }
+    private readonly string _id;
+    private readonly string? _propertyName;
+    private readonly Func<object?>? _inpcGetter;
 
     public bool IsRoot { get; }
 
-    public bool IsVirtual => !IsRoot && string.IsNullOrWhiteSpace(PropertyName) && InpcGetter != null;
+    public bool IsVirtual => !IsRoot && string.IsNullOrWhiteSpace(_propertyName) && _inpcGetter != null;
 
     public bool IsLeaf => !DownstreamNodes.Any();
 
     public ICollection<DependencyNode> DownstreamNodes { get; } = new HashSet<DependencyNode>();
 
-    public Func<INotifyPropertyChanged>? InpcGetter { get; }
-
     public DependencyNode(Expression node, bool isRoot = false)
     {
-        Id = node.ToString();
+        _id = node.ToString();
         IsRoot = isRoot;
 
-        if (typeof(INotifyPropertyChanged).IsAssignableFrom(node.Type))
+        if (!node.Type.IsValueType)
         {
-            InpcGetter = Expression.Lambda<Func<INotifyPropertyChanged>>(node).Compile();
+            _inpcGetter = Expression.Lambda<Func<object?>>(node).Compile();
         }
 
         if (node is MemberExpression memberExpression)
         {
-            PropertyName = memberExpression.Member.Name;
+            _propertyName = memberExpression.Member.Name;
         }
     }
 
@@ -133,12 +120,27 @@ internal class DependencyNode : IEquatable<DependencyNode>
     private void Subscribe()
     {
         // Update the INPC object
-        if (InpcGetter?.Invoke() is { } inpc)
+        if (Suppress(_inpcGetter) is INotifyPropertyChanged inpc)
         {
             inpc.PropertyChanged += OnPropertyChanged;
             _inpcObjectCache = inpc;
 
             Debug.WriteLine($"[{DateTime.Now}][Bound] {this} has been bound. ");
+        }
+
+        // Local methods:
+        static object? Suppress(Func<object?>? getter)
+        {
+            try
+            {
+                return getter?.Invoke();
+            }
+            catch (NullReferenceException)
+            {
+                // FIXME: The single line expression do not support `A?.B` syntactic sugar,
+                // so ignore this exception here, which may cause performance problems.
+                return null;
+            }
         }
     }
 
@@ -162,7 +164,7 @@ internal class DependencyNode : IEquatable<DependencyNode>
             return;
         }
 
-        DependencyNode? changedNode = DownstreamNodes.FirstOrDefault(item => item.PropertyName == e.PropertyName);
+        DependencyNode? changedNode = DownstreamNodes.FirstOrDefault(item => item._propertyName == e.PropertyName);
         if (changedNode is null)
         {
             return;
@@ -187,7 +189,7 @@ internal class DependencyNode : IEquatable<DependencyNode>
             return false;
         }
 
-        return ReferenceEquals(this, other) || string.Equals(Id, other.Id);
+        return ReferenceEquals(this, other) || string.Equals(_id, other._id);
     }
 
     public override bool Equals(object? obj)
@@ -205,7 +207,7 @@ internal class DependencyNode : IEquatable<DependencyNode>
         return obj.GetType() == GetType() && Equals((DependencyNode)obj);
     }
 
-    public override int GetHashCode() => Id.GetHashCode();
+    public override int GetHashCode() => _id.GetHashCode();
 
     public static bool operator ==(DependencyNode left, DependencyNode right) => Equals(left, right);
 
@@ -214,10 +216,10 @@ internal class DependencyNode : IEquatable<DependencyNode>
     #endregion
 
     public override string ToString() => IsRoot
-        ? $"<Root:{PropertyName}>"
+        ? $"<Root:{_propertyName}>"
         : IsVirtual
             ? $"<Virtual>"
-            : $"<{(IsLeaf ? "Leaf" : "Relay")}:{PropertyName}>";
+            : $"<{(IsLeaf ? "Leaf" : "Relay")}:{_propertyName}>";
 
     public virtual void RaiseChanged()
     {
