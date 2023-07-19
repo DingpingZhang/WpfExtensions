@@ -494,7 +494,7 @@ public class Tests
     {
         var obj = new TestObject();
         int count = 0;
-        Reactivity.Default.WatchDeep(obj, () => count++);
+        Reactivity.Default.WatchDeep(obj, path => count++);
 
         Assert.Equal(0, count);
 

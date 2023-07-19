@@ -9,17 +9,19 @@ namespace WpfExtensions.Binding;
 internal class DeepCollectionNode : DeepNode
 {
     private readonly INotifyCollectionChanged _incc;
+    private readonly string _propertyPath;
 
-    private Action? _changed;
+    private Action<string>? _changed;
 
     private List<Child>? _children;
 
-    public DeepCollectionNode(INotifyCollectionChanged incc)
+    public DeepCollectionNode(INotifyCollectionChanged incc, string propertyPath)
     {
         _incc = incc;
+        _propertyPath = propertyPath;
     }
 
-    public override void Subscribe(Action? callback)
+    public override void Subscribe(Action<string>? callback)
     {
         _changed = callback;
         _incc.CollectionChanged += OnCollectionChanged;
@@ -49,11 +51,12 @@ internal class DeepCollectionNode : DeepNode
 
     private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
+        string name = GetFullName(_propertyPath, $"{e.Action}()");
         if (e.Action is NotifyCollectionChangedAction.Reset)
         {
             var callback = _changed;
             Unsubscribe();
-            _changed?.Invoke();
+            _changed?.Invoke(name);
             Subscribe(callback);
         }
         else
@@ -74,12 +77,13 @@ internal class DeepCollectionNode : DeepNode
                 }
             }
 
-            _changed?.Invoke();
+            _changed?.Invoke(name);
             if (_children is not null && e.NewItems is not null)
             {
                 foreach (var item in e.NewItems)
                 {
-                    var child = new Child(item, Create(item).ToArray());
+                    string path = GetFullName(_propertyPath, "[]", splitter: string.Empty);
+                    var child = new Child(item, Create(item, path).ToArray());
                     foreach (var node in child.Nodes)
                     {
                         node.Subscribe(_changed);
@@ -100,7 +104,8 @@ internal class DeepCollectionNode : DeepNode
 
         foreach (var item in items)
         {
-            yield return new Child(item, Create(item).ToArray());
+            string path = GetFullName(_propertyPath, "[]", splitter: string.Empty);
+            yield return new Child(item, Create(item, path).ToArray());
         }
     }
 

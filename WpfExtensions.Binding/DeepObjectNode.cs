@@ -13,11 +13,12 @@ internal class DeepObjectNode : DeepNode
     private readonly INotifyPropertyChanged _inpc;
     private readonly Type _type;
     private readonly HashSet<string> _propertyNames;
+    private readonly string _propertyPath;
 
-    private Action? _changed;
+    private Action<string>? _changed;
     private Dictionary<string, DeepNode[]>? _children;
 
-    public DeepObjectNode(INotifyPropertyChanged inpc)
+    public DeepObjectNode(INotifyPropertyChanged inpc, string propertyPath)
     {
         _inpc = inpc;
         _type = _inpc.GetType();
@@ -28,9 +29,10 @@ internal class DeepObjectNode : DeepNode
         }
 
         _propertyNames = props;
+        _propertyPath = propertyPath;
     }
 
-    public override void Subscribe(Action? callback)
+    public override void Subscribe(Action<string>? callback)
     {
         _changed = callback;
         _inpc.PropertyChanged += OnPropertyChanged;
@@ -68,7 +70,7 @@ internal class DeepObjectNode : DeepNode
             node.Unsubscribe();
         }
 
-        _changed?.Invoke();
+        _changed?.Invoke(GetFullName(_propertyPath, e.PropertyName));
 
         if (_children is not null)
         {
@@ -107,7 +109,7 @@ internal class DeepObjectNode : DeepNode
     private DeepNode[] GetChildByName(string name)
     {
         object? value = PropertyGetterCache.Get(_type, name)?.Invoke(_inpc);
-        return Create(value).ToArray();
+        return Create(value, GetFullName(_propertyPath, name)).ToArray();
     }
 
     private static IEnumerable<string> GetPropertyNames(Type type)

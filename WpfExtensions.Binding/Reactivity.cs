@@ -36,9 +36,9 @@ public class Reactivity : IReactivity
     }
 
     /// <inheritdoc/>
-    public IDisposable WatchDeep(object target, Action callback)
+    public IDisposable WatchDeep(object target, Action<string> callback)
     {
-        var nodes = DeepNode.Create(target);
+        var nodes = DeepNode.Create(target, string.Empty);
         foreach (var item in nodes)
         {
             item.Subscribe(callback);
