@@ -537,7 +537,7 @@ public class Tests
         Assert.Equal(3, count);
 
         count = 0;
-        prop.Number = 42;
+        prop.Number = 24;
         Assert.Equal(0, count);
 
         count = 0;
