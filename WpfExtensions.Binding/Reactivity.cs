@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -34,6 +33,24 @@ public class Reactivity : IReactivity
 
         Binding.Scope.ActiveEffectScope?.AddStopToken(token);
         return token;
+    }
+
+    /// <inheritdoc/>
+    public IDisposable WatchDeep(object target, Action callback)
+    {
+        var nodes = DeepNode.Create(target);
+        foreach (var item in nodes)
+        {
+            item.Subscribe(callback);
+        }
+
+        return Disposable.Create(() =>
+        {
+            foreach (var item in nodes)
+            {
+                item.Unsubscribe();
+            }
+        });
     }
 
     /// <inheritdoc/>

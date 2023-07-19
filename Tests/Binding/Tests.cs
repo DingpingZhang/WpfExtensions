@@ -488,4 +488,64 @@ public class Tests
         Assert.Equal(1, count);
         Assert.Equal(2, flag);
     }
+
+    [Fact(DisplayName = "deep: it should watch an instance deep")]
+    public void SupportWatchDeep()
+    {
+        var obj = new TestObject();
+        int count = 0;
+        Reactivity.Default.WatchDeep(obj, () => count++);
+
+        Assert.Equal(0, count);
+
+        obj.Number = 42;
+        Assert.Equal(1, count);
+
+        count = 0;
+        obj.Child = new TestObject();
+        Assert.Equal(1, count);
+
+        count = 0;
+        obj.Strings.Add("foo");
+        Assert.Equal(3, count);
+
+        count = 0;
+        obj.Child.Name = "foo";
+        Assert.Equal(1, count);
+
+        count = 0;
+        obj.Child.Number = 42;
+        Assert.Equal(1, count);
+
+        count = 0;
+        obj.Child = new TestObject();
+        Assert.Equal(1, count);
+
+        count = 0;
+        var prop = new TestProperty();
+        obj.Child.Objects.Add(new TestProperty());
+        obj.Child.Objects.Add(prop);
+        obj.Child.Objects.Add(new TestProperty());
+        Assert.Equal(9, count);
+
+        count = 0;
+        prop.Number = 42;
+        Assert.Equal(1, count);
+
+        count = 0;
+        obj.Child.Objects.Remove(prop);
+        Assert.Equal(3, count);
+
+        count = 0;
+        prop.Number = 42;
+        Assert.Equal(0, count);
+
+        count = 0;
+        obj.Child.Objects[0].Child = new TestObject();
+        Assert.Equal(1, count);
+
+        count = 0;
+        obj.Child.Objects[0].Child!.Name = "foo";
+        Assert.Equal(1, count);
+    }
 }

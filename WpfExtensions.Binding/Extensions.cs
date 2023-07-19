@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq.Expressions;
 
 namespace WpfExtensions.Binding;
@@ -57,5 +59,11 @@ public static class Extensions
         {
             callback(item);
         }
+    }
+
+    internal static bool IsNotify(this Type type)
+    {
+        return typeof(INotifyPropertyChanged).IsAssignableFrom(type)
+            || typeof(INotifyCollectionChanged).IsAssignableFrom(type);
     }
 }

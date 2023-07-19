@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq.Expressions;
 
 namespace WpfExtensions.Binding;
@@ -16,6 +18,15 @@ public interface IReactivity
     /// <param name="callback">The function to be invoked when the expression changes.</param>
     /// <returns>Returns a token for unwatching.</returns>
     IDisposable Watch<T>(Expression<Func<T>> expression, Action callback);
+
+    /// <summary>
+    /// Watches a <see cref="INotifyPropertyChanged"/> or <see cref="INotifyCollectionChanged"/> object deeply
+    /// and invokes a callback function when properties in this object changed.
+    /// </summary>
+    /// <param name="target">The watched object, which must be <see cref="INotifyPropertyChanged"/> or <see cref="INotifyCollectionChanged"/> type.</param>
+    /// <param name="callback">The function to be invoked when properties in this object changed.</param>
+    /// <returns>Returns a token for unwatching.</returns>
+    IDisposable WatchDeep(object target, Action callback);
 
     /// <summary>
     /// Creates a scope object which can capture the watchers created within it
