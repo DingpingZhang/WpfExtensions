@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using WpfExtensions.Binding;
 
 namespace Tests.Binding;
@@ -40,6 +41,10 @@ internal class TestObject : BindableBase, ITestObject
         get => _abstraction;
         set => SetProperty(ref _abstraction, value);
     }
+
+    public ObservableCollection<string> Strings { get; } = new();
+
+    public ObservableCollection<TestProperty> Objects { get; } = new();
 
     public static string GetName(string text) => text;
 }

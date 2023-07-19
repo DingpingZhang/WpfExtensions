@@ -466,4 +466,26 @@ public class Tests
         Assert.Equal(10086, dummy);
         Assert.Equal(84, dummy2);
     }
+
+    [Fact(DisplayName = "it should support computed property in BindableBase")]
+    public void SupportComputedProperty()
+    {
+        var obj = new TestObject();
+        var prop = new TestProperty();
+        obj.Objects.Add(prop);
+
+        int count = 0;
+        int flag = 0;
+        // read to trigger subscription.
+        _ = prop.Double;
+        Reactivity.Default.Watch(() => obj.Objects[0].Double, value =>
+        {
+            count++;
+            flag = value;
+        });
+
+        prop.Number = 1;
+        Assert.Equal(1, count);
+        Assert.Equal(2, flag);
+    }
 }
