@@ -20,7 +20,7 @@ public class Reactivity : IReactivity
     {
         DependencyGraph graph = GenerateDependencyGraph(expression);
         IDisposable[] tokens = graph.DependencyRootNodes
-            .Select(item => item.Initialize(OnPropertyChanged))
+            .Select(item => item.Initialize(callback))
             .Concat(graph.ConditionalRootNodes.Select(item => item.Initialize()))
             .ToArray();
 
@@ -34,8 +34,6 @@ public class Reactivity : IReactivity
 
         Binding.Scope.ActiveEffectScope?.AddStopToken(token);
         return token;
-
-        void OnPropertyChanged(object sender, EventArgs e) => callback();
     }
 
     /// <inheritdoc/>

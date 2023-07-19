@@ -43,7 +43,7 @@ internal class DependencyNode : IEquatable<DependencyNode>
     private bool _isInitialized;
     private bool _isActivated;
 
-    public event EventHandler? Changed;
+    public event Action? Changed;
 
     public bool IsActivated
     {
@@ -68,7 +68,7 @@ internal class DependencyNode : IEquatable<DependencyNode>
         }
     }
 
-    public IDisposable Initialize(EventHandler onExpressionChanged)
+    public IDisposable Initialize(Action onExpressionChanged)
     {
         // Sometimes some nodes have multiple parent nodes, and do not need to be initialized repeatedly.
         if (_isInitialized)
@@ -173,7 +173,7 @@ internal class DependencyNode : IEquatable<DependencyNode>
         changedNode.UnsubscribeRecursively();
         if (changedNode.IsActivated)
         {
-            changedNode.RaiseChanged();
+            changedNode.Changed?.Invoke();
             changedNode.SubscribeRecursively();
         }
     }
@@ -220,9 +220,4 @@ internal class DependencyNode : IEquatable<DependencyNode>
         : IsVirtual
             ? $"<Virtual>"
             : $"<{(IsLeaf ? "Leaf" : "Relay")}:{_propertyName}>";
-
-    public virtual void RaiseChanged()
-    {
-        Changed?.Invoke(this, EventArgs.Empty);
-    }
 }

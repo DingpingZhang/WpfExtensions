@@ -130,7 +130,7 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
         // Case: root node is static property.
         if (IsStaticRoot(node, ownerNode))
         {
-            return new DependencyNode(node, true);
+            return new DependencyNode(node, isRoot: true);
         }
 
         // Case: resolve nested property in the chain. (Inpc -> Prop)
@@ -149,7 +149,7 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
                 // Case: root node is a closure variable, like: ((<>c__DisplayClass_0_0).(Inpc)field).
                 // The root-node will be created here, and the closure class (<>x__DisplayClass_X_X)
                 // will be discarded in the VisitConstant method.
-                return new DependencyNode(node, true);
+                return new DependencyNode(node, isRoot: true);
             }
             else
             {
@@ -161,9 +161,9 @@ internal class SingleLineLambdaVisitor : ExpressionVisitor
         throw new NotSupportedException($"The expression of the type cannot be supported: '{node}'.");
     }
 
-    private static DependencyNode? CreateRootNode(Expression node) => new(node, isRoot: true);
+    private static DependencyNode CreateRootNode(Expression node) => new(node, isRoot: true);
 
-    private static DependencyNode? CreateNode(Expression node) => new(node);
+    private static DependencyNode CreateNode(Expression node) => new(node);
 
     private static bool IsNestedNode(MemberExpression node, Expression ownerNode)
     {

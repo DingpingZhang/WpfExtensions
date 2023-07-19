@@ -120,7 +120,7 @@ internal class ConditionalNode
         };
     }
 
-    private void OnChanged(object sender, EventArgs e)
+    private void OnChanged()
     {
         if (!IsActivated)
         {
