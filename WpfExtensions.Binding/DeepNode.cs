@@ -7,7 +7,7 @@ namespace WpfExtensions.Binding;
 
 internal abstract class DeepNode
 {
-    public abstract void Subscribe(Action<string>   ? callback);
+    public abstract void Subscribe(Action<string>? callback);
 
     public abstract void Unsubscribe();
 
@@ -24,12 +24,12 @@ internal abstract class DeepNode
         }
     }
 
-    protected static string GetFullName(string owner, string name, string splitter = ".")
+    protected static string GetFullName(string owner, string name)
     {
         return string.IsNullOrEmpty(owner)
             ? string.IsNullOrEmpty(name)
                 ? string.Empty
                 : name
-            : $"{owner}{splitter}{name}";
+            : $"{owner}.{name}";
     }
 }

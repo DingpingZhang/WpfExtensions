@@ -82,7 +82,7 @@ internal class DeepCollectionNode : DeepNode
             {
                 foreach (var item in e.NewItems)
                 {
-                    string path = GetFullName(_propertyPath, "[]", splitter: string.Empty);
+                    string path = GetFullName(_propertyPath, "Item[]");
                     var child = new Child(item, Create(item, path).ToArray());
                     foreach (var node in child.Nodes)
                     {
@@ -104,7 +104,7 @@ internal class DeepCollectionNode : DeepNode
 
         foreach (var item in items)
         {
-            string path = GetFullName(_propertyPath, "[]", splitter: string.Empty);
+            string path = GetFullName(_propertyPath, "Item[]");
             yield return new Child(item, Create(item, path).ToArray());
         }
     }

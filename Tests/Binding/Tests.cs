@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using WpfExtensions.Binding;
 
@@ -489,8 +490,8 @@ public class Tests
         Assert.Equal(2, flag);
     }
 
-    [Fact(DisplayName = "deep: it should watch an instance deep")]
-    public void SupportWatchDeep()
+    [Fact(DisplayName = "deep: it should watch a INotifyPropertyChanged instance")]
+    public void SupportWatchDeepINotifyPropertyChanged()
     {
         var obj = new TestObject();
         int count = 0;
@@ -507,6 +508,7 @@ public class Tests
 
         count = 0;
         obj.Strings.Add("foo");
+        // Count, Item[], Add()
         Assert.Equal(3, count);
 
         count = 0;
@@ -546,6 +548,53 @@ public class Tests
 
         count = 0;
         obj.Child.Objects[0].Child!.Name = "foo";
+        Assert.Equal(1, count);
+    }
+
+    [Fact(DisplayName = "deep: it should watch a INotifyCollectionChanged instance")]
+    public void SupportWatchDeepINotifyCollectionChanged()
+    {
+        var col = new ObservableCollection<string> { "1", "2", "3" };
+
+        int count = 0;
+        Reactivity.Default.WatchDeep(col, path => count++);
+
+        count = 0;
+        col.Add("42");
+        Assert.Equal(3, count);
+
+        count = 0;
+        col[0] = "10086";
+        // Item[], Replace()
+        Assert.Equal(2, count);
+
+        var item1 = new TestProperty();
+        var col2 = new ObservableCollection<TestProperty> { item1, new TestProperty() };
+
+        Reactivity.Default.WatchDeep(col2, path => count++);
+
+        count = 0;
+        item1.Child = new TestObject();
+        Assert.Equal(1, count);
+
+        count = 0;
+        item1.Child.Name = "foo";
+        Assert.Equal(1, count);
+
+        count = 0;
+        col2[1].Number = 42;
+        Assert.Equal(1, count);
+
+        count = 0;
+        col2[0] = new TestProperty();
+        Assert.Equal(2, count);
+
+        count = 0;
+        item1.Number = 123;
+        Assert.Equal(0, count);
+
+        count = 0;
+        col2[0].Number = 24;
         Assert.Equal(1, count);
     }
 }
