@@ -40,6 +40,11 @@ public static class Extensions
         return self.Watch(expression, () => callback(getter()));
     }
 
+    public static IDisposable WatchDeep(this IReactivity self, object target, Action callback)
+    {
+        return self.WatchDeep(target, _ => callback());
+    }
+
     public static void Run(this Scope scope, Action action)
     {
         using (scope.Begin())

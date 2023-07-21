@@ -44,13 +44,16 @@ public class Reactivity : IReactivity
             item.Subscribe(callback);
         }
 
-        return Disposable.Create(() =>
+        IDisposable token = Disposable.Create(() =>
         {
             foreach (var item in nodes)
             {
                 item.Unsubscribe();
             }
         });
+
+        Binding.Scope.ActiveEffectScope?.AddStopToken(token);
+        return token;
     }
 
     /// <inheritdoc/>
