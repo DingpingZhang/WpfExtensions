@@ -19,51 +19,38 @@ The project is structured as follows:
 
 ## 1. WpfExtensions.Binding
 
-This module is designed to solve the problem of property update dependency, which is often encountered in development: the value of a property is calculated from multiple other property, then when these dependent properties changed, the resultant property also needs to notify the UI to update. For example: `RectArea = Width * Height`, all three properties in this formula need to be bound to the UI, and the display of the `RectArea` will be automatically refreshed when `Width` and `Height` are changed.
+Brings some of the functionality of the Reactivity module from [Vue3](https://vuejs.org/api/) into Wpf.
 
-To achieve this effect, the traditional implementation is as follows, and it's not hard to find: it's quite a pain to write, and each dependent property has to add a line of code to notify the result property to refresh.
+> The term "observable" as used in the following documentation refers to objects that implement `INotifyPropertyChanged` or `INotifyCollectionChanged`.
 
-```csharp
-// View Model
-public double Width {
-    get => field;
-    set {
-        if (SetProperty(ref field, value)) {
-            RaisePropertyChanged(nameof(RectArea));
-        }
-    }
-}
+### 1.1 `Watch`
 
-public double Height {
-    get => field;
-    set {
-        if (SetProperty(ref field, value)) {
-            RaisePropertyChanged(nameof(RectArea));
-        }
-    }
-}
-
-public double RectArea => Width * Height;
-```
-
-So after using `WpfExtensions.Binding`, can it be shorter?
+Subscribe to an observable expression and trigger a callback function when its value changes.
 
 ```csharp
-// View Model is derived from WpfExtensions.Binding.BindableBase.
-public double Width {
-    get => field;
-    set => SetProperty(ref field, value);
-}
-
-public double Height {
-    get => field;
-    set => SetProperty(ref field, value);
-}
-
-public double RectArea => Computed(() => Width * Height);
+// See the source code for more overloads, whose signatures are consistent with vue3's `watch()`, and the vue3 documentation for examples.
+Reactivity.Default.Watch(() => Width * Height, area => Debug.WriteLine(area));
 ```
 
-Perhaps this example is too simple. If the same property affects multiple results, then multiple result properties have to be raised in that property. Such an intricate update dependency is not easy to maintain.
+### 1.2 `WatchDeep`
+
+Deep traversal subscribes to an observable object and triggers a callback function when its properties, or the properties of its properties, change.
+
+```csharp
+// `path` will print out the path to the specific property that was changed.
+Reactivity.Default.WatchDeep(obj, path => Debug.WriteLine(path))
+```
+
+### 1.3 `Computed`
+
+Computed property that is an instance method of the `BindableBase` base class.
+
+```csharp
+public class ViewModel : BindableBase {
+    // Can be bound to xaml to automatically notify Area changes when Width or Height changes.
+    public double Area => Computed(() => Width * Height);
+}
+```
 
 ## 2. WpfExtensions.Xaml
 

@@ -12,58 +12,45 @@
 
 ## NuGet
 
-| Package                 | NuGet                                                                                                                   |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `WpfExtensions.Xaml`    | [![version](https://img.shields.io/nuget/v/WpfExtensions.Xaml.svg)](https://www.nuget.org/packages/WpfExtensions.Xaml) |
-| `WpfExtensions.Binding` | [![version](https://img.shields.io/nuget/v/WpfExtensions.Binding.svg)](https://www.nuget.org/packages/WpfExtensions.Binding)   |
+| Package                 | NuGet                                                                                                                        |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `WpfExtensions.Xaml`    | [![version](https://img.shields.io/nuget/v/WpfExtensions.Xaml.svg)](https://www.nuget.org/packages/WpfExtensions.Xaml)       |
+| `WpfExtensions.Binding` | [![version](https://img.shields.io/nuget/v/WpfExtensions.Binding.svg)](https://www.nuget.org/packages/WpfExtensions.Binding) |
 
 ## 1. WpfExtensions.Binding
 
-该模块是为了解决属性更新依赖的问题，开发中经常会遇到：一个属性的值，是由其它多个数据计算得到的，那么当这些被依赖的数据发生改变时，结果属性也需要通知 UI 更新。如：`RectArea = Width * Height`，该公式中的三个属性都需要绑定到 UI 上，并且输入 `Width` 和 `Height` 后，`RectArea` 的显示将自动刷新。
+将 [Vue3](https://vuejs.org/api/) 响应式模块的部分功能引入到了 Wpf 中。
 
-为达到这一效果，传统地实现如下，不难发现：写起来挺麻烦的，每个被依赖的属性中，都要加一行代码去通知结果属性刷新。
+> 以下文档中出现的“可观测”一词，指的是实现了 `INotifyPropertyChanged` 或 `INotifyCollectionChanged` 的对象。
 
-```csharp
-// View Model
-public double Width {
-    get => field;
-    set {
-        if (SetProperty(ref field, value)) {
-            RaisePropertyChanged(nameof(RectArea));
-        }
-    }
-}
+### 1.1 `Watch`
 
-public double Height {
-    get => field;
-    set {
-        if (SetProperty(ref field, value)) {
-            RaisePropertyChanged(nameof(RectArea));
-        }
-    }
-}
-
-public double RectArea => Width * Height;
-```
-
-那么使用 `WpfExtensions.Binding` 之后，是否可以短一点呢？
+订阅一个可观测的表达式，并在其值发生改变的时候，触发回调函数。
 
 ```csharp
-// View Model is derived from WpfExtensions.Binding.BindableBase.
-public double Width {
-    get => field;
-    set => SetProperty(ref field, value);
-}
-
-public double Height {
-    get => field;
-    set => SetProperty(ref field, value);
-}
-
-public double RectArea => Computed(() => Width * Height);
+// 更多重载见源码，其签名与 vue3 的 watch() 保持一致，使用示例亦可直接参考 vue3 文档。
+Reactivity.Default.Watch(() => Width * Height, area => Debug.WriteLine(area));
 ```
 
-或许这个例子过于简单，但想象：如果同一个属性影响多个结果，那么就要在该属性中 Raise 多个结果属性。这样错综复杂的更新依赖关系，是不容易维护的。好吧，就算一般项目里不会出现比较复杂的更新依赖，那反正这个 Binding 库就十几 KB，引用了又不亏。
+### 1.2 `WatchDeep`
+
+深度遍历地订阅一个可观测的对象，并在其属性、或属性的属性发生变化时，触发回调函数。
+
+```csharp
+// `path` 将打印出具体被修改的属性的路径。
+Reactivity.Default.WatchDeep(obj, path => Debug.WriteLine(path))
+```
+
+### 1.3 `Computed`
+
+计算属性，是 `BindableBase` 基类的实例方法。
+
+```csharp
+public class ViewModel : BindableBase {
+    // 可 binding 到 xaml，当 Width 或 Height 发生改变时，自动通知 Area 的改变。
+    public double Area => Computed(() => Width * Height);
+}
+```
 
 ## 2. WpfExtensions.Xaml
 
